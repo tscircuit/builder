@@ -1,0 +1,22 @@
+{
+  "name": "builder",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "test": "ava"
+  },
+  "devDependencies": {
+    "ava": "^4.3.3",
+    "esbuild": "^0.15.8",
+    "esbuild-register": "^3.3.3",
+    "esbuild-runner": "^2.2.1",
+    "prettier": "^2.7.1",
+    "tsup": "^6.2.3"
+  },
+  "dependencies": {
+    "parsel-js": "^1.0.2",
+    "rectilinear-router": "^1.0.1",
+    "transformation-matrix": "^2.12.0"
+  }
+}
