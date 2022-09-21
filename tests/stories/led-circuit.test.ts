@@ -2,7 +2,7 @@ import test from "ava"
 import { createProjectBuilder } from "lib/builder"
 
 test("render an led circuit project", async (t) => {
-  const projectTSBO = createProjectBuilder()
+  const projectTSBO = await createProjectBuilder()
     .addGroup((gb) =>
       gb
         .addResistor((rb) =>
@@ -81,7 +81,7 @@ test("render an led circuit project", async (t) => {
         .addTrace([".D1 > .left", ".B1 > .RG"])
         .addTrace([".D1 > .right", ".C1 > .right"])
     )
-    .buildProject()
+    .build()
 
   t.snapshot(projectTSBO, "led circuit")
 })

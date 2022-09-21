@@ -24,9 +24,13 @@ export const createProjectBuilder = (): ProjectBuilder => {
     return `${prefix}_${idCount[prefix]++}`
   }
   builder.build_group = builder.build
-  builder.buildProject = async () => {
+  builder.build = async () => {
     resetIdCount()
-    return createProjectFromElements(await builder.build())
+    return await builder.build_group()
+  }
+  builder.buildProject = async () => {
+    const group = await builder.build()
+    return createProjectFromElements(group)
   }
   return builder
 }

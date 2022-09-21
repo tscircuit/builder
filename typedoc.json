@@ -1,0 +1,4 @@
+{
+  "gitRevision": "main",
+  "entryPoints": "src/index.ts"
+}
