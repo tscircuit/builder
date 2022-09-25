@@ -14,6 +14,7 @@ export type GroupBuilderCallback = (gb: GroupBuilder) => unknown
 export interface GroupBuilder {
   project_builder: ProjectBuilder
   builder_type: "group_builder"
+  reset: () => GroupBuilder
   appendChild(
     child: CB.ComponentBuilder | GroupBuilder | TraceBuilder
   ): GroupBuilder
@@ -49,11 +50,17 @@ export const createGroupBuilder = (
     builder_type: "group_builder",
     project_builder,
   } as any
-  const internal = {
-    groups: [] as GroupBuilder[],
-    components: [] as CB.BaseComponentBuilder<any>[],
-    traces: [] as TraceBuilder[],
+  let internal
+
+  builder.reset = () => {
+    ;(builder as any)._internal = internal = {
+      groups: [] as GroupBuilder[],
+      components: [] as CB.BaseComponentBuilder<any>[],
+      traces: [] as TraceBuilder[],
+    }
+    return builder
   }
+  builder.reset()
 
   builder.appendChild = (child) => {
     if (child.builder_type === "group_builder") {
