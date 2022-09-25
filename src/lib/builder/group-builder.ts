@@ -15,6 +15,7 @@ export interface GroupBuilder {
   project_builder: ProjectBuilder
   builder_type: "group_builder"
   reset: () => GroupBuilder
+  setName: (name: string) => GroupBuilder
   appendChild(
     child: CB.ComponentBuilder | GroupBuilder | TraceBuilder
   ): GroupBuilder
@@ -61,6 +62,11 @@ export const createGroupBuilder = (
     return builder
   }
   builder.reset()
+
+  builder.setName = (name: string) => {
+    internal.name = name
+    return builder
+  }
 
   builder.appendChild = (child) => {
     if (child.builder_type === "group_builder") {
