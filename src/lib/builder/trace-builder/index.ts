@@ -11,6 +11,7 @@ import { rmstSolver } from "./rmst-solver"
 
 export type TraceBuilderCallback = (cb: TraceBuilder) => unknown
 export interface TraceBuilder {
+  builder_type: "trace_builder"
   project_builder: ProjectBuilder
   parent: GroupBuilder
   setRouteSolver: (routeSolver: Type.RouteSolver) => TraceBuilder
@@ -21,7 +22,10 @@ export interface TraceBuilder {
 export const createTraceBuilder = (
   project_builder: ProjectBuilder
 ): TraceBuilder => {
-  const builder: TraceBuilder = { project_builder } as any
+  const builder: TraceBuilder = {
+    project_builder,
+    builder_type: "trace_builder",
+  } as any
   const internal: any = {
     portSelectors: [] as string[],
     routeSolver: rmstSolver,

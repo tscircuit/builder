@@ -8,6 +8,7 @@ import getPortPosition from "./get-port-position"
 import { Point, SchematicComponent } from "lib/types"
 
 export interface BaseComponentBuilder<T> {
+  builder_type: string
   project_builder: ProjectBuilder
   ports: PortsBuilder
   setName: (name: string) => BaseComponentBuilder<T>
@@ -42,6 +43,7 @@ export type GenericComponentBuilderCallback = (
 
 export class ComponentBuilderClass implements GenericComponentBuilder {
   name: string = null
+  builder_type = "generic_component_builder"
   tags: string[] = []
   source_properties: any = {}
   schematic_properties: any = {}

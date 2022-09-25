@@ -8,29 +8,34 @@ import {
   TraceBuilder,
   TraceBuilderCallback,
 } from "./trace-builder"
+import { GenericComponentBuilder } from "./component-builder"
 
 export type GroupBuilderCallback = (gb: GroupBuilder) => unknown
 export interface GroupBuilder {
   project_builder: ProjectBuilder
-  addGroup: (groupBuilderCallback: GroupBuilderCallback) => GroupBuilder
-  addComponent: (
+  builder_type: "group_builder"
+  appendChild(
+    child: CB.ComponentBuilder | GroupBuilder | TraceBuilder
+  ): GroupBuilder
+  addGroup(
+    groupBuilderCallback: GroupBuilderCallback | GroupBuilder
+  ): GroupBuilder
+  addComponent(
     componentBuilderCallback: CB.GenericComponentBuilderCallback
-  ) => GroupBuilder
-  addResistor: (
-    resistorBuilderCallback: CB.ResistorBuilderCallback
-  ) => GroupBuilder
-  addCapacitor: (
+  ): GroupBuilder
+  addResistor(resistorBuilderCallback: CB.ResistorBuilderCallback): GroupBuilder
+  addCapacitor(
     capacitorBuilderCallback: CB.CapacitorBuilderCallback
-  ) => GroupBuilder
-  addDiode: (capacitorBuilderCallback: CB.DiodeBuilderCallback) => GroupBuilder
-  addBug: (bugBuilderCallback: CB.BugBuilderCallback) => GroupBuilder
-  addPowerSource: (
+  ): GroupBuilder
+  addDiode(capacitorBuilderCallback: CB.DiodeBuilderCallback): GroupBuilder
+  addBug(bugBuilderCallback: CB.BugBuilderCallback): GroupBuilder
+  addPowerSource(
     powerSourceBuilderCallback: CB.PowerSourceBuilderCallback
-  ) => GroupBuilder
-  addInductor: (
+  ): GroupBuilder
+  addInductor(
     powerSourceBuilderCallback: CB.InductorBuilderCallback
-  ) => GroupBuilder
-  addGround: (groundBuilderCallback: CB.GroundBuilderCallback) => GroupBuilder
+  ): GroupBuilder
+  addGround(groundBuilderCallback: CB.GroundBuilderCallback): GroupBuilder
   addTrace: (
     traceBuiderCallback: TraceBuilderCallback | string[]
   ) => GroupBuilder
@@ -41,6 +46,7 @@ export const createGroupBuilder = (
   project_builder?: ProjectBuilder
 ): GroupBuilder => {
   const builder: GroupBuilder = {
+    builder_type: "group_builder",
     project_builder,
   } as any
   const internal = {
@@ -49,7 +55,26 @@ export const createGroupBuilder = (
     traces: [] as TraceBuilder[],
   }
 
-  builder.addGroup = (callback) => {
+  builder.appendChild = (child) => {
+    if (child.builder_type === "group_builder") {
+      internal.groups.push(child as any)
+    } else if (child.builder_type === "trace_builder") {
+      internal.traces.push(child as any)
+    } else {
+      internal.components.push(child as any)
+    }
+    return builder
+  }
+
+  builder.addGroup = (callbackOrObj) => {
+    if (typeof callbackOrObj !== "function") {
+      // TODO validate
+      callbackOrObj.project_builder = builder.project_builder
+      internal.groups.push(callbackOrObj)
+      return builder
+    }
+    const callback = callbackOrObj
+
     const gb = createGroupBuilder()
     gb.project_builder = builder.project_builder
     internal.groups.push(gb)

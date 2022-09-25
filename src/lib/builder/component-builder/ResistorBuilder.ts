@@ -20,6 +20,8 @@ export class ResistorBuilderClass
   extends ComponentBuilderClass
   implements ResistorBuilder
 {
+  builder_type = "resistor_builder"
+
   constructor(project_builder: ProjectBuilder) {
     super(project_builder)
     this.source_properties = {
