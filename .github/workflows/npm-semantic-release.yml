@@ -18,6 +18,8 @@ jobs:
           cache: "yarn"
       - name: Install dependencies
         run: yarn install
+      - name: Build
+        run: yarn build
       - name: Release
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
