@@ -4,26 +4,24 @@ import { createProjectBuilder, ProjectClass } from "lib/project"
 import { applySelector } from "lib/apply-selector"
 
 test("applySelector use css selector to select circuit elements", async (t) => {
-  const project = new ProjectClass(
-    await createProjectBuilder()
-      .addGroup((gb) =>
-        gb
-          .addResistor((cb) =>
-            cb.setSourceProperties({
-              resistance: "10 ohm",
-              name: "R1",
-            })
-          )
-          .addCapacitor((cb) =>
-            cb.setSourceProperties({
-              name: "C1",
-              capacitance: "10 uF",
-            })
-          )
-      )
-      .buildProject()
-  )
-  const elements = project.getElements()
+  const elements = await createProjectBuilder()
+    .addGroup((gb) =>
+      gb
+        .addResistor((cb) =>
+          cb.setSourceProperties({
+            resistance: "10 ohm",
+            name: "R1",
+          })
+        )
+        .addCapacitor((cb) =>
+          cb.setSourceProperties({
+            name: "C1",
+            capacitance: "10 uF",
+          })
+        )
+    )
+    .build()
+
   const selector = ".R1 > port.right"
 
   t.deepEqual(applySelector(elements, selector), [
