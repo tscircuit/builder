@@ -7,6 +7,7 @@ const elementArrayKeys = [
   "schematic_ports",
   "pcb_groups",
   "pcb_components",
+  "pcb_labels",
   "pcb_traces",
   "pcb_ports",
   "source_traces",
