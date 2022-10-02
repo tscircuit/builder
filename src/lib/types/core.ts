@@ -158,7 +158,6 @@ export interface PCBComponent {
 
 export interface PCBPort {
   type: "pcb_port"
-  center: Point
   pcb_port_id: string
   source_port_id: string
 }

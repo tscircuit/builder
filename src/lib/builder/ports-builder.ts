@@ -81,6 +81,11 @@ export const createPortsBuilder = (
           center: port.schematic_position,
           facing_direction: port.facing_direction,
         } as Type.SchematicPort,
+        {
+          type: "pcb_port",
+          pcb_port_id,
+          source_port_id,
+        } as Type.PCBPort,
       ] as Type.AnyElement[]
     }) as Type.AnyElement[]
   }

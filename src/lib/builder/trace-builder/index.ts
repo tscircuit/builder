@@ -125,7 +125,7 @@ export const createTraceBuilder = (
       ) as Type.PCBPort | null
       if (!pcb_port)
         throw new Error(
-          `Missing pcb_port for source_port "${sp.source_port_id}"`
+          `source_port "${sp.source_port_id}" is missing a pcb_port`
         )
       return pcb_port
     })
