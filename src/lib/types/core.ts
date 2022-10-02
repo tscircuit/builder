@@ -118,6 +118,7 @@ export type PCBSMTPad =
       pcb_port_id?: string
     }
   | {
+      type: "pcb_smtpad"
       shape: "rect"
       x: number
       y: number
@@ -224,6 +225,9 @@ export type AnyElement =
   | PCBGroup
   | PCBConfig
   | PCBPort
+  | PCBTrace
+  | PCBSMTPad
+  | PCBDrill
   | SchematicGroup
   | SchematicComponent
   | SchematicTrace

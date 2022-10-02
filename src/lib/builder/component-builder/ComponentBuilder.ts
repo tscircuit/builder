@@ -6,6 +6,7 @@ import { compose, rotate, transform, translate } from "transformation-matrix"
 import { transformSchematicElements } from "lib/builder/transform-elements"
 import getPortPosition from "./get-port-position"
 import { Point, SchematicComponent } from "lib/types"
+import { FootprintBuilder } from "../footprint-builder"
 
 export interface BaseComponentBuilder<T> {
   builder_type: string
@@ -50,6 +51,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
   schematic_rotation: number = 0
   schematic_position: Point = { x: 0, y: 0 }
   ports: PortsBuilder
+  footprint: FootprintBuilder
   constructor(public project_builder: ProjectBuilder) {
     this.ports = createPortsBuilder(project_builder)
   }
