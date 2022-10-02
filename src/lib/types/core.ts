@@ -77,19 +77,78 @@ export interface SchematicPort {
   facing_direction?: "up" | "down" | "left" | "right"
 }
 
+export interface LayerRef {
+  name: string
+}
+
 export interface PCBTrace {
   type: "pcb_trace"
   source_trace_id: string
   pcb_trace_id: string
-  route: Array<{
-    x: number
-    y: number
-    width: number
-    // cap: "butt" | "round" | "square"
-    start_pcb_port_id?: string
-    end_pcb_port_id?: string
-  }>
+  route: Array<
+    | {
+        route_type: "wire"
+        x: number
+        y: number
+        width: number
+        // cap: "butt" | "round" | "square"
+        start_pcb_port_id?: string
+        end_pcb_port_id?: string
+        layer: LayerRef
+      }
+    | {
+        route_type: "via"
+        x: number
+        y: number
+        from_layer: LayerRef
+        to_layer: LayerRef
+      }
+  >
 }
+
+export type PCBSMTPad =
+  | {
+      type: "pcb_smtpad"
+      shape: "circle"
+      x: number
+      y: number
+      radius: number
+      layer: LayerRef
+      pcb_component_id?: string
+      pcb_port_id?: string
+    }
+  | {
+      shape: "rect"
+      x: number
+      y: number
+      width: number
+      height: number
+      layer: LayerRef
+      pcb_component_id?: string
+      pcb_port_id?: string
+    }
+
+export type PCBDrill =
+  | {
+      type: "pcb_drill"
+      x: number
+      y: number
+      radius: number
+      through_all: true
+      pcb_component_id?: string
+      from_layer: undefined
+      to_layer: undefined
+    }
+  | {
+      type: "pcb_drill"
+      x: number
+      y: number
+      radius: number
+      from_layer: LayerRef
+      to_layer: LayerRef
+      pcb_component_id?: string
+      through_all: false | undefined
+    }
 
 export interface PCBComponent {
   type: "pcb_component"
