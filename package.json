@@ -24,6 +24,7 @@
     "typescript": "^4.8.3"
   },
   "dependencies": {
+    "@tscircuit/eagle-xml-converter": "^0.0.7",
     "parsel-js": "^1.0.2",
     "rectilinear-router": "^1.0.1",
     "svg-path-bounds": "^1.0.2",
