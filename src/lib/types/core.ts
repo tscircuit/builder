@@ -84,8 +84,8 @@ export interface PCBTrace {
   route: Array<{
     x: number
     y: number
-    strokeWidth: number
-    cap: "butt" | "round" | "square"
+    width: number
+    // cap: "butt" | "round" | "square"
     start_pcb_port_id?: string
     end_pcb_port_id?: string
   }>
@@ -99,6 +99,7 @@ export interface PCBComponent {
 
 export interface PCBPort {
   type: "pcb_port"
+  center: Point
   pcb_port_id: string
   source_port_id: string
 }

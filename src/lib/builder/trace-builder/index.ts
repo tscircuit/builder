@@ -75,9 +75,14 @@ export const createTraceBuilder = (
         (sp) => sp.source_port_id
       ),
     }
+
+    // ----------------------------
+    // SCHEMATIC ROUTING
+    // ----------------------------
+
     const schematic_trace_id = builder.project_builder.getId("schematic_trace")
 
-    const straightRoute = sourcePortsInRoute.map((sp) => {
+    const schematicTerminals = sourcePortsInRoute.map((sp) => {
       const schematic_port = parentElements.find(
         (elm) =>
           elm.type === "schematic_port" &&
@@ -96,7 +101,7 @@ export const createTraceBuilder = (
     })
 
     const edges = await internal.routeSolver({
-      terminals: straightRoute,
+      terminals: schematicTerminals,
       obstacles: [],
     })
 
@@ -107,7 +112,36 @@ export const createTraceBuilder = (
       edges,
     }
 
-    return [source_trace, schematic_trace]
+    // ----------------------------
+    // PCB ROUTING
+    // ----------------------------
+
+    const pcb_trace_id = builder.project_builder.getId("schematic_trace")
+
+    const pcb_terminals = sourcePortsInRoute.map((sp) => {
+      const pcb_port = parentElements.find(
+        (elm) =>
+          elm.type === "pcb_port" && elm.source_port_id === sp.source_port_id
+      ) as Type.PCBPort | null
+      if (!pcb_port)
+        throw new Error(
+          `Missing pcb_port for source_port "${sp.source_port_id}"`
+        )
+      return pcb_port
+    })
+
+    const pcb_route = []
+
+    // TODO construct route from pcb_terminals
+
+    const pcb_trace: Type.PCBTrace = {
+      type: "pcb_trace",
+      pcb_trace_id,
+      source_trace_id: source_trace_id,
+      route: pcb_route,
+    }
+
+    return [source_trace, schematic_trace, pcb_trace]
   }
 
   return builder
