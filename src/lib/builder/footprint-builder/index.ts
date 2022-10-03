@@ -15,6 +15,10 @@ export class FootprintBuilderClass implements FootprintBuilder {
 
   smt_pads: Array<{}> = []
 
+  constructor(project_builder: ProjectBuilder) {
+    this.project_builder = this.project_builder
+  }
+
   addPad(): FootprintBuilder {
     throw new Error("Method not implemented.")
   }
@@ -34,4 +38,10 @@ export class FootprintBuilderClass implements FootprintBuilder {
       } as Type.PCBSMTPad,
     ]
   }
+}
+
+export const createFootprintBuilder = (
+  project_builder: ProjectBuilder
+): FootprintBuilder => {
+  return new FootprintBuilderClass(project_builder)
 }

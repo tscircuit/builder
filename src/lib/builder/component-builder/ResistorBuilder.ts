@@ -129,6 +129,7 @@ export class ResistorBuilderClass
       source_component_id,
       pcb_component_id,
     })
+    elements.push(...(await this.footprint.build()))
 
     return elements
   }
