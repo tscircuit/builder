@@ -51,7 +51,7 @@ export class SMTPadBuilderClass implements SMTPadBuilder {
   }
 
   setSize(width_or_radius: number, height?: number) {
-    if (this.shape === "rect" && this.height === undefined) {
+    if (this.shape === "rect" && height === undefined) {
       throw new Error("Must set height for rect")
     }
     if (this.shape === "circle") {
