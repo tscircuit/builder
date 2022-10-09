@@ -8,12 +8,24 @@ import {
   TraceBuilder,
   TraceBuilderCallback,
 } from "./trace-builder"
-import { GenericComponentBuilder } from "./component-builder"
+
+export const addables = {
+  generic_component: CB.createComponentBuilder,
+  resistor: CB.createResistorBuilder,
+  capacitor: CB.createCapacitorBuilder,
+  diode: CB.createDiodeBuilder,
+  power_source: CB.createPowerSourceBuilder,
+  inductor: CB.createInductorBuilder,
+  ground: CB.createGroundBuilder,
+  trace: createTraceBuilder,
+  group: createGroupBuilder,
+}
 
 export type GroupBuilderCallback = (gb: GroupBuilder) => unknown
 export interface GroupBuilder {
   project_builder: ProjectBuilder
   builder_type: "group_builder"
+  addables: typeof addables
   reset: () => GroupBuilder
   setName: (name: string) => GroupBuilder
   appendChild(
@@ -41,15 +53,20 @@ export interface GroupBuilder {
   addTrace: (
     traceBuiderCallback: TraceBuilderCallback | string[]
   ) => GroupBuilder
+  add<T extends keyof typeof addables>(
+    builder_type: T,
+    callback: (builder: ReturnType<typeof addables[T]>) => unknown
+  ): GroupBuilder
   build(): Promise<Type.AnyElement[]>
 }
 
-export const createGroupBuilder = (
+export function createGroupBuilder(
   project_builder?: ProjectBuilder
-): GroupBuilder => {
+): GroupBuilder {
   const builder: GroupBuilder = {
     builder_type: "group_builder",
     project_builder,
+    addables,
   } as any
   let internal
 
@@ -62,6 +79,12 @@ export const createGroupBuilder = (
     return builder
   }
   builder.reset()
+
+  builder.add = (new_builder_type, callback) => {
+    const new_builder = addables[new_builder_type](builder.project_builder)
+    callback(new_builder as any) // not smart enough to infer generic
+    return builder
+  }
 
   builder.setName = (name: string) => {
     internal.name = name

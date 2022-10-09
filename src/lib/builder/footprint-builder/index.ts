@@ -1,42 +1,57 @@
 import { BaseComponentBuilder, ProjectBuilder } from "lib/project"
 import * as Type from "lib/types"
+import { SMTPadBuilder, createSMTPadBuilder } from "./smt-pad-builder"
 
 export type FootprintBuilderCallback = (rb: FootprintBuilder) => unknown
+
+export const addables = {
+  smtpad: createSMTPadBuilder,
+} as const
+
 export interface FootprintBuilder {
   builder_type: "footprint_builder"
   project_builder: ProjectBuilder
-  addPad(): FootprintBuilder
+  addables: typeof addables
+  addPad(cb: (smtpadbuilder: SMTPadBuilder) => unknown): FootprintBuilder
+  add<T extends keyof typeof addables>(
+    builder_type: T,
+    callback: (builder: ReturnType<typeof addables[T]>) => unknown
+  ): FootprintBuilder
   build(): Promise<Type.AnyElement[]>
 }
 
 export class FootprintBuilderClass implements FootprintBuilder {
   builder_type: "footprint_builder"
   project_builder: ProjectBuilder
+  addables = addables
 
-  smt_pads: Array<{}> = []
+  children: SMTPadBuilder[] = []
 
   constructor(project_builder: ProjectBuilder) {
     this.project_builder = this.project_builder
   }
 
-  addPad(): FootprintBuilder {
-    throw new Error("Method not implemented.")
+  add(new_builder_type, cb) {
+    const new_builder = addables[new_builder_type](this.project_builder)
+    cb(new_builder)
+    this.children.push(new_builder)
+    return this
+  }
+
+  addPad(cb) {
+    const smtpadbuilder = createSMTPadBuilder(this.project_builder)
+    cb(smtpadbuilder)
+    this.children.push(smtpadbuilder)
+    return this
   }
 
   async build(): Promise<Type.AnyElement[]> {
-    return [
-      {
-        type: "pcb_smtpad",
-        shape: "rect",
-        x: 0,
-        y: 0,
-        width: 100,
-        height: 100,
-        layer: { name: "top" },
-        // pcb_component_id?: string
-        // pcb_port_id?: string
-      } as Type.PCBSMTPad,
-    ]
+    const built_elements = []
+    for (const child of this.children) {
+      const built = await child.build()
+      built_elements.push(...built)
+    }
+    return built_elements
   }
 }
 
