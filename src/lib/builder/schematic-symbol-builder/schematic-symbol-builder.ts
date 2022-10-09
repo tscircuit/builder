@@ -1,5 +1,5 @@
 import * as Type from "lib/types"
-import { Builder } from "lib/types"
+import { Builder, SchematicDrawing } from "lib/types"
 import { ProjectBuilder } from "../project-builder"
 import { SchematicBoxBuilder } from "./schematic-box-builder"
 import { SchematicLineBuilder } from "./schematic-line-builder"
@@ -8,7 +8,7 @@ import { SchematicTextBuilder } from "./schematic-text-builder"
 export interface SchematicSymbolBuilder {
   project_builder: ProjectBuilder
   builder_type: "schematic_symbol_builder"
-  build(): Type.AnyElement[]
+  build(): SchematicDrawing
 }
 
 export class SchematicSymbolBuilderClass implements SchematicSymbolBuilder {
@@ -41,8 +41,8 @@ export class SchematicSymbolBuilderClass implements SchematicSymbolBuilder {
     this.children.push(child as any)
   }
 
-  build() {
-    return []
+  build(): SchematicDrawing[] {
+    return this.children.map((child) => child.build())
   }
 }
 

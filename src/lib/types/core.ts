@@ -28,6 +28,30 @@ export interface SchematicGroup {
   children_schematic_trace_ids: string[]
 }
 
+export type SchematicDrawing =
+  | {
+      drawing_type: "box"
+      width: number
+      height: number
+      x: number
+      y: number
+    }
+  | {
+      drawing_type: "line"
+      x1: number
+      x2: number
+      y1: number
+      y2: number
+    }
+  // TODO this text type seems redundant with schematic_text...
+  // It's attached to the symbol, so probably shouldn't be used often
+  | {
+      drawing_type: "text"
+      align: string
+      center: Point
+      text: string
+    }
+
 export interface SchematicComponent {
   type: "schematic_component"
   rotation: number
@@ -35,6 +59,10 @@ export interface SchematicComponent {
   center: Point
   source_component_id: string
   schematic_component_id: string
+
+  drawing?: {
+    elements: Array<SchematicDrawing>
+  }
 
   // TODO only for schematic-bug
   port_arrangement?: {
