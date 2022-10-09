@@ -6,6 +6,7 @@ export interface SMTPadBuilder {
   project_builder: ProjectBuilder
   setShape(shape: Type.PCBSMTPad["shape"]): SMTPadBuilder
   setSize(width: number, height: number): SMTPadBuilder
+  setRadius(radius: number): SMTPadBuilder
   setLayer(layer: Type.PCBSMTPad["layer"] | string): SMTPadBuilder
   setPosition(x: number, y: number): SMTPadBuilder
   build(): Promise<Type.PCBSMTPad[]>
@@ -59,6 +60,11 @@ export class SMTPadBuilderClass implements SMTPadBuilder {
       this.width = width_or_radius
       this.height = height
     }
+    return this
+  }
+
+  setRadius(radius: number) {
+    this.radius = radius
     return this
   }
 
