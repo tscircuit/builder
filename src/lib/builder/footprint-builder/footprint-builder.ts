@@ -4,7 +4,7 @@ import { SMTPadBuilder, createSMTPadBuilder } from "./smt-pad-builder"
 
 export type FootprintBuilderCallback = (rb: FootprintBuilder) => unknown
 
-export const addables = {
+const addables = {
   smtpad: createSMTPadBuilder,
 } as const
 

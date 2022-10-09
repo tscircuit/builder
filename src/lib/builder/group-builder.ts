@@ -9,7 +9,7 @@ import {
   TraceBuilderCallback,
 } from "./trace-builder"
 
-export const addables = {
+const addables = {
   generic_component: CB.createComponentBuilder,
   resistor: CB.createResistorBuilder,
   capacitor: CB.createCapacitorBuilder,
