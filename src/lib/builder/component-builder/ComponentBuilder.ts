@@ -12,6 +12,7 @@ export interface BaseComponentBuilder<T> {
   builder_type: string
   project_builder: ProjectBuilder
   ports: PortsBuilder
+  footprint: FootprintBuilder
   setName: (name: string) => BaseComponentBuilder<T>
   setTag: (tag: string) => BaseComponentBuilder<T>
   setTags: (tags: string[]) => BaseComponentBuilder<T>

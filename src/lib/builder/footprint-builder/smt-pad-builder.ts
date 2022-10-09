@@ -7,6 +7,7 @@ export interface SMTPadBuilder {
   setShape(shape: Type.PCBSMTPad["shape"]): SMTPadBuilder
   setSize(width: number, height: number): SMTPadBuilder
   setLayer(layer: Type.PCBSMTPad["layer"] | string): SMTPadBuilder
+  setPosition(x: number, y: number): SMTPadBuilder
   build(): Promise<Type.PCBSMTPad[]>
 }
 

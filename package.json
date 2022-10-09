@@ -6,7 +6,8 @@
   "scripts": {
     "test": "ava",
     "build": "tsup ./src --sourcemap --dts",
-    "build:docs": "typedoc"
+    "build:docs": "typedoc",
+    "yalc": "npm run build && yalc publish --push"
   },
   "devDependencies": {
     "@semantic-release/commit-analyzer": "^9.0.2",
