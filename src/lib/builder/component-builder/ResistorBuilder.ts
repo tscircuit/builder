@@ -3,11 +3,12 @@ import { BaseComponentBuilder, ComponentBuilderClass } from "./ComponentBuilder"
 import * as Type from "lib/types"
 import { transformSchematicElements } from "../transform-elements"
 import { compose, rotate, translate } from "transformation-matrix"
-import { PortsBuilder } from "../ports-builder"
+import { PortsBuilder } from "../ports-builder/ports-builder"
 import { Except } from "type-fest"
 
 export type ResistorBuilderCallback = (rb: ResistorBuilder) => unknown
 export interface ResistorBuilder extends BaseComponentBuilder<ResistorBuilder> {
+  builder_type: "resistor_builder"
   setSourceProperties(
     properties: Except<
       Type.SimpleResistor,
@@ -20,7 +21,7 @@ export class ResistorBuilderClass
   extends ComponentBuilderClass
   implements ResistorBuilder
 {
-  builder_type = "resistor_builder"
+  builder_type = "resistor_builder" as const
 
   constructor(project_builder: ProjectBuilder) {
     super(project_builder)

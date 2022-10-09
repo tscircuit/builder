@@ -3,11 +3,12 @@ import { BaseComponentBuilder, ComponentBuilderClass } from "./ComponentBuilder"
 import * as Type from "lib/types"
 import { transformSchematicElements } from "../transform-elements"
 import { compose, rotate, translate } from "transformation-matrix"
-import { PortsBuilder } from "../ports-builder"
+import { PortsBuilder } from "../ports-builder/ports-builder"
 import { Except } from "type-fest"
 
 export type GroundBuilderCallback = (rb: GroundBuilder) => unknown
 export interface GroundBuilder extends BaseComponentBuilder<GroundBuilder> {
+  builder_type: "ground_builder"
   setSourceProperties(
     properties: Except<
       Type.SimpleGround,
@@ -20,6 +21,8 @@ export class GroundBuilderClass
   extends ComponentBuilderClass
   implements GroundBuilder
 {
+  builder_type = "ground_builder" as const
+
   constructor(project_builder: ProjectBuilder) {
     super(project_builder)
     this.source_properties = {

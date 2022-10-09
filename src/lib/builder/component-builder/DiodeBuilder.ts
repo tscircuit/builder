@@ -3,12 +3,13 @@ import { BaseComponentBuilder, ComponentBuilderClass } from "./ComponentBuilder"
 import * as Type from "lib/types"
 import { transformSchematicElements } from "../transform-elements"
 import { compose, rotate, translate } from "transformation-matrix"
-import { PortsBuilder } from "../ports-builder"
+import { PortsBuilder } from "../ports-builder/ports-builder"
 import { Except } from "type-fest"
 import getPortPosition from "./get-port-position"
 
 export type DiodeBuilderCallback = (rb: DiodeBuilder) => unknown
 export interface DiodeBuilder extends BaseComponentBuilder<DiodeBuilder> {
+  builder_type: "diode_builder"
   setSourceProperties(
     properties: Except<
       Type.SimpleDiode,
@@ -21,6 +22,7 @@ export class DiodeBuilderClass
   extends ComponentBuilderClass
   implements DiodeBuilder
 {
+  builder_type = "diode_builder" as const
   constructor(project_builder: ProjectBuilder) {
     super(project_builder)
     this.source_properties = {

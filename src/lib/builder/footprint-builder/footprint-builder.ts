@@ -1,5 +1,6 @@
 import { BaseComponentBuilder, ProjectBuilder } from "lib/project"
 import * as Type from "lib/types"
+import { Builder } from "lib/types/builders"
 import { SMTPadBuilder, createSMTPadBuilder } from "./smt-pad-builder"
 
 export type FootprintBuilderCallback = (rb: FootprintBuilder) => unknown
@@ -12,6 +13,7 @@ export interface FootprintBuilder {
   builder_type: "footprint_builder"
   project_builder: ProjectBuilder
   addables: typeof addables
+  appendChild: (child: Builder) => FootprintBuilder
   addPad(cb: (smtpadbuilder: SMTPadBuilder) => unknown): FootprintBuilder
   add<T extends keyof typeof addables>(
     builder_type: T,
@@ -29,6 +31,16 @@ export class FootprintBuilderClass implements FootprintBuilder {
 
   constructor(project_builder: ProjectBuilder) {
     this.project_builder = project_builder
+  }
+
+  appendChild(child) {
+    if (child.builder_type === "smtpad_builder") {
+      this.children.push(child)
+      return this
+    }
+    throw new Error(
+      `Unsupported child for footprint builder: "${child.builder_type}"`
+    )
   }
 
   add(new_builder_type, cb) {

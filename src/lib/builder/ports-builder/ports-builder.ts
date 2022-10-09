@@ -1,10 +1,13 @@
 import * as Type from "lib/types"
+import { Builder } from "lib/types"
 import { Except, Simplify } from "type-fest"
-import { ProjectBuilder } from "./project-builder"
+import { ProjectBuilder } from "../project-builder"
 
 export type PortBuilderCallback = (cb: PortsBuilder) => unknown
 export interface PortsBuilder {
+  builder_type: "ports_builder"
   project_builder: ProjectBuilder
+  appendChild: (child: Builder) => PortsBuilder
   add: ((portName: string, schematicPosition: Type.Point) => PortsBuilder) &
     ((params: {
       name: string
@@ -20,7 +23,10 @@ export interface PortsBuilder {
 export const createPortsBuilder = (
   project_builder: ProjectBuilder
 ): PortsBuilder => {
-  const builder: PortsBuilder = { project_builder } as any
+  const builder: PortsBuilder = {
+    project_builder,
+    builder_type: "ports_builder",
+  } as any
 
   const internal = {
     source_component_id: "",

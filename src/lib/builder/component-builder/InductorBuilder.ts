@@ -3,11 +3,12 @@ import { BaseComponentBuilder, ComponentBuilderClass } from "./ComponentBuilder"
 import * as Type from "lib/types"
 import { transformSchematicElements } from "../transform-elements"
 import { compose, rotate, translate } from "transformation-matrix"
-import { PortsBuilder } from "../ports-builder"
+import { PortsBuilder } from "../ports-builder/ports-builder"
 import getPortPosition from "./get-port-position"
 
 export type InductorBuilderCallback = (rb: InductorBuilder) => unknown
 export interface InductorBuilder extends BaseComponentBuilder<InductorBuilder> {
+  builder_type: "inductor_builder"
   setSourceProperties(
     properties: Type.SimpleInductor & { name?: string }
   ): InductorBuilder
@@ -17,6 +18,8 @@ export class InductorBuilderClass
   extends ComponentBuilderClass
   implements InductorBuilder
 {
+  builder_type = "inductor_builder" as const
+
   constructor(project_builder: ProjectBuilder) {
     super(project_builder)
     this.source_properties = {

@@ -9,6 +9,7 @@ import getPortPosition from "./get-port-position"
 
 export type BugBuilderCallback = (rb: BugBuilder) => unknown
 export interface BugBuilder extends BaseComponentBuilder<BugBuilder> {
+  builder_type: "bug_builder"
   setSourceProperties(
     properties: Except<
       Type.SimpleBug,
@@ -21,6 +22,8 @@ export class BugBuilderClass
   extends ComponentBuilderClass
   implements BugBuilder
 {
+  builder_type = "bug_builder" as const
+
   constructor(project_builder: ProjectBuilder) {
     super(project_builder)
     this.source_properties = {
@@ -29,7 +32,7 @@ export class BugBuilderClass
     }
   }
 
-  setSourceProperties(props: Type.SimpleBug) {
+  setSourceProperties(props) {
     this.source_properties = {
       ...this.source_properties,
       ...props,

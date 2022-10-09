@@ -3,13 +3,14 @@ import { BaseComponentBuilder, ComponentBuilderClass } from "./ComponentBuilder"
 import * as Type from "lib/types"
 import { transformSchematicElements } from "../transform-elements"
 import { compose, rotate, translate } from "transformation-matrix"
-import { PortsBuilder } from "../ports-builder"
+import { PortsBuilder } from "../ports-builder/ports-builder"
 import { Except } from "type-fest"
 import getPortPosition from "./get-port-position"
 
 export type PowerSourceBuilderCallback = (rb: PowerSourceBuilder) => unknown
 export interface PowerSourceBuilder
   extends BaseComponentBuilder<PowerSourceBuilder> {
+  builder_type: "power_source_builder"
   setSourceProperties(
     properties: Except<
       Type.SimplePowerSource,
@@ -22,6 +23,7 @@ export class PowerSourceBuilderClass
   extends ComponentBuilderClass
   implements PowerSourceBuilder
 {
+  builder_type = "power_source_builder" as const
   constructor(project_builder: ProjectBuilder) {
     super(project_builder)
     this.source_properties = {

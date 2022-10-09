@@ -3,13 +3,14 @@ import { BaseComponentBuilder, ComponentBuilderClass } from "./ComponentBuilder"
 import * as Type from "lib/types"
 import { transformSchematicElements } from "../transform-elements"
 import { compose, rotate, translate } from "transformation-matrix"
-import { PortsBuilder } from "../ports-builder"
+import { PortsBuilder } from "../ports-builder/ports-builder"
 import { Except } from "type-fest"
 import getPortPosition from "./get-port-position"
 
 export type CapacitorBuilderCallback = (rb: CapacitorBuilder) => unknown
 export interface CapacitorBuilder
   extends BaseComponentBuilder<CapacitorBuilder> {
+  builder_type: "capacitor_builder"
   setSourceProperties(
     properties: Except<
       Type.SimpleCapacitor,
@@ -22,6 +23,8 @@ export class CapacitorBuilderClass
   extends ComponentBuilderClass
   implements CapacitorBuilder
 {
+  builder_type = "capacitor_builder" as const
+
   constructor(project_builder: ProjectBuilder) {
     super(project_builder)
     this.source_properties = {

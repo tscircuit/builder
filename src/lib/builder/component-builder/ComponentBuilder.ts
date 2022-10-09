@@ -1,21 +1,24 @@
 import * as Type from "lib/types"
 import { Except, Simplify } from "type-fest"
 import { ProjectBuilder } from "lib/builder/project-builder"
-import { PortsBuilder, createPortsBuilder } from "lib/builder/ports-builder"
+import {
+  PortsBuilder,
+  createPortsBuilder,
+} from "lib/builder/ports-builder/ports-builder"
 import { compose, rotate, transform, translate } from "transformation-matrix"
 import { transformSchematicElements } from "lib/builder/transform-elements"
 import getPortPosition from "./get-port-position"
-import { Point, SchematicComponent } from "lib/types"
+import { AnyElement, Point, SchematicComponent } from "lib/types"
 import { createFootprintBuilder, FootprintBuilder } from "../footprint-builder"
 
 export interface BaseComponentBuilder<T> {
-  builder_type: string
   project_builder: ProjectBuilder
   ports: PortsBuilder
   footprint: FootprintBuilder
   setName: (name: string) => BaseComponentBuilder<T>
   setTag: (tag: string) => BaseComponentBuilder<T>
   setTags: (tags: string[]) => BaseComponentBuilder<T>
+  appendChild(child: { builder_type: string }): BaseComponentBuilder<T>
   setSourceProperties(
     properties: Simplify<
       Except<
@@ -37,6 +40,7 @@ export interface BaseComponentBuilder<T> {
 
 export type GenericComponentBuilder =
   BaseComponentBuilder<GenericComponentBuilder> & {
+    builder_type: "generic_component_builder"
     setFType: (ftype: string) => GenericComponentBuilder
   }
 export type GenericComponentBuilderCallback = (
@@ -45,7 +49,7 @@ export type GenericComponentBuilderCallback = (
 
 export class ComponentBuilderClass implements GenericComponentBuilder {
   name: string = null
-  builder_type = "generic_component_builder"
+  builder_type = "generic_component_builder" as any
   tags: string[] = []
   source_properties: any = {}
   schematic_properties: any = {}
@@ -56,6 +60,23 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
   constructor(public project_builder: ProjectBuilder) {
     this.ports = createPortsBuilder(project_builder)
     this.footprint = createFootprintBuilder(project_builder)
+  }
+
+  appendChild(child) {
+    // Based on the child type, add to appropriate builder
+    switch (child.builder_type) {
+      case "port_builder": {
+        this.ports.appendChild(child)
+        return this
+      }
+      case "smtpad_builder": {
+        this.footprint.appendChild(child)
+      }
+    }
+
+    throw new Error(
+      `Can't add child builder type: "${child.builder_type}" inside component builder`
+    )
   }
 
   setTag(tag) {
