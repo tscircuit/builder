@@ -28,7 +28,7 @@ export class FootprintBuilderClass implements FootprintBuilder {
   children: SMTPadBuilder[] = []
 
   constructor(project_builder: ProjectBuilder) {
-    this.project_builder = this.project_builder
+    this.project_builder = project_builder
   }
 
   add(new_builder_type, cb) {
