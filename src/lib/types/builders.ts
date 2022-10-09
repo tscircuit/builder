@@ -9,5 +9,7 @@ export type Builder =
   | builder.ProjectBuilder
   | builder.SMTPadBuilder
   | builder.TraceBuilder
+  | builder.SchematicSymbolBuilder
+  | builder.SchematicSymbolPrimitiveBuilder
 
 export type BuilderType = builder.ComponentBuilder["builder_type"]

@@ -92,6 +92,19 @@ export function createGroupBuilder(
   }
 
   builder.appendChild = (child) => {
+    if (
+      [
+        "schematic_symbol_builder",
+        "schematic_box_builder",
+        "schematic_line_builder",
+        "schematic_text_builder",
+      ].includes(child.builder_type)
+    ) {
+      throw new Error(
+        `Schematic primitives can't be added to a group builder (try adding to a component)`
+      )
+    }
+
     if (child.builder_type === "group_builder") {
       internal.groups.push(child as any)
     } else if (child.builder_type === "trace_builder") {
