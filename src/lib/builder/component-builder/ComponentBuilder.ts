@@ -115,7 +115,11 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
   }
 
   async build() {
-    return []
+    const elements = []
+    elements.push(...(await this.ports.build()))
+    // TODO schematic box of some kind
+    elements.push(...(await this.footprint.build()))
+    return elements
   }
 }
 
