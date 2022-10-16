@@ -60,6 +60,9 @@ export interface GroupBuilder {
   build(): Promise<Type.AnyElement[]>
 }
 
+/**
+ * This uses an old construction pattern that's been tested.
+ */
 export function createGroupBuilder(
   project_builder?: ProjectBuilder
 ): GroupBuilder {

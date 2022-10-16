@@ -10,11 +10,16 @@ import { transformSchematicElements } from "lib/builder/transform-elements"
 import getPortPosition from "./get-port-position"
 import { AnyElement, Point, SchematicComponent } from "lib/types"
 import { createFootprintBuilder, FootprintBuilder } from "../footprint-builder"
+import {
+  createSchematicSymbolBuilder,
+  SchematicSymbolBuilder,
+} from "../schematic-symbol-builder"
 
 export interface BaseComponentBuilder<T> {
   project_builder: ProjectBuilder
   ports: PortsBuilder
   footprint: FootprintBuilder
+  schematic_symbol: SchematicSymbolBuilder
   setName: (name: string) => BaseComponentBuilder<T>
   setTag: (tag: string) => BaseComponentBuilder<T>
   setTags: (tags: string[]) => BaseComponentBuilder<T>
@@ -57,9 +62,11 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
   schematic_position: Point = { x: 0, y: 0 }
   ports: PortsBuilder
   footprint: FootprintBuilder
+  schematic_symbol: SchematicSymbolBuilder
   constructor(public project_builder: ProjectBuilder) {
     this.ports = createPortsBuilder(project_builder)
     this.footprint = createFootprintBuilder(project_builder)
+    this.schematic_symbol = createSchematicSymbolBuilder(project_builder)
   }
 
   appendChild(child) {
@@ -71,6 +78,10 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
       }
       case "smtpad_builder": {
         this.footprint.appendChild(child)
+      }
+      case "schematic_symbol_builder": {
+        // TODO merge
+        this.schematic_symbol = child
       }
     }
 
