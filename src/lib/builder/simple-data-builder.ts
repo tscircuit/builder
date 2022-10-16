@@ -19,7 +19,7 @@ export interface SimpleDataBuilder<
 
 export const createSimpleDataBuilderClass = <
   BuilderType extends string,
-  Fields extends Object
+  Fields
 >(
   builder_type: BuilderType,
   default_fields: Partial<Fields>

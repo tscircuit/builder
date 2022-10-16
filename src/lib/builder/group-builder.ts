@@ -110,12 +110,17 @@ export class GroupBuilderClass implements GroupBuilder {
       )
     }
 
+    // TODO just make this children?
     if (child.builder_type === "group_builder") {
       this.groups.push(child as any)
     } else if (child.builder_type === "trace_builder") {
       this.traces.push(child as any)
-    } else {
+    } else if (addables[child.builder_type.split("_builder")[0]]) {
       this.components.push(child as any)
+    } else {
+      throw new Error(
+        `Unknown builder type for appendChild: "${child.builder_type}"`
+      )
     }
     return this
   }

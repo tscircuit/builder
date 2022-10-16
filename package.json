@@ -26,6 +26,7 @@
     "typescript": "^4.8.3"
   },
   "dependencies": {
+    "@lume/kiwi": "^0.1.0",
     "@tscircuit/eagle-xml-converter": "^0.0.7",
     "parsel-js": "^1.0.2",
     "rectilinear-router": "^1.0.1",
