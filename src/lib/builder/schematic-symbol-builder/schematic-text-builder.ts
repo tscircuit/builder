@@ -6,6 +6,7 @@ export interface SchematicTextBuilderFields {
   x: number
   y: number
   text: string
+  drawing_type: "text"
 }
 export interface SchematicTextBuilder {
   builder_type: "schematic_text_builder"
@@ -16,7 +17,7 @@ export interface SchematicTextBuilder {
 
 export const SchematicTextBuilder = createSimpleDataBuilderClass(
   "schematic_text_builder",
-  { align: "top-left" } as SchematicTextBuilder["props"]
+  { align: "top-left", drawing_type: "text" } as SchematicTextBuilder["props"]
 )
 
 export const createSchematicTextBuilder = (

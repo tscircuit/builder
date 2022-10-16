@@ -8,7 +8,9 @@ export interface SchematicBoxBuilderFields {
   x: number
   y: number
   name: string
+  drawing_type: "box"
 }
+
 export interface SchematicBoxBuilder {
   builder_type: "schematic_box_builder"
   props: SchematicBoxBuilderFields
@@ -18,7 +20,7 @@ export interface SchematicBoxBuilder {
 
 export const SchematicBoxBuilderClass = createSimpleDataBuilderClass(
   "schematic_box_builder",
-  {} as SchematicBoxBuilder["props"]
+  { drawing_type: "box" } as SchematicBoxBuilder["props"]
 )
 
 export const createSchematicBoxBuilder = (

@@ -48,7 +48,8 @@ export type SchematicDrawing =
   | {
       drawing_type: "text"
       align: string
-      center: Point
+      x: number
+      y: number
       text: string
     }
 

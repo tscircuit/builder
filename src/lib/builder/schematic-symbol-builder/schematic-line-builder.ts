@@ -6,7 +6,9 @@ export interface SchematicLineBuilderFields {
   y1: number
   x2: number
   y2: number
+  drawing_type: "line"
 }
+
 export interface SchematicLineBuilder {
   builder_type: "schematic_line_builder"
   props: SchematicLineBuilderFields
@@ -16,7 +18,7 @@ export interface SchematicLineBuilder {
 
 export const SchematicLineBuilder = createSimpleDataBuilderClass(
   "schematic_line_builder",
-  {} as SchematicLineBuilder["props"]
+  { drawing_type: "line" } as SchematicLineBuilder["props"]
 )
 
 export const createSchematicLineBuilder = (

@@ -42,28 +42,7 @@ export class SchematicSymbolBuilderClass implements SchematicSymbolBuilder {
   }
 
   build(): SchematicDrawing[] {
-    const elms = this.children.map((child) => child.build())
-
-    // TODO apply constraints?
-
-    // TODO type mapping
-
-    const drawings: SchematicDrawing[] = []
-    for (const elm of elms) {
-      switch (elm.type) {
-        case "schematic_box_builder": {
-          continue
-        }
-        case "schematic_line_builder": {
-          continue
-        }
-        case "schematic_text_builder": {
-          continue
-        }
-      }
-    }
-
-    return []
+    return this.children.map((child) => child.build())
   }
 }
 
