@@ -17,6 +17,7 @@ const addables = {
   power_source: CB.createPowerSourceBuilder,
   inductor: CB.createInductorBuilder,
   ground: CB.createGroundBuilder,
+  bug: CB.createBugBuilder,
   trace: createTraceBuilder,
   group: createGroupBuilder,
 }
@@ -60,41 +61,42 @@ export interface GroupBuilder {
   build(): Promise<Type.AnyElement[]>
 }
 
-/**
- * This uses an old construction pattern that's been tested.
- */
-export function createGroupBuilder(
-  project_builder?: ProjectBuilder
-): GroupBuilder {
-  const builder: GroupBuilder = {
-    builder_type: "group_builder",
-    project_builder,
-    addables,
-  } as any
-  let internal
+export class GroupBuilderClass implements GroupBuilder {
+  builder_type: "group_builder"
+  groups: GroupBuilder[]
+  components: CB.BaseComponentBuilder<any>[]
+  traces: TraceBuilder[]
+  project_builder: ProjectBuilder
+  name: string
+  addables = addables
 
-  builder.reset = () => {
-    ;(builder as any)._internal = internal = {
-      groups: [] as GroupBuilder[],
-      components: [] as CB.BaseComponentBuilder<any>[],
-      traces: [] as TraceBuilder[],
+  constructor(project_builder?: ProjectBuilder) {
+    this.project_builder = project_builder
+    this.reset()
+  }
+
+  reset() {
+    this.groups = []
+    this.components = []
+    this.traces = []
+    return this
+  }
+  add(new_builder_type, callback) {
+    if (!this.addables[new_builder_type]) {
+      throw new Error(
+        `No addable in group builder for builder_type: "${new_builder_type}"`
+      )
     }
-    return builder
-  }
-  builder.reset()
-
-  builder.add = (new_builder_type, callback) => {
-    const new_builder = addables[new_builder_type](builder.project_builder)
+    const new_builder = this.addables[new_builder_type](this.project_builder)
     callback(new_builder as any) // not smart enough to infer generic
-    return builder
+    this.appendChild(new_builder)
+    return this
   }
-
-  builder.setName = (name: string) => {
-    internal.name = name
-    return builder
+  setName(name) {
+    this.name = name
+    return this
   }
-
-  builder.appendChild = (child) => {
+  appendChild(child) {
     if (
       [
         "schematic_symbol_builder",
@@ -109,108 +111,74 @@ export function createGroupBuilder(
     }
 
     if (child.builder_type === "group_builder") {
-      internal.groups.push(child as any)
+      this.groups.push(child as any)
     } else if (child.builder_type === "trace_builder") {
-      internal.traces.push(child as any)
+      this.traces.push(child as any)
     } else {
-      internal.components.push(child as any)
+      this.components.push(child as any)
     }
-    return builder
+    return this
   }
-
-  builder.addGroup = (callbackOrObj) => {
-    if (typeof callbackOrObj !== "function") {
-      // TODO validate
-      callbackOrObj.project_builder = builder.project_builder
-      internal.groups.push(callbackOrObj)
-      return builder
-    }
-    const callback = callbackOrObj
-
-    const gb = createGroupBuilder()
-    gb.project_builder = builder.project_builder
-    internal.groups.push(gb)
-    callback(gb)
-    return builder
+  addGroup(gb) {
+    return this.add("group", gb)
   }
-
-  builder.addComponent = (callback) => {
-    const cb = CB.createComponentBuilder(builder.project_builder)
-    internal.components.push(cb)
-    callback(cb)
-    return builder
+  addPowerSource(cb) {
+    return this.add("power_source", cb)
   }
-  builder.addResistor = (callback) => {
-    const cb = CB.createResistorBuilder(builder.project_builder)
-    internal.components.push(cb)
-    callback(cb)
-    return builder
+  addComponent(cb) {
+    return this.add("component", cb)
   }
-  builder.addCapacitor = (callback) => {
-    const cb = CB.createCapacitorBuilder(builder.project_builder)
-    internal.components.push(cb)
-    callback(cb)
-    return builder
+  addResistor(cb) {
+    return this.add("resistor", cb)
   }
-  builder.addInductor = (callback) => {
-    const cb = CB.createInductorBuilder(builder.project_builder)
-    internal.components.push(cb)
-    callback(cb)
-    return builder
+  addCapacitor(cb) {
+    return this.add("capacitor", cb)
   }
-  builder.addBug = (callback) => {
-    const cb = CB.createBugBuilder(builder.project_builder)
-    internal.components.push(cb)
-    callback(cb)
-    return builder
+  addBug(cb) {
+    return this.add("bug", cb)
   }
-  builder.addGround = (callback) => {
-    const cb = CB.createGroundBuilder(builder.project_builder)
-    internal.components.push(cb)
-    callback(cb)
-    return builder
+  addDiode(cb) {
+    return this.add("diode", cb)
   }
-  builder.addPowerSource = (callback) => {
-    const cb = CB.createPowerSourceBuilder(builder.project_builder)
-    internal.components.push(cb)
-    callback(cb)
-    return builder
+  addInductor(cb) {
+    return this.add("diode", cb)
   }
-  builder.addDiode = (callback) => {
-    const cb = CB.createDiodeBuilder(builder.project_builder)
-    internal.components.push(cb)
-    callback(cb)
-    return builder
+  addGround(cb) {
+    return this.add("ground", cb)
   }
-
-  builder.addTrace = (callback) => {
-    if (typeof callback !== "function") {
-      const portSelectors = callback as string[]
-      callback = (rb) => {
+  addTrace(tb) {
+    if (typeof tb !== "function") {
+      const portSelectors = tb as string[]
+      tb = (rb) => {
         rb.addConnections(portSelectors)
       }
     }
-    const rb = createTraceBuilder(builder.project_builder)
-    internal.traces.push(rb)
-    callback(rb)
-    return builder
+    const builder = createTraceBuilder(this.project_builder)
+    this.traces.push(builder)
+    tb(builder)
+    return this
   }
-
-  builder.build = async () => {
+  async build() {
     const elements = []
     elements.push(
-      ...flatten(await Promise.all(internal.groups.map((g) => g.build())))
+      ...flatten(await Promise.all(this.groups.map((g) => g.build())))
     )
     elements.push(
-      ...flatten(await Promise.all(internal.components.map((c) => c.build())))
+      ...flatten(await Promise.all(this.components.map((c) => c.build())))
     )
     elements.push(
-      ...flatten(
-        await Promise.all(internal.traces.map((c) => c.build(elements)))
-      )
+      ...flatten(await Promise.all(this.traces.map((c) => c.build(elements))))
     )
     return elements
   }
+}
 
-  return builder
+/**
+ * This uses an old construction pattern that's been tested.
+ */
+export function createGroupBuilder(
+  project_builder?: ProjectBuilder
+): GroupBuilder {
+  const gb = new GroupBuilderClass(project_builder)
+  return gb
 }
