@@ -134,6 +134,67 @@ export interface PCBTrace {
   >
 }
 
+export interface PCBVia {
+  type: "pcb_via"
+  outer_diameter: number
+  hole_diameter: number
+  x: number
+  y: number
+}
+
+export interface PCBPlatedHole {
+  type: "pcb_plated_hole"
+  outer_diameter: number
+  hole_diameter: number
+  x: number
+  y: number
+}
+
+export interface PCBHole {
+  type: "pcb_hole"
+  hole_diameter: number
+  x: number
+  y: number
+}
+
+export interface PCBText {
+  type: "pcb_text"
+  text: string
+  x: number
+  y: number
+  align: "bottom-left"
+  width: number
+  height: number
+  lines: number
+}
+
+export interface PCBBoard {
+  type: "pcb_board"
+  width: number
+  height: number
+  x: number
+  y: number
+  align: "bottom-left"
+}
+
+export interface CopperPour {
+  type: "pcb_copper_pour"
+  layer: LayerRef
+  polygons: Array<{
+    points: Array<{ x: number; y: number }>
+  }>
+}
+
+export interface PCBImage {
+  type: "pcb_image"
+  width: number
+  height: number
+  x: number
+  y: number
+  align: "bottom-left"
+  image_url: string
+}
+
 export type PCBSMTPad =
   | {
       type: "pcb_smtpad"
@@ -256,6 +317,9 @@ export type AnyElement =
   | PCBTrace
   | PCBSMTPad
   | PCBDrill
+  | PCBHole
+  | PCBPlatedHole
+  | PCBVia
   | SchematicGroup
   | SchematicComponent
   | SchematicTrace
