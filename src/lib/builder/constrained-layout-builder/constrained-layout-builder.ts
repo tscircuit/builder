@@ -21,6 +21,7 @@ import {
   createConstraintBuilder,
 } from "./constraint-builder"
 import { applySelector } from "lib/apply-selector"
+import { AnyElement } from "lib/types"
 
 const constraint_builder_addables = {
   ...group_builder_addables,
@@ -40,14 +41,14 @@ export interface ConstrainedLayoutBuilder extends GroupBuilder {
   addConstraint(props: ConstraintBuilderFields): ConstrainedLayoutBuilder
 }
 
-export const toCenteredSpatialObj = (
-  obj: any
-): { x: number; y: number; w: number; h: number } => {
-  const x = obj.x || obj.center?.x
-  const y = obj.y || obj.center?.y
-  const w = obj.w || obj.width || obj.size?.width || 0
-  const h = obj.h || obj.height || obj.size?.height || 0
-  const align = obj.align || "center"
+type SpatialElement = { x: number; y: number; w: number; h: number }
+
+export const toCenteredSpatialObj = (obj: any): SpatialElement => {
+  const x = obj.x ?? obj.center?.x
+  const y = obj.y ?? obj.center?.y
+  const w = obj.w ?? obj.width ?? obj.size?.width ?? 0
+  const h = obj.h ?? obj.height ?? obj.size?.height ?? 0
+  const align = obj.align ?? "center"
   if (x === undefined || y === undefined) {
     throw new Error(
       `Cannot convert to spatial obj (no x,y): ${JSON.stringify(
@@ -70,16 +71,88 @@ export const toCenteredSpatialObj = (
   return { x, y, w, h }
 }
 
+export const getElementChildren = (
+  matchElm: AnyElement,
+  elements: AnyElement[]
+) => {
+  // TODO get deep children
+  return elements.filter(
+    (elm) =>
+      elm[`${matchElm.type}_id`] === matchElm[`${matchElm.type}_id`] &&
+      elm !== matchElm
+  )
+}
+
+export const getSpatialBoundsFromSpatialElements = (
+  elements: SpatialElement[]
+) => {
+  if (elements.length === 0) return { x: 0, y: 0, w: 0, h: 0 }
+  let { x: lx, y: ly, w, h } = elements[0]
+  lx -= w / 2
+  ly -= h / 2
+  let hx = lx + w / 2
+  let hy = ly + h / 2
+  for (let i = 1; i < elements.length; i++) {
+    const { x, y, w, h } = elements[i]
+    lx = Math.min(lx, x - w / 2)
+    ly = Math.min(ly, y - h / 2)
+    hx = Math.max(hx, x + w / 2)
+    hy = Math.max(hy, y + h / 2)
+  }
+  return {
+    x: (lx + hx) / 2,
+    y: (ly + hy) / 2,
+    w: hx - lx,
+    h: hy - ly,
+  }
+}
+
+/**
+ * Get element size with any children elements. e.g. for a pcb component,
+ * compute it's size from it's children.
+ */
+export const getSpatialElementIncludingChildren = (
+  elm: AnyElement,
+  elements: AnyElement[]
+) => {
+  if (elm.type === "pcb_component") {
+    const children = getElementChildren(elm, elements).map((e) =>
+      toCenteredSpatialObj(e)
+    )
+    return getSpatialBoundsFromSpatialElements(children)
+    // component size is computed from children
+  } else if (elm.type === "schematic_component") {
+    return toCenteredSpatialObj(elm)
+  }
+  throw new Error(
+    `Get spatial elements including children not implemented for: "${elm.type}"`
+  )
+}
+
+export const constrainable_element_types = [
+  "pcb_component",
+  "schematic_component",
+] as const
+
 export const moveElementTo = (
   elements: Type.AnyElement[],
   ind: number,
-  x: number,
-  y: number
+  dx: number,
+  dy: number
 ) => {
   const elm = elements[ind]
   if (elm.type === "schematic_component") {
-    elm.center.x = x
-    elm.center.y = y
+    elm.center.x += dx
+    elm.center.y += dy
+  } else if (elm.type === "pcb_component") {
+    const children = getElementChildren(elements[ind], elements)
+    // TODO do recursive method...
+    for (const child of children) {
+      if ("x" in child) {
+        child.x += dx
+        child.y += dy
+      }
+    }
   } else {
     throw new Error(
       `Not sure how to move element of type "${elm.type}" (in constrained layout builder)`
@@ -129,12 +202,9 @@ export class ConstrainedLayoutBuilderClass
     const solver = new kiwi.Solver()
 
     const spatial_elements = elements.map((elm) => {
-      try {
-        const spatial_elm = toCenteredSpatialObj(elm)
-        return spatial_elm
-      } catch (e) {
-        return null
-      }
+      if (!constrainable_element_types.includes(elm.type)) return null
+      const spatial_elm = getSpatialElementIncludingChildren(elm, elements)
+      return spatial_elm
     })
     const vars = {}
 
@@ -153,7 +223,7 @@ export class ConstrainedLayoutBuilderClass
     }
 
     const pb = this.project_builder
-    function match(selector) {
+    function match(selector, target_type: "schematic" | "pcb") {
       const matchingElms = applySelector(elements, selector)
       if (matchingElms.length > 1)
         throw new Error(
@@ -168,18 +238,17 @@ export class ConstrainedLayoutBuilderClass
 
       let elm = matchingElms[0]
 
-      // TODO if schematic context, use schematic position
-      // TODO if pcb context, use pcb position
       if (elm.type === "source_component") {
         const { source_component_id } = elm
         const associated_components = elements.filter(
           (e) => e.source_component_id === source_component_id
         )
-        const schematic_component = associated_components.find(
-          (c) => c.type === "schematic_component"
-        )
-        if (schematic_component) {
-          elm = schematic_component
+        if (target_type === "schematic") {
+          elm = associated_components.find(
+            (c) => c.type === "schematic_component"
+          )
+        } else if (target_type === "pcb") {
+          elm = associated_components.find((c) => c.type === "pcb_component")
         } else {
           throw new Error(
             `Unable to properly associate component for constraint solving "${JSON.stringify(
@@ -208,10 +277,11 @@ export class ConstrainedLayoutBuilderClass
 
     for (const constraint of this.constraints) {
       const { props } = constraint
+      const target_type = props.schematic ? "schematic" : "pcb"
       switch (props.type) {
         case "xdist": {
-          const A = match(props.left)
-          const B = match(props.right)
+          const A = match(props.left, target_type)
+          const B = match(props.right, target_type)
           const lhs = new kiwi.Expression(A.X, A.w / 2, props.dist)
           const rhs = new kiwi.Expression(B.X, -B.w / 2)
           solver.addConstraint(
@@ -236,8 +306,8 @@ export class ConstrainedLayoutBuilderClass
           continue
         }
         case "ydist": {
-          const A = match(props.bottom)
-          const B = match(props.top)
+          const A = match(props.bottom, target_type)
+          const B = match(props.top, target_type)
           const lhs = new kiwi.Expression(A.Y, A.h / 2, props.dist)
           const rhs = new kiwi.Expression(B.Y, -B.h / 2)
           solver.addConstraint(
@@ -269,11 +339,12 @@ export class ConstrainedLayoutBuilderClass
       if (!spatial_elements[i]) continue
       const new_x = vars[`elm${i}_x`].value()
       const new_y = vars[`elm${i}_y`].value()
-      const changed =
-        new_x !== spatial_elements[i].x || new_y !== spatial_elements[i].y
+      const old_x = spatial_elements[i].x
+      const old_y = spatial_elements[i].y
+      const changed = new_x !== old_x || new_y !== old_y
 
       if (changed) {
-        moveElementTo(elements, i, new_x, new_y)
+        moveElementTo(elements, i, new_x - old_x, new_y - old_y)
       }
     }
 

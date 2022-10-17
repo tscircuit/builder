@@ -156,6 +156,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
     const pcb_component_id = pb.getId(`pcb_generic_component`)
 
     const source_component = {
+      type: "source_component",
       source_component_id,
       name: this.name,
     }

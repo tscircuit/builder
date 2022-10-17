@@ -1,7 +1,11 @@
+import { RequireAtLeastOne } from "type-fest"
 import { ProjectBuilder } from "../project-builder"
 import { createSimpleDataBuilderClass } from "../simple-data-builder"
 
-export type ConstraintContextFlag = { schematic: true } | { pcb: true }
+export type ConstraintContextFlag = RequireAtLeastOne<{
+  schematic: boolean
+  pcb: boolean
+}>
 
 export type ConstraintBuilderFields =
   | ({
