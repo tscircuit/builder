@@ -1,5 +1,9 @@
 import test from "ava"
-import { createConstrainedLayoutBuilder, createProjectBuilder } from "../src"
+import {
+  createConstrainedLayoutBuilder,
+  createProjectBuilder,
+  SchematicComponent,
+} from "../src"
 
 test("constraint builder test", async (t) => {
   const pb = createProjectBuilder()
@@ -16,8 +20,11 @@ test("constraint builder test", async (t) => {
         capacitance: "10 uF",
       })
     )
-    .addConstraint({ type: "xdist", dist: 10, a: "R1", b: "C1" })
+    .addConstraint({ type: "xdist", dist: 2, left: ".R1", right: ".C1" })
 
   const elements = await cb.build()
-  console.log(elements)
+  const [e1, e2] = elements.filter(
+    (e) => e.type === "schematic_component"
+  ) as SchematicComponent[]
+  t.is(e1.center.x + e1.size.width / 2 + 2, e2.center.x - e2.size.width / 2)
 })

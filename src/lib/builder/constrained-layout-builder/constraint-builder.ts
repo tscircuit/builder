@@ -5,14 +5,14 @@ export type ConstraintBuilderFields =
   | {
       type: "xdist"
       dist: number
-      a: string
-      b: string
+      left: string
+      right: string
     }
   | {
       type: "ydist"
       dist: number
-      a: string
-      b: string
+      top: string
+      bottom: string
     }
 
 export interface ConstraintBuilder {

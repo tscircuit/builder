@@ -41,8 +41,8 @@ export const toCenteredSpatialObj = (
 ): { x: number; y: number; w: number; h: number } => {
   const x = obj.x || obj.center?.x
   const y = obj.y || obj.center?.y
-  const w = obj.w || obj.width || 0
-  const h = obj.w || obj.width || 0
+  const w = obj.w || obj.width || obj.size?.width || 0
+  const h = obj.h || obj.height || obj.size?.height || 0
   const align = obj.align || "center"
   if (x === undefined || y === undefined) {
     throw new Error(
@@ -64,6 +64,23 @@ export const toCenteredSpatialObj = (
   }
 
   return { x, y, w, h }
+}
+
+export const moveElementTo = (
+  elements: Type.AnyElement[],
+  ind: number,
+  x: number,
+  y: number
+) => {
+  const elm = elements[ind]
+  if (elm.type === "schematic_component") {
+    elm.center.x = x
+    elm.center.y = y
+  } else {
+    throw new Error(
+      `Not sure how to move element of type "${elm.type}" (in constrained layout builder)`
+    )
+  }
 }
 
 export class ConstrainedLayoutBuilderClass
@@ -116,18 +133,22 @@ export class ConstrainedLayoutBuilderClass
       }
     })
     const vars = {}
+
+    // TODO limit to components mentioned in constraints?
     for (let i = 0; i < spatial_elements.length; i++) {
       if (!spatial_elements[i]) continue
       vars[`elm${i}_x`] = new kiwi.Variable(`elm${i}_x`)
-      solver.addEditVariable(vars[`elm${i}_x`], spatial_elements[i].x)
+      solver.addEditVariable(vars[`elm${i}_x`], kiwi.Strength.weak)
+      solver.suggestValue(vars[`elm${i}_x`], spatial_elements[i].x)
       vars[`elm${i}_y`] = new kiwi.Variable(`elm${i}_y`)
-      solver.addEditVariable(vars[`elm${i}_y`], spatial_elements[i].y)
+      solver.addEditVariable(vars[`elm${i}_y`], kiwi.Strength.weak)
       // vars[`elm${i}_w`] = new kiwi.Variable(`elm${i}_w`)
       // solver.suggestValue(vars[`elm${i}_w`], spatial_elements[i].w)
       // vars[`elm${i}_h`] = new kiwi.Variable(`elm${i}_h`)
       // solver.suggestValue(vars[`elm${i}_h`], spatial_elements[i].h)
     }
 
+    const pb = this.project_builder
     function match(selector) {
       const matchingElms = applySelector(elements, selector)
       if (matchingElms.length > 1)
@@ -141,12 +162,40 @@ export class ConstrainedLayoutBuilderClass
       if (matchingElms.length === 0)
         throw new Error(`No elements match selector: "${selector}"`)
 
-      const elmi = elements.indexOf(matchingElms[0])
+      let elm = matchingElms[0]
+
+      // TODO if schematic context, use schematic position
+      // TODO if pcb context, use pcb position
+      if (elm.type === "source_component") {
+        const { source_component_id } = elm
+        const associated_components = elements.filter(
+          (e) => e.source_component_id === source_component_id
+        )
+        const schematic_component = associated_components.find(
+          (c) => c.type === "schematic_component"
+        )
+        if (schematic_component) {
+          elm = schematic_component
+        } else {
+          throw new Error(
+            `Unable to properly associate component for constraint solving "${JSON.stringify(
+              elm,
+              null,
+              "  "
+            )}"`
+          )
+        }
+      }
+
+      const elmi = elements.indexOf(elm)
+
       return {
         X: vars[`elm${elmi}_x`],
         Y: vars[`elm${elmi}_y`],
-        w: spatial_elements[elmi].w,
-        h: spatial_elements[elmi].h,
+        x: spatial_elements[elmi]?.x,
+        y: spatial_elements[elmi]?.y,
+        w: spatial_elements[elmi]?.w,
+        h: spatial_elements[elmi]?.h,
         // TODO solve group stuff
         og_elm: matchingElms[0],
         index: elmi,
@@ -155,28 +204,72 @@ export class ConstrainedLayoutBuilderClass
 
     for (const constraint of this.constraints) {
       const { props } = constraint
-      let A, B
-
-      if (props.a) {
-        A = match(props.a)
-      }
-      if (props.b) {
-        B = match(props.b)
-      }
-
       switch (props.type) {
         case "xdist": {
+          const A = match(props.left)
+          const B = match(props.right)
           const lhs = new kiwi.Expression(A.X, A.w / 2, props.dist)
           const rhs = new kiwi.Expression(B.X, -B.w / 2)
-          solver.addConstraint(new kiwi.Constraint(lhs, kiwi.Operator.Eq, rhs))
+          solver.addConstraint(
+            new kiwi.Constraint(
+              lhs,
+              kiwi.Operator.Eq,
+              rhs,
+              kiwi.Strength.strong
+            )
+          )
+
+          // weak constraint to have these components meet in the middle
+          solver.addConstraint(
+            new kiwi.Constraint(
+              new kiwi.Expression([0.5, A.X], [0.5, B.X]),
+              kiwi.Operator.Eq,
+              (A.x + B.x) / 2,
+              kiwi.Strength.weak
+            )
+          )
+
           continue
         }
         case "ydist": {
+          const A = match(props.bottom)
+          const B = match(props.top)
           const lhs = new kiwi.Expression(A.Y, A.h / 2, props.dist)
           const rhs = new kiwi.Expression(B.Y, -B.h / 2)
-          solver.addConstraint(new kiwi.Constraint(lhs, kiwi.Operator.Eq, rhs))
+          solver.addConstraint(
+            new kiwi.Constraint(
+              lhs,
+              kiwi.Operator.Eq,
+              rhs,
+              kiwi.Strength.strong
+            )
+          )
+
+          // weak constraint to have these components meet in the middle
+          solver.addConstraint(
+            new kiwi.Constraint(
+              new kiwi.Expression([0.5, A.Y], [0.5, B.Y]),
+              kiwi.Operator.Eq,
+              (A.y + B.y) / 2,
+              kiwi.Strength.weak
+            )
+          )
           continue
         }
+      }
+    }
+
+    solver.updateVariables()
+
+    for (let i = 0; i < spatial_elements.length; i++) {
+      if (!spatial_elements[i]) continue
+      const new_x = vars[`elm${i}_x`].value()
+      const new_y = vars[`elm${i}_y`].value()
+      const changed =
+        new_x !== spatial_elements[i].x || new_y !== spatial_elements[i].y
+
+      if (changed) {
+        moveElementTo(elements, i, new_x, new_y)
       }
     }
 
