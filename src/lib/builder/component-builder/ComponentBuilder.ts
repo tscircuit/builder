@@ -148,10 +148,35 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
   }
 
   async build() {
+    const pb = this.project_builder
     const elements = []
+
+    const source_component_id = pb.getId("generic")
+    const schematic_component_id = pb.getId(`schematic_generic_component`)
+    const pcb_component_id = pb.getId(`pcb_generic_component`)
+
+    const source_component = {
+      source_component_id,
+      name: this.name,
+    }
+
+    elements.push(source_component)
+
     elements.push(...(await this.ports.build()))
+
     // TODO schematic box of some kind
-    elements.push(...(await this.footprint.build()))
+    const pcb_element = {
+      type: "pcb_component",
+      source_component_id,
+      pcb_component_id,
+    }
+    const footprint_elements = await this.footprint.build()
+
+    for (const fe of footprint_elements) {
+      ;(fe as any).pcb_component_id = pcb_component_id
+    }
+
+    elements.push(pcb_element, ...footprint_elements)
     return elements
   }
 }

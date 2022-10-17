@@ -12,6 +12,7 @@ import {
   GroupBuilder,
   GroupBuilderCallback,
   GroupBuilderClass,
+  group_builder_addables,
 } from "../group-builder"
 import { ProjectBuilder } from "../project-builder"
 import {
@@ -21,15 +22,18 @@ import {
 } from "./constraint-builder"
 import { applySelector } from "lib/apply-selector"
 
-export interface ConstrainedLayoutBuilder extends GroupBuilder {
-  // TODO modify add function
-  add(
-    builder_type: Parameters<GroupBuilder["add"]>[0] | "constraint",
-    callback:
-      | Parameters<GroupBuilder["add"]>[1]
-      | ((cb: ConstraintBuilder) => unknown)
-  ): ConstrainedLayoutBuilder
+const constraint_builder_addables = {
+  ...group_builder_addables,
+  constraint: createConstraintBuilder,
+}
 
+export interface ConstrainedLayoutBuilder extends GroupBuilder {
+  add<T extends keyof typeof constraint_builder_addables>(
+    builder_type: T,
+    callback: (
+      builder: ReturnType<typeof constraint_builder_addables[T]>
+    ) => unknown
+  ): ConstrainedLayoutBuilder
   appendChild(
     child: Parameters<GroupBuilder["appendChild"]>[0] | ConstraintBuilder
   ): ConstrainedLayoutBuilder

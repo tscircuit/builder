@@ -8,9 +8,11 @@ import {
   TraceBuilder,
   TraceBuilderCallback,
 } from "./trace-builder"
+import { createConstraintBuilder } from "./constrained-layout-builder"
 
-const addables = {
+export const group_builder_addables = {
   generic_component: CB.createComponentBuilder,
+  component: CB.createComponentBuilder,
   resistor: CB.createResistorBuilder,
   capacitor: CB.createCapacitorBuilder,
   diode: CB.createDiodeBuilder,
@@ -26,7 +28,7 @@ export type GroupBuilderCallback = (gb: GroupBuilder) => unknown
 export interface GroupBuilder {
   project_builder: ProjectBuilder
   builder_type: "group_builder"
-  addables: typeof addables
+  addables: typeof group_builder_addables
   reset: () => GroupBuilder
   setName: (name: string) => GroupBuilder
   appendChild(
@@ -54,9 +56,9 @@ export interface GroupBuilder {
   addTrace: (
     traceBuiderCallback: TraceBuilderCallback | string[]
   ) => GroupBuilder
-  add<T extends keyof typeof addables>(
+  add<T extends keyof typeof group_builder_addables>(
     builder_type: T,
-    callback: (builder: ReturnType<typeof addables[T]>) => unknown
+    callback: (builder: ReturnType<typeof group_builder_addables[T]>) => unknown
   ): GroupBuilder
   build(): Promise<Type.AnyElement[]>
 }
@@ -68,7 +70,7 @@ export class GroupBuilderClass implements GroupBuilder {
   traces: TraceBuilder[]
   project_builder: ProjectBuilder
   name: string
-  addables = addables
+  addables = group_builder_addables
 
   constructor(project_builder?: ProjectBuilder) {
     this.project_builder = project_builder
@@ -115,7 +117,7 @@ export class GroupBuilderClass implements GroupBuilder {
       this.groups.push(child as any)
     } else if (child.builder_type === "trace_builder") {
       this.traces.push(child as any)
-    } else if (addables[child.builder_type.split("_builder")[0]]) {
+    } else if (this.addables[child.builder_type.split("_builder")[0]]) {
       this.components.push(child as any)
     } else {
       throw new Error(

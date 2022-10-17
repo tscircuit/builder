@@ -3,9 +3,9 @@ import {
   createConstrainedLayoutBuilder,
   createProjectBuilder,
   SchematicComponent,
-} from "../src"
+} from "../../src"
 
-test("constraint builder test", async (t) => {
+test("basic schematic constraint builder test", async (t) => {
   const pb = createProjectBuilder()
   const cb = createConstrainedLayoutBuilder(pb)
     .add("resistor", (rb) =>
@@ -20,7 +20,13 @@ test("constraint builder test", async (t) => {
         capacitance: "10 uF",
       })
     )
-    .addConstraint({ type: "xdist", dist: 2, left: ".R1", right: ".C1" })
+    .addConstraint({
+      type: "xdist",
+      schematic: true,
+      dist: 2,
+      left: ".R1",
+      right: ".C1",
+    })
 
   const elements = await cb.build()
   const [e1, e2] = elements.filter(

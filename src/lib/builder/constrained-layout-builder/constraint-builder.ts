@@ -1,19 +1,21 @@
 import { ProjectBuilder } from "../project-builder"
 import { createSimpleDataBuilderClass } from "../simple-data-builder"
 
+export type ConstraintContextFlag = { schematic: true } | { pcb: true }
+
 export type ConstraintBuilderFields =
-  | {
+  | ({
       type: "xdist"
       dist: number
       left: string
       right: string
-    }
-  | {
+    } & ConstraintContextFlag)
+  | ({
       type: "ydist"
       dist: number
       top: string
       bottom: string
-    }
+    } & ConstraintContextFlag)
 
 export interface ConstraintBuilder {
   builder_type: "constraint_builder"
