@@ -28,3 +28,7 @@ export const createSchematicBoxBuilder = (
 ): SchematicBoxBuilder => {
   return new SchematicBoxBuilderClass(project_builder)
 }
+
+// Boxes can be used for both pcbs and schematics, react-fiber should probably
+// determine which to use based on context...
+export const createBoxBuilder = createSchematicBoxBuilder
