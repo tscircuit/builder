@@ -1,3 +1,5 @@
+import { Simplify } from "type-fest"
+
 // Currently, removing uncommon SI Prefixes for type simplicity.
 export type SIPrefix =
   // | "y"
@@ -33,9 +35,11 @@ export type UnitAbbreviations = {
   henry: "H"
   meter: "m"
   volt: "V"
+  inch: "in"
+  foot: "ft"
 }
 
-export type Unit = "ohm" | "farad" | "henry" | "meter" | "volt"
+export type Unit = keyof UnitAbbreviations
 
 export type UnitOrAbbreviation = UnitAbbreviations[Unit] | Unit
 
@@ -50,3 +54,5 @@ export type NumberWithUnit<T extends Unit> =
   | `${number} ${T | UnitAbbreviations[T]}`
   | `${number}${SIPrefix}${T | UnitAbbreviations[T]}`
   | `${number} ${SIPrefix}${T | UnitAbbreviations[T]}`
+
+export type Dimension = NumberWithUnit<"meter" | "inch" | "foot">

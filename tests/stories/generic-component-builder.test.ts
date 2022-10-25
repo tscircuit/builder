@@ -54,5 +54,4 @@ test("component build from scratch", async (t) => {
   //     </>
   //   ))}
   //   </component>
-  const
 })
