@@ -183,7 +183,9 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
       ;(fe as any).pcb_component_id = pcb_component_id
     }
 
-    elements.push(pcb_element, ...footprint_elements)
+    const schematic_elements = await this.schematic_symbol.build(bc)
+
+    elements.push(pcb_element, ...footprint_elements, ...schematic_elements)
     return elements
   }
 }
