@@ -6,7 +6,7 @@ export interface PlatedHoleBuilder {
   builder_type: "plated_hole_builder"
   project_builder: ProjectBuilder
   setProps(props: Partial<Type.PCBPlatedHole>): PlatedHoleBuilder
-  build(pb: ProjectBuilder, bc: BuildContext): Promise<Type.PCBPlatedHole[]>
+  build(bc: BuildContext): Promise<Type.PCBPlatedHole[]>
 }
 
 export class PlatedHoleBuilderClass implements PlatedHoleBuilder {
@@ -22,14 +22,16 @@ export class PlatedHoleBuilderClass implements PlatedHoleBuilder {
     this.project_builder = project_builder
   }
 
-  setProps(props: Partial<Type.PCBPlatedHole>): PlatedHoleBuilder {
+  setProps(props: Partial<{
+    
+  }>): PlatedHoleBuilder {
     for (const k in props) {
       this[k] = props[k]
     }
     return this
   }
 
-  async build(pb, bc): Promise<Type.PCBPlatedHole[]> {
+  async build(bc): Promise<Type.PCBPlatedHole[]> {
     return [
       {
         type: "pcb_plated_hole",

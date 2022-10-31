@@ -1,3 +1,4 @@
+import {BuildContext, Dimension} from "lib/types"
 import { RequireAtLeastOne } from "type-fest"
 import { ProjectBuilder } from "../project-builder"
 import { createSimpleDataBuilderClass } from "../simple-data-builder"
@@ -10,13 +11,13 @@ export type ConstraintContextFlag = RequireAtLeastOne<{
 export type ConstraintBuilderFields =
   | ({
       type: "xdist"
-      dist: number
+      dist: Dimension
       left: string
       right: string
     } & ConstraintContextFlag)
   | ({
       type: "ydist"
-      dist: number
+      dist: Dimension
       top: string
       bottom: string
     } & ConstraintContextFlag)
@@ -25,16 +26,17 @@ export interface ConstraintBuilder {
   builder_type: "constraint_builder"
   props: ConstraintBuilderFields
   setProps(props: Partial<ConstraintBuilderFields>): ConstraintBuilder
-  build(): ConstraintBuilderFields
+  build(bc: BuildContext): Omit<ConstraintBuilderFields, "dist"> & { dist: number }
 }
 
 export const ConstraintBuilderClass = createSimpleDataBuilderClass<
   "constraint_builder",
-  ConstraintBuilderFields
->("constraint_builder", {})
+  ConstraintBuilderFields,
+  "dist"
+>("constraint_builder", {}, ["dist"])
 
 export const createConstraintBuilder = (
   project_builder: ProjectBuilder
 ): ConstraintBuilder => {
-  return new ConstraintBuilderClass(project_builder)
+  return new ConstraintBuilderClass(project_builder) as any
 }

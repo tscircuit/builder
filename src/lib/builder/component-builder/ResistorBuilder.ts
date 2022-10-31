@@ -39,7 +39,7 @@ export class ResistorBuilderClass
     return this
   }
 
-  async build() {
+  async build(bc) {
     const elements: Type.AnyElement[] = []
     const { ftype } = this.source_properties
     const { project_builder } = this
@@ -130,7 +130,7 @@ export class ResistorBuilderClass
       source_component_id,
       pcb_component_id,
     })
-    elements.push(...(await this.footprint.build()))
+    elements.push(...(await this.footprint.build(bc)))
 
     return elements
   }

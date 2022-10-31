@@ -2,11 +2,13 @@
  * A simple data builder is a builder that constructs a JSON object
  */
 
+import { BuildContext } from "lib/types"
 import { ProjectBuilder } from "./project-builder"
 
 export interface SimpleDataBuilder<
   BuilderType extends string,
-  Fields extends Object
+  Fields extends Object,
+  UnitFields extends keyof Fields = never
 > {
   builder_type: BuilderType
   project_builder: ProjectBuilder
@@ -14,17 +16,19 @@ export interface SimpleDataBuilder<
   props: Fields
   setProps(props: Partial<Fields>): SimpleDataBuilder<BuilderType, Fields>
 
-  build(): Fields
+  build(bc: BuildContext): Omit<Fields, UnitFields> & Record<UnitFields, number>
 }
 
 export const createSimpleDataBuilderClass = <
   BuilderType extends string,
-  Fields
+  Fields,
+  UnitField extends keyof Fields = keyof Fields
 >(
   builder_type: BuilderType,
-  default_fields: Partial<Fields>
+  default_fields: Partial<Fields>,
+  unit_fields: UnitField[] = []
 ): {
-  new (project_builder: ProjectBuilder): SimpleDataBuilder<BuilderType, Fields>
+  new (project_builder: ProjectBuilder): SimpleDataBuilder<BuilderType, Fields, UnitField>
 } => {
   class SimpleDataBuilderClass
     implements SimpleDataBuilder<BuilderType, Fields>
@@ -44,10 +48,14 @@ export const createSimpleDataBuilderClass = <
       return this
     }
 
-    build() {
+    build(bc: BuildContext) {
+      const ret_obj: any = { ...this.props }
+      for (const unit_field of unit_fields) {
+        ret_obj[unit_field] = bc.convert(ret_obj[unit_field])
+      }
       return this.props
     }
   }
 
-  return SimpleDataBuilderClass
+  return SimpleDataBuilderClass as any
 }

@@ -5,7 +5,7 @@ import { applySelector } from "lib/apply-selector"
 
 test("applySelector use css selector to select circuit elements", async (t) => {
   const elements = await createProjectBuilder()
-    .addGroup((gb) =>
+    .add("group", (gb) =>
       gb
         .addResistor((cb) =>
           cb.setSourceProperties({

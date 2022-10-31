@@ -28,6 +28,7 @@
   "dependencies": {
     "@lume/kiwi": "^0.1.0",
     "@tscircuit/eagle-xml-converter": "^0.0.7",
+    "convert-units": "^2.3.4",
     "parsel-js": "^1.0.2",
     "rectilinear-router": "^1.0.1",
     "svg-path-bounds": "^1.0.2",

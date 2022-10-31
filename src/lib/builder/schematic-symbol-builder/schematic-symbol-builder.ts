@@ -5,24 +5,29 @@ import { SchematicBoxBuilder } from "./schematic-box-builder"
 import { SchematicLineBuilder } from "./schematic-line-builder"
 import { SchematicTextBuilder } from "./schematic-text-builder"
 
+type ChildBuilder =
+  | SchematicBoxBuilder
+  | SchematicLineBuilder
+  | SchematicTextBuilder
+
 export interface SchematicSymbolBuilder {
   project_builder: ProjectBuilder
   builder_type: "schematic_symbol_builder"
-  build(): SchematicDrawing[]
+  appendChild: (child: ChildBuilder) => SchematicSymbolBuilder
+  build(bc: Type.BuildContext): SchematicDrawing[]
 }
 
 export class SchematicSymbolBuilderClass implements SchematicSymbolBuilder {
   project_builder: ProjectBuilder
   builder_type: "schematic_symbol_builder" = "schematic_symbol_builder"
-  children: Array<
-    SchematicBoxBuilder | SchematicLineBuilder | SchematicTextBuilder
-  >
+  children: ChildBuilder[]
 
   constructor(project_builder: ProjectBuilder) {
     this.project_builder = project_builder
+    this.children = []
   }
 
-  appendChild(child: Builder) {
+  appendChild(child: ChildBuilder) {
     if (
       ![
         "schematic_box_builder",
@@ -30,7 +35,7 @@ export class SchematicSymbolBuilderClass implements SchematicSymbolBuilder {
         "schematic_text_builder",
       ].includes(child.builder_type)
     ) {
-      if (child.builder_type === "schematic_symbol_builder") {
+      if ((child as any).builder_type === "schematic_symbol_builder") {
         throw new Error(`Schematic symbol builder nesting not yet supported!`)
       }
       throw new Error(
@@ -39,15 +44,16 @@ export class SchematicSymbolBuilderClass implements SchematicSymbolBuilder {
     }
 
     this.children.push(child as any)
+    return this
   }
 
-  build(): SchematicDrawing[] {
-    return this.children.map((child) => child.build())
+  build(bc: Type.BuildContext): SchematicDrawing[] {
+    return this.children.map((child) => child.build(bc))
   }
 }
 
 export const createSchematicSymbolBuilder = (
   project_builder: ProjectBuilder
 ): SchematicSymbolBuilder => {
-  return new SchematicSymbolBuilderClass(project_builder)
+  return new SchematicSymbolBuilderClass(project_builder) as any
 }

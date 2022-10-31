@@ -9,7 +9,7 @@ export interface SMTPadBuilder {
   setRadius(radius: number): SMTPadBuilder
   setLayer(layer: Type.PCBSMTPad["layer"] | string): SMTPadBuilder
   setPosition(x: number, y: number): SMTPadBuilder
-  build(): Promise<Type.PCBSMTPad[]>
+  build(bc: Type.BuildContext): Promise<Type.PCBSMTPad[]>
 }
 
 type RectProps = Extract<Type.PCBSMTPad, { shape: "rect" }>

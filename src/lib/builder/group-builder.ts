@@ -60,11 +60,11 @@ export interface GroupBuilder {
     builder_type: T,
     callback: (builder: ReturnType<typeof group_builder_addables[T]>) => unknown
   ): GroupBuilder
-  build(): Promise<Type.AnyElement[]>
+  build(build_context: Type.BuildContext): Promise<Type.AnyElement[]>
 }
 
 export class GroupBuilderClass implements GroupBuilder {
-  builder_type: "group_builder"
+  builder_type: "group_builder" = "group_builder"
   groups: GroupBuilder[]
   components: CB.BaseComponentBuilder<any>[]
   traces: TraceBuilder[]
@@ -165,13 +165,13 @@ export class GroupBuilderClass implements GroupBuilder {
     tb(builder)
     return this
   }
-  async build() {
+  async build(bc) {
     const elements = []
     elements.push(
-      ...flatten(await Promise.all(this.groups.map((g) => g.build())))
+      ...flatten(await Promise.all(this.groups.map((g) => g.build(bc))))
     )
     elements.push(
-      ...flatten(await Promise.all(this.components.map((c) => c.build())))
+      ...flatten(await Promise.all(this.components.map((c) => c.build(bc))))
     )
     elements.push(
       ...flatten(await Promise.all(this.traces.map((c) => c.build(elements))))

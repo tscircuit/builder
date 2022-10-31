@@ -28,7 +28,7 @@ test("basic schematic constraint builder test", async (t) => {
       right: ".C1",
     })
 
-  const elements = await cb.build()
+  const elements = await cb.build(pb.createBuildContext())
   const [e1, e2] = elements.filter(
     (e) => e.type === "schematic_component"
   ) as SchematicComponent[]

@@ -4,9 +4,10 @@ import {
   createPlatedHoleBuilder,
   createPortBuilder,
   createProjectBuilder,
+  createSchematicSymbolBuilder,
 } from "lib/builder"
 
-test("component build from scratch", async (t) => {
+test("component build from scratch without .add function (only appendChild)", async (t) => {
   const pb = await createProjectBuilder()
 
   const pins = ["rx", "tx", "d2"]
@@ -22,13 +23,25 @@ test("component build from scratch", async (t) => {
         hole_diameter: "1mm",
       })
       const portb = createPortBuilder(pb)
-      // const bb = createBoxBuilder(pb)
 
       cb.appendChild(phb)
       cb.appendChild(portb)
+
+      // Symbol
+      const ssb = createSchematicSymbolBuilder(pb)
+
+      const box = createBoxBuilder(pb).setProps({
+        width: "0.5in",
+        height: "0.5in",
+        x: 0,
+        y: 0,
+      })
+
+      ssb.appendChild(box)
+
+      cb.appendChild(ssb)
     }
   })
-
 
   console.table(await pb.build())
   // convert this to builder form

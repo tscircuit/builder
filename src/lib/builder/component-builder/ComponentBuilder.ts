@@ -40,7 +40,7 @@ export interface BaseComponentBuilder<T> {
     properties: Partial<Type.SchematicComponent>
   ): BaseComponentBuilder<T>
   labelPort(position: number, name: string): BaseComponentBuilder<T>
-  build(): Promise<Type.AnyElement[]>
+  build(build_context: Type.BuildContext): Promise<Type.AnyElement[]>
 }
 
 export type GenericComponentBuilder =
@@ -87,6 +87,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
       case "schematic_symbol_builder": {
         // TODO merge
         this.schematic_symbol = child
+        return this
       }
     }
 
@@ -152,7 +153,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
     return this
   }
 
-  async build() {
+  async build(bc) {
     const pb = this.project_builder
     const elements = []
 
@@ -176,7 +177,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
       source_component_id,
       pcb_component_id,
     }
-    const footprint_elements = await this.footprint.build()
+    const footprint_elements = await this.footprint.build(bc)
 
     for (const fe of footprint_elements) {
       ;(fe as any).pcb_component_id = pcb_component_id

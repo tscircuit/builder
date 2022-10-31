@@ -5,7 +5,7 @@ export interface ViaBuilder {
   builder_type: "via_builder"
   project_builder: ProjectBuilder
   setProps(props: Partial<Type.PCBVia>): ViaBuilder
-  build(): Promise<Type.PCBVia[]>
+  build(bc: Type.BuildContext): Promise<Type.PCBVia[]>
 }
 
 export class ViaBuilderClass implements ViaBuilder {
@@ -28,14 +28,14 @@ export class ViaBuilderClass implements ViaBuilder {
     return this
   }
 
-  async build(): Promise<Type.PCBVia[]> {
+  async build(bc): Promise<Type.PCBVia[]> {
     return [
       {
         type: "pcb_via",
-        x: this.x,
-        y: this.y,
-        hole_diameter: this.hole_diameter,
-        outer_diameter: this.outer_diameter,
+        x: bc.convert(this.x),
+        y: bc.convert(this.y),
+        hole_diameter: bc.convert(this.hole_diameter),
+        outer_diameter: bc.convert(this.outer_diameter),
       },
     ]
   }

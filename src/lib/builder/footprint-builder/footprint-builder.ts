@@ -19,7 +19,7 @@ export interface FootprintBuilder {
     builder_type: T,
     callback: (builder: ReturnType<typeof addables[T]>) => unknown
   ): FootprintBuilder
-  build(): Promise<Type.AnyElement[]>
+  build(bc: Type.BuildContext): Promise<Type.AnyElement[]>
 }
 
 export class FootprintBuilderClass implements FootprintBuilder {
@@ -60,10 +60,10 @@ export class FootprintBuilderClass implements FootprintBuilder {
     return this
   }
 
-  async build(): Promise<Type.AnyElement[]> {
+  async build(bc): Promise<Type.AnyElement[]> {
     const built_elements = []
     for (const child of this.children) {
-      const built = await child.build()
+      const built = await child.build(bc)
       built_elements.push(...built)
     }
     return built_elements

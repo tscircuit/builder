@@ -2,7 +2,7 @@ import { createProjectBuilder } from "lib/builder"
 import test from "ava"
 
 test("build resistor project", async (t) => {
-  const projectBuilder = await createProjectBuilder().addResistor((rb) =>
+  const projectBuilder = await createProjectBuilder().add("resistor", (rb) =>
     rb
       .setSourceProperties({
         resistance: "10 ohm",

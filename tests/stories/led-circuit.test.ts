@@ -3,9 +3,9 @@ import { createProjectBuilder } from "lib/builder"
 
 test("render an led circuit project", async (t) => {
   const projectTSBO = await createProjectBuilder()
-    .addGroup((gb) =>
+    .add("group", (gb) =>
       gb
-        .addResistor((rb) =>
+        .add("resistor", (rb) =>
           rb
             .setSourceProperties({
               resistance: "10 ohm",
@@ -13,7 +13,7 @@ test("render an led circuit project", async (t) => {
             })
             .setSchematicCenter(2, 1)
         )
-        .addCapacitor((cb) =>
+        .add("capacitor", (cb) =>
           cb
             .setSourceProperties({
               name: "C1",
@@ -22,7 +22,7 @@ test("render an led circuit project", async (t) => {
             .setSchematicCenter(4, 2)
             .setSchematicRotation("90deg")
         )
-        .addResistor((cb) =>
+        .add("resistor", (cb) =>
           cb
             .setSourceProperties({
               resistance: "10 ohm",
@@ -31,8 +31,10 @@ test("render an led circuit project", async (t) => {
             .setSchematicCenter(6, 1)
             .setSchematicRotation("90deg")
         )
-        .addTrace([".R1 > port.right", ".C1 > port.left", ".R2 > port.left"])
-        .addPowerSource((cb) =>
+        .add("trace", tb => {
+          tb.addConnections([".R1 > port.right", ".C1 > port.left", ".R2 > port.left"])
+        })
+        .add("power_source", (cb) =>
           cb
             .setSourceProperties({
               voltage: "5V",
@@ -40,13 +42,17 @@ test("render an led circuit project", async (t) => {
             })
             .setSchematicCenter(1, 2)
         )
-        .addTrace(["power > port.positive", ".R1 > port.left"])
-        .addTrace([
-          "power > port.negative",
-          ".C1 > port.right",
-          ".R2 > port.right",
-        ])
-        .addBug((cb) =>
+        .add("trace", tb => {
+          tb.addConnections(["power > port.positive", ".R1 > port.left"])
+        })
+        .add("trace", tb => {
+          tb.addConnections([
+            "power > port.negative",
+            ".C1 > port.right",
+            ".R2 > port.right"
+          ])
+        })
+        .add("bug", (cb) =>
           cb
             .setSourceProperties({ name: "B1" })
             .setSchematicProperties({
@@ -63,23 +69,29 @@ test("render an led circuit project", async (t) => {
             .labelPort(6, "GND")
             .setSchematicCenter(8, 3)
         )
-        .addTrace([".B1 > port.PWR", ".R2 > port.left"])
-        .addGround((cb) =>
+        .add("trace", tb => {
+          tb.addConnections([
+            ".B1 > port.PWR", ".R2 > port.left"
+          ])
+        })
+        .add("ground", (cb) =>
           cb
             .setSourceProperties({
               name: "GND",
             })
             .setSchematicCenter(11, 3)
         )
-        .addTrace([".B1 > port.GND", ".gnd"])
-        .addDiode((db) =>
+        .add("trace", tb => {
+          tb.addConnections([".B1 > port.GND", ".gnd"])
+        })
+        .add("diode", (db) =>
           db
             .setSourceProperties({ name: "D1" })
             .setSchematicCenter(6, 3.5)
             .setSchematicRotation("180deg")
         )
-        .addTrace([".D1 > .left", ".B1 > .RG"])
-        .addTrace([".D1 > .right", ".C1 > .right"])
+        .add("trace", tb => tb.addConnections([".D1 > .left", ".B1 > .RG"]))
+        .add("trace", tb => tb.addConnections([".D1 > .right", ".C1 > .right"]))
     )
     .build()
 

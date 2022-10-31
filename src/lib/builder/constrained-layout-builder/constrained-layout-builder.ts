@@ -28,7 +28,7 @@ const constraint_builder_addables = {
   constraint: createConstraintBuilder,
 }
 
-export interface ConstrainedLayoutBuilder extends GroupBuilder {
+export interface ConstrainedLayoutBuilder extends Omit<GroupBuilder, 'add' | 'appendChild'> {
   add<T extends keyof typeof constraint_builder_addables>(
     builder_type: T,
     callback: (
@@ -193,8 +193,8 @@ export class ConstrainedLayoutBuilderClass
     return this
   }
 
-  async build() {
-    const elements = await super.build()
+  async build(bc) {
+    const elements = await super.build(bc)
 
     // TODO solve groups when all subpositions have been solved, constraints
     // should be applied to the entire solve group

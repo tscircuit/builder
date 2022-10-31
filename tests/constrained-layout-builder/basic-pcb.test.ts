@@ -59,7 +59,7 @@ test("basic pcb constraint builder test", async (t) => {
 ───────────────────┴─────────────────────┴──────┴───────────────────────────┴────────┴───────┴───┴───────┴────────┴
   */
 
-  const elements = await cb.build()
+  const elements = await cb.build(pb.createBuildContext())
   const pads: PCBSMTPad[] = elements.filter(
     (e) => e.type === "pcb_smtpad"
   ) as any
