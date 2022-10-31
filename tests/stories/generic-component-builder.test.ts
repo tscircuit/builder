@@ -28,6 +28,9 @@ test("component build from scratch", async (t) => {
       cb.appendChild(portb)
     }
   })
+
+
+  console.table(await pb.build())
   // convert this to builder form
   //   <component>
   //   {pins.map((label, i) => (

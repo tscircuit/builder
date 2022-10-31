@@ -78,6 +78,11 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
       }
       case "smtpad_builder": {
         this.footprint.appendChild(child)
+        return this
+      }
+      case "plated_hole_builder": {
+        this.footprint.appendChild(child)
+        return this
       }
       case "schematic_symbol_builder": {
         // TODO merge

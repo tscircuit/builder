@@ -12,10 +12,10 @@ export class ViaBuilderClass implements ViaBuilder {
   project_builder: ProjectBuilder
   builder_type = "via_builder" as const
 
-  outer_diameter: number
-  hole_diameter: number
-  x: number
-  y: number
+  outer_diameter: Type.Dimension
+  hole_diameter: Type.Dimension
+  x: Type.Dimension
+  y: Type.Dimension
 
   constructor(project_builder: ProjectBuilder) {
     this.project_builder = project_builder

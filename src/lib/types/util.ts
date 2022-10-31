@@ -55,4 +55,4 @@ export type NumberWithUnit<T extends Unit> =
   | `${number}${SIPrefix}${T | UnitAbbreviations[T]}`
   | `${number} ${SIPrefix}${T | UnitAbbreviations[T]}`
 
-export type Dimension = NumberWithUnit<"meter" | "inch" | "foot">
+export type Dimension = number | NumberWithUnit<"meter" | "inch" | "foot">

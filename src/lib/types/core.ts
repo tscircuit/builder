@@ -1,4 +1,5 @@
 import { SourceComponent } from "./source-component"
+import {Dimension} from "./util"
 
 export interface SchematicConfig {
   type: "schematic_config"

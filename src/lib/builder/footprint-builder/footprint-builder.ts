@@ -37,6 +37,9 @@ export class FootprintBuilderClass implements FootprintBuilder {
     if (child.builder_type === "smtpad_builder") {
       this.children.push(child)
       return this
+    } else if (child.builder_type === "plated_hole_builder") {
+      this.children.push(child)
+      return this
     }
     throw new Error(
       `Unsupported child for footprint builder: "${child.builder_type}"`
