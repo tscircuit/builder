@@ -169,6 +169,23 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
 
     elements.push(source_component)
 
+    // Build schematic component
+
+    const schematic_component: SchematicComponent = {
+      type: "schematic_component",
+      schematic_component_id,
+      source_component_id,
+      center: this.schematic_position,
+      drawing: {
+        elements: this.schematic_symbol.build(bc)
+      },
+      rotation: this.schematic_rotation,
+      size: { width: 1, height: 1 },
+    }
+
+    elements.push(schematic_component)
+
+
     elements.push(...(await this.ports.build()))
 
     // TODO schematic box of some kind
