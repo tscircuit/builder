@@ -4,6 +4,7 @@ import {
   createProjectBuilder,
   SchematicComponent,
 } from "../../src"
+import { logLayout } from "../utils/log-layout"
 
 test("basic schematic constraint builder test", async (t) => {
   const pb = createProjectBuilder()
@@ -29,6 +30,7 @@ test("basic schematic constraint builder test", async (t) => {
     })
 
   const elements = await cb.build(pb.createBuildContext())
+  await logLayout("basic-schematic", elements)
   const [e1, e2] = elements.filter(
     (e) => e.type === "schematic_component"
   ) as SchematicComponent[]
