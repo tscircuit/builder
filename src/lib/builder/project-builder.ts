@@ -35,8 +35,14 @@ export const createProjectBuilder = (): ProjectBuilder => {
   builder.build_group = builder.build
   builder.createBuildContext = (): Type.BuildContext => ({
     distance_unit: "mm",
-    convert(v: Type.NumberWithAnyUnit) {
+    convert(v) {
       if (typeof v === "number") return v
+      if (v.x !== undefined && v.y !== undefined) {
+        return {
+          x: this.convert(v.x),
+          y: this.convert(v.y),
+        }
+      }
       const unit_reversed = v
         .split("")
         .reverse()

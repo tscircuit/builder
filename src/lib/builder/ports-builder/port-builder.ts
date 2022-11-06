@@ -1,10 +1,11 @@
 import * as Type from "lib/types"
+import { Dimension } from "lib/types"
 import { ProjectBuilder } from "../project-builder"
 
 export interface PortBuilder {
   builder_type: "port_builder"
   name: string
-  schematic_position: Type.Point
+  schematic_position: { x: Dimension; y: Dimension }
   schematic_direction: "up" | "down" | "left" | "right"
   setName(name: string): PortBuilder
   setSchematicPosition(coords: { x: number; y: number }): PortBuilder

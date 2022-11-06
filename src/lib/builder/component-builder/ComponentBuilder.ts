@@ -183,7 +183,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
 
     elements.push(schematic_component)
 
-    elements.push(...(await this.ports.build()))
+    elements.push(...(await this.ports.build(bc)))
 
     elements.push(...this.schematic_symbol.build(bc))
 

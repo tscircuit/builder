@@ -23,7 +23,7 @@ export interface PortsBuilder {
   setSourceComponent: (source_component_id: string) => PortsBuilder
   setSchematicComponent: (schematic_component_id: string) => PortsBuilder
   setPCBComponent: (pcb_component_id: string) => PortsBuilder
-  build(): Type.AnyElement[]
+  build(bc: Type.BuildContext): Type.AnyElement[]
 }
 
 export class PortsBuilderClass implements PortsBuilder {
@@ -80,7 +80,7 @@ export class PortsBuilderClass implements PortsBuilder {
     return this
   }
 
-  build() {
+  build(bc: Type.BuildContext) {
     const { project_builder } = this
     return this.ports.flatMap((port) => {
       const source_port_id = project_builder.getId("source_port")
@@ -97,7 +97,7 @@ export class PortsBuilderClass implements PortsBuilder {
           type: "schematic_port",
           schematic_port_id,
           source_port_id,
-          center: port.schematic_position,
+          center: bc.convert(port.schematic_position),
           facing_direction: port.schematic_direction,
         } as Type.SchematicPort,
         {
