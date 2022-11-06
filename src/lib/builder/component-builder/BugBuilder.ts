@@ -40,7 +40,7 @@ export class BugBuilderClass
     return this
   }
 
-  async build() {
+  async build(bc) {
     const elements: Type.AnyElement[] = []
     const { project_builder } = this
     const { ftype } = this.source_properties
@@ -117,7 +117,7 @@ export class BugBuilderClass
 
     elements.push(
       ...transformSchematicElements(
-        [...this.ports.build(), ...textElements],
+        [...this.ports.build(bc), ...textElements],
         compose(
           translate(schematic_component.center.x, schematic_component.center.y),
           rotate(schematic_component.rotation)

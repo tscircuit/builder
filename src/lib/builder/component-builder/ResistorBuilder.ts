@@ -39,7 +39,7 @@ export class ResistorBuilderClass
     return this
   }
 
-  async build(bc) {
+  async build(bc: Type.BuildContext) {
     const elements: Type.AnyElement[] = []
     const { ftype } = this.source_properties
     const { project_builder } = this
@@ -117,7 +117,7 @@ export class ResistorBuilderClass
 
     elements.push(
       ...transformSchematicElements(
-        [...this.ports.build(), ...textElements],
+        [...this.ports.build(bc), ...textElements],
         compose(
           translate(schematic_component.center.x, schematic_component.center.y),
           rotate(schematic_component.rotation)
