@@ -1,5 +1,5 @@
 import { SourceComponent } from "./source-component"
-import {Dimension} from "./util"
+import { Dimension } from "./util"
 
 export interface SchematicConfig {
   type: "schematic_config"
@@ -31,14 +31,16 @@ export interface SchematicGroup {
 
 export type SchematicDrawing =
   | {
-      drawing_type: "box"
+      type: "schematic_box"
+      schematic_component_id: string
       width: number
       height: number
       x: number
       y: number
     }
   | {
-      drawing_type: "line"
+      type: "schematic_line"
+      schematic_component_id: string
       x1: number
       x2: number
       y1: number
@@ -47,7 +49,9 @@ export type SchematicDrawing =
   // TODO this text type seems redundant with schematic_text...
   // It's attached to the symbol, so probably shouldn't be used often
   | {
+      type: "schematic_drawing"
       drawing_type: "text"
+      schematic_component_id: string
       align: string
       x: number
       y: number
@@ -62,9 +66,9 @@ export interface SchematicComponent {
   source_component_id: string
   schematic_component_id: string
 
-  drawing?: {
-    elements: Array<SchematicDrawing>
-  }
+  // drawing?: {
+  //   elements: Array<SchematicDrawing>
+  // }
 
   // TODO only for schematic-bug
   port_arrangement?: {
@@ -328,6 +332,7 @@ export type AnyElement =
   | SchematicConfig
   | SchematicPort
   | SchematicText
+  | SchematicDrawing
 
 export type ElementType = AnyElement["type"]
 export type ElementOfType<T extends ElementType> = Extract<

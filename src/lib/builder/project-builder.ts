@@ -10,7 +10,7 @@ import { createProjectFromElements } from "../project/create-project-from-elemen
 import { TraceBuilderCallback } from "./trace-builder"
 import convertUnits from "convert-units"
 
-export type ProjectBuilder = Omit<GroupBuilder, 'add'> & {
+export type ProjectBuilder = Omit<GroupBuilder, "add"> & {
   build_context: Type.BuildContext
   getId: (prefix: string) => string
   addGroup: (groupBuilderCallback: GroupBuilderCallback) => ProjectBuilder
@@ -33,15 +33,27 @@ export const createProjectBuilder = (): ProjectBuilder => {
     return `${prefix}_${idCount[prefix]++}`
   }
   builder.build_group = builder.build
-  builder.createBuildContext = () => ({
+  builder.createBuildContext = (): Type.BuildContext => ({
     distance_unit: "mm",
     convert(v: Type.NumberWithAnyUnit) {
       if (typeof v === "number") return v
-      const [_, value, unit] = v.match(/([0-9.]+)([a-zA-Z]+)/)
+      const unit_reversed = v
+        .split("")
+        .reverse()
+        .join("")
+        .match(/[a-zA-Z]+/)?.[0]
+      if (!unit_reversed) {
+        throw new Error(`Could not determine unit: ${v}`)
+      }
+      const unit = unit_reversed.split("").reverse().join("")
+      const value = v.slice(0, -unit.length)
       return convertUnits(parseFloat(value)).from(unit).to(this.distance_unit)
-    } 
+    },
+    fork(mutation) {
+      return { ...this, ...mutation, parent: this }
+    },
   })
-    
+
   builder.build = async () => {
     resetIdCount()
     const build_context = builder.createBuildContext()

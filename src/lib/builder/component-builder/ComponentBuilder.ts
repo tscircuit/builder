@@ -160,6 +160,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
     const source_component_id = pb.getId("generic")
     const schematic_component_id = pb.getId(`schematic_generic_component`)
     const pcb_component_id = pb.getId(`pcb_generic_component`)
+    bc = bc.fork({ schematic_component_id })
 
     const source_component = {
       type: "source_component",
@@ -176,17 +177,15 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
       schematic_component_id,
       source_component_id,
       center: this.schematic_position,
-      drawing: {
-        elements: this.schematic_symbol.build(bc)
-      },
       rotation: this.schematic_rotation,
       size: { width: 1, height: 1 },
     }
 
     elements.push(schematic_component)
 
-
     elements.push(...(await this.ports.build()))
+
+    elements.push(...this.schematic_symbol.build(bc))
 
     // TODO schematic box of some kind
     const pcb_element = {

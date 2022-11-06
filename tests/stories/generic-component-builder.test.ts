@@ -4,6 +4,7 @@ import {
   createPlatedHoleBuilder,
   createPortBuilder,
   createProjectBuilder,
+  createSchematicLineBuilder,
   createSchematicSymbolBuilder,
 } from "lib/builder"
 import { logLayout } from "../utils/log-layout"
@@ -32,17 +33,28 @@ test("component build from scratch without .add function (only appendChild)", as
     const ssb = createSchematicSymbolBuilder(pb)
 
     const box = createBoxBuilder(pb).setProps({
-      width: "0.5in",
-      height: "0.5in",
+      width: "0.1in",
+      height: "0.3in",
       x: 0,
       y: 0,
     })
-
     ssb.appendChild(box)
+
+    for (let i = 0; i < pins.length; i++) {
+      const pin = pins[i]
+      const y1 = `${(0.3 / 3) * i - 0.1}in` as const
+      const slb = createSchematicLineBuilder(pb).setProps({
+        x1: "0.04in",
+        y1,
+        x2: "0.07in",
+        y2: y1,
+      })
+      ssb.appendChild(slb)
+    }
 
     cb.appendChild(ssb)
   })
-
+  console.table(await pb.build())
   await logLayout("generic-component-builder", await pb.build())
   // convert this to builder form
   // <component>

@@ -5,10 +5,8 @@ import { SchematicBoxBuilder } from "./schematic-box-builder"
 import { SchematicLineBuilder } from "./schematic-line-builder"
 import { SchematicTextBuilder } from "./schematic-text-builder"
 
-type ChildBuilder =
-  | SchematicBoxBuilder
-  | SchematicLineBuilder
-  | SchematicTextBuilder
+type ChildBuilder = SchematicBoxBuilder | SchematicLineBuilder
+// | SchematicTextBuilder
 
 export interface SchematicSymbolBuilder {
   project_builder: ProjectBuilder
@@ -48,7 +46,19 @@ export class SchematicSymbolBuilderClass implements SchematicSymbolBuilder {
   }
 
   build(bc: Type.BuildContext): SchematicDrawing[] {
-    return this.children.map((child) => child.build(bc))
+    if (!bc.schematic_component_id)
+      throw new Error(
+        "Can't render symbols without schematic_component_id from context"
+      )
+
+    const components_wo_id = this.children.map((child) => child.build(bc))
+
+    const components_w_id = components_wo_id.map((component) => ({
+      ...component,
+      schematic_component_id: bc.schematic_component_id,
+    }))
+
+    return components_w_id
   }
 }
 

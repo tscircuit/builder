@@ -1,8 +1,9 @@
-import {Dimension} from "lib/types"
+import { Dimension } from "lib/types"
 import { ProjectBuilder } from "../project-builder"
 import { createSimpleDataBuilderClass } from "../simple-data-builder"
 
 export interface SchematicBoxBuilderFields {
+  type: "schematic_box"
   width: Dimension
   height: Dimension
   align: "center"
@@ -16,12 +17,20 @@ export interface SchematicBoxBuilder {
   builder_type: "schematic_box_builder"
   props: SchematicBoxBuilderFields
   setProps(props: Partial<SchematicBoxBuilderFields>): SchematicBoxBuilder
-  build(): Omit<SchematicBoxBuilderFields, 'width' | 'height' | 'x' | 'y'> & { width: number, height: number, x: number, y: number }
+  build(): Omit<SchematicBoxBuilderFields, "width" | "height" | "x" | "y"> & {
+    width: number
+    height: number
+    x: number
+    y: number
+  }
 }
 
 export const SchematicBoxBuilderClass = createSimpleDataBuilderClass(
   "schematic_box_builder",
-  { drawing_type: "box" } as SchematicBoxBuilder["props"],
+  {
+    drawing_type: "box",
+    type: "schematic_box",
+  } as SchematicBoxBuilder["props"],
   ["x", "y", "width", "height"]
 )
 
