@@ -6,6 +6,7 @@ import {
   createProjectBuilder,
   createSchematicSymbolBuilder,
 } from "lib/builder"
+import { logLayout } from "../utils/log-layout"
 
 test("component build from scratch without .add function (only appendChild)", async (t) => {
   const pb = await createProjectBuilder()
@@ -42,7 +43,7 @@ test("component build from scratch without .add function (only appendChild)", as
     cb.appendChild(ssb)
   })
 
-  console.table(await pb.build())
+  await logLayout("generic-component-builder", await pb.build())
   // convert this to builder form
   // <component>
   // {pins.map((label, i) => (

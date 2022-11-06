@@ -32,7 +32,7 @@ export const logLayout = async (
       layout_name,
       layout: {
         objects: objects
-          .filter((o) => o.type.includes(layout_name))
+          .filter((o) => o.type?.includes(layout_name))
           .map((o: any) => ({
             ...o,
             source: objects.find(

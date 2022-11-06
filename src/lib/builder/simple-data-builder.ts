@@ -28,7 +28,11 @@ export const createSimpleDataBuilderClass = <
   default_fields: Partial<Fields>,
   unit_fields: UnitField[] = []
 ): {
-  new (project_builder: ProjectBuilder): SimpleDataBuilder<BuilderType, Fields, UnitField>
+  new (project_builder: ProjectBuilder): SimpleDataBuilder<
+    BuilderType,
+    Fields,
+    UnitField
+  >
 } => {
   class SimpleDataBuilderClass
     implements SimpleDataBuilder<BuilderType, Fields>
@@ -53,7 +57,7 @@ export const createSimpleDataBuilderClass = <
       for (const unit_field of unit_fields) {
         ret_obj[unit_field] = bc.convert(ret_obj[unit_field])
       }
-      return this.props
+      return ret_obj
     }
   }
 
