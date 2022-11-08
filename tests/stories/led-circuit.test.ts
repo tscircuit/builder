@@ -1,5 +1,6 @@
 import test from "ava"
 import { createProjectBuilder } from "lib/builder"
+import { logLayout } from "../utils/log-layout"
 
 test("render an led circuit project", async (t) => {
   const projectTSBO = await createProjectBuilder()
@@ -31,8 +32,12 @@ test("render an led circuit project", async (t) => {
             .setSchematicCenter(6, 1)
             .setSchematicRotation("90deg")
         )
-        .add("trace", tb => {
-          tb.addConnections([".R1 > port.right", ".C1 > port.left", ".R2 > port.left"])
+        .add("trace", (tb) => {
+          tb.addConnections([
+            ".R1 > port.right",
+            ".C1 > port.left",
+            ".R2 > port.left",
+          ])
         })
         .add("power_source", (cb) =>
           cb
@@ -42,14 +47,14 @@ test("render an led circuit project", async (t) => {
             })
             .setSchematicCenter(1, 2)
         )
-        .add("trace", tb => {
+        .add("trace", (tb) => {
           tb.addConnections(["power > port.positive", ".R1 > port.left"])
         })
-        .add("trace", tb => {
+        .add("trace", (tb) => {
           tb.addConnections([
             "power > port.negative",
             ".C1 > port.right",
-            ".R2 > port.right"
+            ".R2 > port.right",
           ])
         })
         .add("bug", (cb) =>
@@ -69,10 +74,8 @@ test("render an led circuit project", async (t) => {
             .labelPort(6, "GND")
             .setSchematicCenter(8, 3)
         )
-        .add("trace", tb => {
-          tb.addConnections([
-            ".B1 > port.PWR", ".R2 > port.left"
-          ])
+        .add("trace", (tb) => {
+          tb.addConnections([".B1 > port.PWR", ".R2 > port.left"])
         })
         .add("ground", (cb) =>
           cb
@@ -81,7 +84,7 @@ test("render an led circuit project", async (t) => {
             })
             .setSchematicCenter(11, 3)
         )
-        .add("trace", tb => {
+        .add("trace", (tb) => {
           tb.addConnections([".B1 > port.GND", ".gnd"])
         })
         .add("diode", (db) =>
@@ -90,10 +93,13 @@ test("render an led circuit project", async (t) => {
             .setSchematicCenter(6, 3.5)
             .setSchematicRotation("180deg")
         )
-        .add("trace", tb => tb.addConnections([".D1 > .left", ".B1 > .RG"]))
-        .add("trace", tb => tb.addConnections([".D1 > .right", ".C1 > .right"]))
+        .add("trace", (tb) => tb.addConnections([".D1 > .left", ".B1 > .RG"]))
+        .add("trace", (tb) =>
+          tb.addConnections([".D1 > .right", ".C1 > .right"])
+        )
     )
     .build()
 
+  await logLayout("led-circuit", projectTSBO)
   t.snapshot(projectTSBO, "led circuit")
 })
