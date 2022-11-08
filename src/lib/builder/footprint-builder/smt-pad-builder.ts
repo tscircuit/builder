@@ -1,5 +1,6 @@
 import * as Type from "lib/types"
 import { ProjectBuilder } from "lib/project"
+import { Dimension } from "lib/types"
 
 export interface SMTPadBuilder {
   builder_type: "smtpad_builder"
@@ -19,11 +20,11 @@ export class SMTPadBuilderClass implements SMTPadBuilder {
   project_builder: ProjectBuilder
   builder_type = "smtpad_builder" as const
 
-  width: RectProps["width"]
-  height: RectProps["height"]
-  radius: CircleProps["radius"]
-  x: number
-  y: number
+  width: Dimension
+  height: Dimension
+  radius: Dimension
+  x: Dimension
+  y: Dimension
 
   layer: Type.LayerRef
   shape: Type.PCBSMTPad["shape"]
@@ -31,6 +32,8 @@ export class SMTPadBuilderClass implements SMTPadBuilder {
   constructor(project_builder: ProjectBuilder) {
     this.project_builder = project_builder
   }
+
+  setProps(props: Type.PCBSMTPad) {}
 
   setShape(shape: Type.PCBSMTPad["shape"]) {
     if ((this.width || this.height) && shape === "circle") {
@@ -44,13 +47,13 @@ export class SMTPadBuilderClass implements SMTPadBuilder {
     return this
   }
 
-  setPosition(x: number, y: number) {
+  setPosition(x: Dimension, y: Dimension) {
     this.x = x
     this.y = y
     return this
   }
 
-  setSize(width_or_radius: number, height?: number) {
+  setSize(width_or_radius: Dimension, height?: Dimension) {
     if (this.shape === "rect" && height === undefined) {
       throw new Error("Must set height for rect")
     }
@@ -77,16 +80,16 @@ export class SMTPadBuilderClass implements SMTPadBuilder {
     return this
   }
 
-  async build(): Promise<Type.PCBSMTPad[]> {
+  async build(bc: Type.BuildContext): Promise<Type.PCBSMTPad[]> {
     if (this.shape === "rect") {
       return [
         {
           type: "pcb_smtpad",
           shape: this.shape,
-          x: this.x,
-          y: this.y,
-          width: this.width,
-          height: this.height,
+          x: bc.convert(this.x),
+          y: bc.convert(this.y),
+          width: bc.convert(this.width),
+          height: bc.convert(this.height),
           layer: this.layer,
         },
       ]
@@ -95,9 +98,9 @@ export class SMTPadBuilderClass implements SMTPadBuilder {
         {
           type: "pcb_smtpad",
           shape: this.shape,
-          x: this.x,
-          y: this.y,
-          radius: this.radius,
+          x: bc.convert(this.x),
+          y: bc.convert(this.y),
+          radius: bc.convert(this.radius),
           layer: this.layer,
         },
       ]

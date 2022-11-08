@@ -5,6 +5,7 @@ import {
   SchematicComponent,
   PCBSMTPad,
 } from "../../src"
+import { logLayout } from "../utils/log-layout"
 
 test("basic pcb constraint builder test", async (t) => {
   const pb = createProjectBuilder()
@@ -77,4 +78,6 @@ test("basic pcb constraint builder test", async (t) => {
   // 10 + 0.5 * 2 because the constraint is 10 between, and each pad has 0.5 padding
   // due to a width of 1
   t.is(Math.abs(c1_max_x - c2_min_x), 10 + 0.5 * 2)
+
+  await logLayout("basic pcb", elements)
 })
