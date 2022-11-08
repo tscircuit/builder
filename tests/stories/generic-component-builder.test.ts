@@ -65,30 +65,6 @@ test("component build from scratch without .add function (only appendChild)", as
   })
 
   await logLayout("generic-component-builder", await pb.build())
-  // convert this to builder form
-  // <component>
-  // {pins.map((label, i) => (
-  //   <>
-  //     <platedhole
-  //       net={label}
-  //       x={`${i * 2.5}mm`}
-  //       y={0}
-  //       outerDiameter="2mm"
-  //       holeDiameter="1mm"
-  //     />
-  //     <port port net={label} x="-0.25in" y={`${i * 0.25}in`} />
-  //     <schematicsymbol>
-  //       <box w="0.5in" h="1in" x="0" y="0" />
-  //       {pins.map((label, i) => (
-  //         <line
-  //           x1={"-0.25in"}
-  //           y1={`${0.1 + 0.2 * i}in`}
-  //           x2={"0in"}
-  //           y2={`${0.1 + 0.2 * i}in`}
-  //         />
-  //       ))}
-  //     </schematicsymbol>
-  //   </>
-  // ))}
-  // </component>
+
+  t.snapshot(await pb.build(), "Generic Component Builder Output")
 })
