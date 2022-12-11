@@ -39,6 +39,8 @@ export interface BaseComponentBuilder<T> {
   setSchematicProperties(
     properties: Partial<Type.SchematicComponent>
   ): BaseComponentBuilder<T>
+  setFootprint(fp: FootprintBuilder | string): BaseComponentBuilder<T>
+  modifyFootprint(cb: (fb: FootprintBuilder) => any): BaseComponentBuilder<T>
   labelPort(position: number, name: string): BaseComponentBuilder<T>
   build(build_context: Type.BuildContext): Promise<Type.AnyElement[]>
 }
@@ -144,6 +146,20 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
       ...this.schematic_properties,
       ...props,
     }
+    return this
+  }
+
+  setFootprint(fp: FootprintBuilder | string) {
+    if (typeof fp === "string") {
+      this.footprint.loadStandardFootprint(fp)
+    } else {
+      this.footprint = fp
+    }
+    return this
+  }
+
+  modifyFootprint(fn) {
+    fn(this.footprint)
     return this
   }
 

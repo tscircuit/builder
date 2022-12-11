@@ -19,6 +19,7 @@ export interface FootprintBuilder {
     builder_type: T,
     callback: (builder: ReturnType<typeof addables[T]>) => unknown
   ): FootprintBuilder
+  loadStandardFootprint(footprint_name: string): FootprintBuilder
   build(bc: Type.BuildContext): Promise<Type.AnyElement[]>
 }
 
@@ -53,10 +54,34 @@ export class FootprintBuilderClass implements FootprintBuilder {
     return this
   }
 
-  addPad(cb) {
+  addPad(cb: (smtpadbuilder: SMTPadBuilder) => unknown) {
     const smtpadbuilder = createSMTPadBuilder(this.project_builder)
     cb(smtpadbuilder)
     this.children.push(smtpadbuilder)
+    return this
+  }
+
+  loadStandardFootprint(footprint_name: string) {
+    if (footprint_name === "0402") {
+      this.addPad((smtpad) => {
+        smtpad.setShape("rect")
+        smtpad.setSize(0.6, 0.6)
+        smtpad.setPosition(-0.5, 0)
+        smtpad.setLayer("top")
+        // smtpad.setSize("0.5mm", "0.5mm")
+        // smtpad.setPosition("-0.5mm", "0mm")
+      })
+      this.addPad((smtpad) => {
+        smtpad.setShape("rect")
+        smtpad.setSize(0.6, 0.6)
+        smtpad.setPosition(0.5, 0)
+        smtpad.setLayer("top")
+      })
+    } else {
+      throw new Error(
+        `Unknown standard footprint name: "${footprint_name}" (examples: 0402, 0603)`
+      )
+    }
     return this
   }
 
