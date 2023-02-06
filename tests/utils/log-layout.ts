@@ -1,7 +1,7 @@
 import defaultAxios from "axios"
 import { AnyElement } from "lib/types"
 
-const DEBUG_SRV = `http://localhost:4011`
+const DEBUG_SRV = `https://debug.tscircuit.com`
 
 const axios = defaultAxios.create({
   baseURL: DEBUG_SRV,
@@ -27,11 +27,12 @@ export const logLayout = async (
   }
 
   for (const layout_name of ["schematic", "pcb"]) {
-    await axios.post("/api/layout/update", {
-      layout_group_name,
-      layout_name,
-      layout: {
-        objects: objects
+    await axios.post("/api/soup_group/add_soup", {
+      soup_group_name: layout_group_name,
+      soup_name: layout_name,
+      username: "tmp",
+      content: {
+        elements: objects
           .filter((o) => o.type?.includes(layout_name))
           .map((o: any) => ({
             ...o,
