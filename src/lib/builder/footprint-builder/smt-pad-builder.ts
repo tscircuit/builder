@@ -33,7 +33,12 @@ export class SMTPadBuilderClass implements SMTPadBuilder {
     this.project_builder = project_builder
   }
 
-  setProps(props: Type.PCBSMTPad) {}
+  setProps(props: Type.PCBSMTPad) {
+    for (const k in props) {
+      this[k] = props[k]
+    }
+    return this
+  }
 
   setShape(shape: Type.PCBSMTPad["shape"]) {
     if ((this.width || this.height) && shape === "circle") {
@@ -105,6 +110,7 @@ export class SMTPadBuilderClass implements SMTPadBuilder {
         },
       ]
     }
+    throw new Error(`Invalid shape "${this.shape}"`)
   }
 }
 

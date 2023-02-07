@@ -1,6 +1,6 @@
 import * as Type from "lib/types"
 import { ProjectBuilder } from "lib/project"
-import {BuildContext} from "lib/types/build-context"
+import { BuildContext } from "lib/types/build-context"
 
 export interface PlatedHoleBuilder {
   builder_type: "plated_hole_builder"
@@ -22,16 +22,14 @@ export class PlatedHoleBuilderClass implements PlatedHoleBuilder {
     this.project_builder = project_builder
   }
 
-  setProps(props: Partial<{
-    
-  }>): PlatedHoleBuilder {
+  setProps(props: Partial<{}>): PlatedHoleBuilder {
     for (const k in props) {
       this[k] = props[k]
     }
     return this
   }
 
-  async build(bc): Promise<Type.PCBPlatedHole[]> {
+  async build(bc: BuildContext): Promise<Type.PCBPlatedHole[]> {
     return [
       {
         type: "pcb_plated_hole",

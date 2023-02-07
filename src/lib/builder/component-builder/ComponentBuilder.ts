@@ -91,6 +91,22 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
         this.schematic_symbol = child
         return this
       }
+      case "schematic_box_builder": {
+        this.schematic_symbol.appendChild(child)
+        return this
+      }
+      case "schematic_line_builder": {
+        this.schematic_symbol.appendChild(child)
+        return this
+      }
+      case "schematic_symbol_builder": {
+        this.schematic_symbol.appendChild(child)
+        return this
+      }
+      case "schematic_text_builder": {
+        this.schematic_symbol.appendChild(child)
+        return this
+      }
     }
 
     throw new Error(

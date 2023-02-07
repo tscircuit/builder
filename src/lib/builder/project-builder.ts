@@ -36,6 +36,7 @@ export const createProjectBuilder = (): ProjectBuilder => {
   builder.createBuildContext = (): Type.BuildContext => ({
     distance_unit: "mm",
     convert(v) {
+      if (typeof v === "undefined") return undefined
       if (typeof v === "number") return v
       if (v.x !== undefined && v.y !== undefined) {
         return {
