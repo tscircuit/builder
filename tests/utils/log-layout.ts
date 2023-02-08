@@ -7,7 +7,27 @@ const axios = defaultAxios.create({
   baseURL: DEBUG_SRV,
 })
 
-let layout_server_healthy = null
+function findSource(elm: AnyElement, sources: Array<AnyElement>) {
+  if ("source_component_id" in elm) {
+    return sources.find(
+      (s) =>
+        "source_component_id" in s &&
+        s.source_component_id === elm.source_component_id &&
+        s.type === "source_component"
+    )
+  }
+  if ("source_port_id" in elm) {
+    return sources.find(
+      (s) =>
+        "source_port_id" in s &&
+        s.source_port_id === elm.source_port_id &&
+        s.type === "source_port"
+    )
+  }
+  return null
+}
+
+let layout_server_healthy: boolean | null = null
 export const logLayout = async (
   layout_group_name: string,
   objects: Array<AnyElement>
@@ -36,11 +56,7 @@ export const logLayout = async (
           .filter((o) => o.type?.includes(layout_name))
           .map((o: any) => ({
             ...o,
-            source: objects.find(
-              (s: any) =>
-                s.source_component_id === o.source_component_id &&
-                s.type?.startsWith("source")
-            ),
+            source: findSource(o, objects),
           })),
       },
     })
