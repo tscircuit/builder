@@ -13,16 +13,33 @@ export interface PortBuilder {
   build(): Type.AnyElement[]
 }
 
+const setable_props = ["name", "schematic_position", "schematic_direction"]
+
 export class PortBuilderClass implements PortBuilder {
   builder_type = "port_builder" as const
   project_builder: ProjectBuilder
   name: string = ""
 
-  schematic_position: Type.Point = { x: 0, y: 0 }
+  schematic_position: Type.Point
   schematic_direction: "up" | "down" | "left" | "right"
 
   constructor(project_builder: ProjectBuilder) {
     this.project_builder = project_builder
+    this.schematic_position = { x: 0, y: 0 }
+  }
+
+  setProps(props) {
+    if (props.x) this.schematic_position.x = props.x
+    if (props.y) this.schematic_position.y = props.y
+    if (props.dir) this.schematic_direction = props.dir
+    if (props.direction) this.schematic_direction = props.direction
+
+    for (const key of Object.keys(props).filter((k) =>
+      setable_props.includes(k)
+    )) {
+      this[key] = props[key]
+    }
+    return this
   }
 
   setName(name) {
