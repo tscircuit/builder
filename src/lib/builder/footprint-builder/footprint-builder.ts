@@ -1,6 +1,12 @@
 import { BaseComponentBuilder, ProjectBuilder } from "lib/project"
 import * as Type from "lib/types"
 import { Builder } from "lib/types/builders"
+import { compose, rotate, translate } from "transformation-matrix"
+import {
+  transformPCBElement,
+  transformPCBElements,
+  transformSchematicElement,
+} from "../transform-elements"
 import { SMTPadBuilder, createSMTPadBuilder } from "./smt-pad-builder"
 
 export type FootprintBuilderCallback = (rb: FootprintBuilder) => unknown
@@ -13,6 +19,8 @@ export interface FootprintBuilder {
   builder_type: "footprint_builder"
   project_builder: ProjectBuilder
   addables: typeof addables
+  position: Type.Point
+  setPosition: (x: number | string, y: number | string) => FootprintBuilder
   appendChild: (child: Builder) => FootprintBuilder
   addPad(cb: (smtpadbuilder: SMTPadBuilder) => unknown): FootprintBuilder
   add<T extends keyof typeof addables>(
@@ -27,11 +35,13 @@ export class FootprintBuilderClass implements FootprintBuilder {
   builder_type: "footprint_builder"
   project_builder: ProjectBuilder
   addables = addables
+  position: Type.Point
 
   children: SMTPadBuilder[] = []
 
   constructor(project_builder: ProjectBuilder) {
     this.project_builder = project_builder
+    this.position = { x: 0, y: 0 }
   }
 
   appendChild(child) {
@@ -85,12 +95,29 @@ export class FootprintBuilderClass implements FootprintBuilder {
     return this
   }
 
-  async build(bc): Promise<Type.AnyElement[]> {
+  setPosition(x, y) {
+    this.position.x = x
+    this.position.y = y
+    return this
+  }
+
+  async build(bc: Type.BuildContext): Promise<Type.AnyElement[]> {
     const built_elements = []
     for (const child of this.children) {
       const built = await child.build(bc)
       built_elements.push(...built)
     }
+
+    const my_position = bc.convert(this.position)
+
+    const transformed_elements = transformPCBElements(
+      built_elements,
+      compose(
+        translate(my_position.x, my_position.y)
+        // rotate(this.rotation)
+      )
+    )
+
     return built_elements
   }
 }

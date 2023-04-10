@@ -49,3 +49,27 @@ export const transformSchematicElements = (
 ) => {
   return elms.map((elm) => transformSchematicElement(elm, matrix))
 }
+
+export const transformPCBElement = (elm: Type.AnyElement, matrix: Matrix) => {
+  if (
+    elm.type === "pcb_plated_hole" ||
+    elm.type === "pcb_hole" ||
+    elm.type === "pcb_drill" ||
+    elm.type === "pcb_via" ||
+    elm.type === "pcb_smtpad"
+  ) {
+    const { x, y } = applyToPoint(matrix, { x: elm.x, y: elm.y })
+    elm.x = x
+    elm.y = y
+  } else if (elm.type === "pcb_port") {
+    // TODO
+  }
+  return elm
+}
+
+export const transformPCBElements = (
+  elms: Type.AnyElement[],
+  matrix: Matrix
+) => {
+  return elms.map((elm) => transformPCBElement(elm, matrix))
+}
