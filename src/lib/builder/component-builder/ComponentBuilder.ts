@@ -32,7 +32,10 @@ export interface BaseComponentBuilder<T> {
       >
     > & { name?: string }
   ): BaseComponentBuilder<T>
-  setSchematicCenter(x: number, y: number): BaseComponentBuilder<T>
+  setSchematicCenter(
+    x: number | string,
+    y: number | string
+  ): BaseComponentBuilder<T>
   setSchematicRotation(
     rotation: number | `${number}deg`
   ): BaseComponentBuilder<T>
@@ -185,7 +188,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
     return this
   }
 
-  async build(bc) {
+  async build(bc: Type.BuildContext) {
     const pb = this.project_builder
     const elements = []
 
@@ -208,7 +211,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
       type: "schematic_component",
       schematic_component_id,
       source_component_id,
-      center: this.schematic_position,
+      center: bc.convert(this.schematic_position),
       rotation: this.schematic_rotation,
       size: { width: 1, height: 1 },
     }
