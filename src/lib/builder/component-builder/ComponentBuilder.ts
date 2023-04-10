@@ -218,9 +218,9 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
 
     elements.push(schematic_component)
 
-    elements.push(...(await this.ports.build(bc)))
+    const built_ports = await this.ports.build(bc)
 
-    elements.push(...this.schematic_symbol.build(bc))
+    // elements.push(...this.schematic_symbol.build(bc))
 
     // TODO schematic box of some kind
     const pcb_element = {
@@ -236,7 +236,17 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
 
     const schematic_elements = await this.schematic_symbol.build(bc)
 
-    elements.push(pcb_element, ...footprint_elements, ...schematic_elements)
+    elements.push(pcb_element, ...footprint_elements)
+
+    elements.push(
+      ...transformSchematicElements(
+        [...built_ports, ...schematic_elements],
+        compose(
+          translate(schematic_component.center.x, schematic_component.center.y),
+          rotate(schematic_component.rotation)
+        )
+      )
+    )
     return elements
   }
 }

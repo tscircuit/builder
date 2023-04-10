@@ -26,7 +26,19 @@ export const transformSchematicElement = (
   } else if (elm.type === "schematic_text") {
     elm.position = applyToPoint(matrix, elm.position)
   } else if (elm.type === "schematic_group") {
+    elm.center = applyToPoint(matrix, elm.center)
   } else if (elm.type === "schematic_trace") {
+  } else if (elm.type === "schematic_box") {
+    const { x, y } = applyToPoint(matrix, { x: elm.x, y: elm.y })
+    elm.x = x
+    elm.y = y
+  } else if (elm.type === "schematic_line") {
+    const { x: x1, y: y1 } = applyToPoint(matrix, { x: elm.x1, y: elm.y1 })
+    const { x: x2, y: y2 } = applyToPoint(matrix, { x: elm.x2, y: elm.y2 })
+    elm.x1 = x1
+    elm.y1 = y1
+    elm.x2 = x2
+    elm.y2 = y2
   }
   return elm
 }
