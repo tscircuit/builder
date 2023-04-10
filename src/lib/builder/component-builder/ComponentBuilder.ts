@@ -14,6 +14,11 @@ import {
   createSchematicSymbolBuilder,
   SchematicSymbolBuilder,
 } from "../schematic-symbol-builder"
+import {
+  getSpatialBoundsFromSpatialElements,
+  getSpatialElementIncludingChildren,
+  toCenteredSpatialObj,
+} from "../constrained-layout-builder"
 
 export interface BaseComponentBuilder<T> {
   project_builder: ProjectBuilder
@@ -238,15 +243,33 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
 
     elements.push(pcb_element, ...footprint_elements)
 
-    elements.push(
-      ...transformSchematicElements(
-        [...built_ports, ...schematic_elements],
-        compose(
-          translate(schematic_component.center.x, schematic_component.center.y),
-          rotate(schematic_component.rotation)
-        )
+    const transformed_schematic_elements = transformSchematicElements(
+      [...built_ports, ...schematic_elements],
+      compose(
+        translate(schematic_component.center.x, schematic_component.center.y),
+        rotate(schematic_component.rotation)
       )
     )
+
+    elements.push(...transformed_schematic_elements)
+
+    const schematic_spatial_bounds = getSpatialBoundsFromSpatialElements(
+      transformed_schematic_elements
+        .map((elm) => {
+          try {
+            return toCenteredSpatialObj(elm)
+          } catch (e) {
+            return null
+          }
+        })
+        .filter(Boolean)
+    )
+
+    schematic_component.center.x = schematic_spatial_bounds.x
+    schematic_component.center.y = schematic_spatial_bounds.y
+    schematic_component.size.width = schematic_spatial_bounds.w
+    schematic_component.size.height = schematic_spatial_bounds.h
+
     return elements
   }
 }

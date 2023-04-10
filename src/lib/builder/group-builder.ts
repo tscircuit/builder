@@ -10,25 +10,28 @@ import {
 } from "./trace-builder"
 import { createConstraintBuilder } from "./constrained-layout-builder"
 
-export const group_builder_addables = {
-  generic_component: CB.createComponentBuilder,
-  component: CB.createComponentBuilder,
-  resistor: CB.createResistorBuilder,
-  capacitor: CB.createCapacitorBuilder,
-  diode: CB.createDiodeBuilder,
-  power_source: CB.createPowerSourceBuilder,
-  inductor: CB.createInductorBuilder,
-  ground: CB.createGroundBuilder,
-  bug: CB.createBugBuilder,
-  trace: createTraceBuilder,
-  group: createGroupBuilder,
-}
+export const getGroupAddables = () =>
+  ({
+    generic_component: CB.createComponentBuilder,
+    component: CB.createComponentBuilder,
+    resistor: CB.createResistorBuilder,
+    capacitor: CB.createCapacitorBuilder,
+    diode: CB.createDiodeBuilder,
+    power_source: CB.createPowerSourceBuilder,
+    inductor: CB.createInductorBuilder,
+    ground: CB.createGroundBuilder,
+    bug: CB.createBugBuilder,
+    trace: createTraceBuilder,
+    group: createGroupBuilder,
+  } as const)
+
+export type GroupBuilderAddables = ReturnType<typeof getGroupAddables>
 
 export type GroupBuilderCallback = (gb: GroupBuilder) => unknown
 export interface GroupBuilder {
   project_builder: ProjectBuilder
   builder_type: "group_builder"
-  addables: typeof group_builder_addables
+  addables: GroupBuilderAddables
   reset: () => GroupBuilder
   setName: (name: string) => GroupBuilder
   appendChild(
@@ -56,9 +59,9 @@ export interface GroupBuilder {
   addTrace: (
     traceBuiderCallback: TraceBuilderCallback | string[]
   ) => GroupBuilder
-  add<T extends keyof typeof group_builder_addables>(
+  add<T extends keyof GroupBuilderAddables>(
     builder_type: T,
-    callback: (builder: ReturnType<typeof group_builder_addables[T]>) => unknown
+    callback: (builder: ReturnType<GroupBuilderAddables[T]>) => unknown
   ): GroupBuilder
   build(build_context: Type.BuildContext): Promise<Type.AnyElement[]>
 }
@@ -70,10 +73,11 @@ export class GroupBuilderClass implements GroupBuilder {
   traces: TraceBuilder[]
   project_builder: ProjectBuilder
   name: string
-  addables = group_builder_addables
+  addables: GroupBuilderAddables
 
   constructor(project_builder?: ProjectBuilder) {
     this.project_builder = project_builder
+    this.addables = getGroupAddables()
     this.reset()
   }
 

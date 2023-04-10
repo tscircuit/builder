@@ -12,7 +12,8 @@ import {
   GroupBuilder,
   GroupBuilderCallback,
   GroupBuilderClass,
-  group_builder_addables,
+  GroupBuilderAddables,
+  getGroupAddables,
 } from "../group-builder"
 import { ProjectBuilder } from "../project-builder"
 import {
@@ -24,11 +25,12 @@ import { applySelector } from "lib/apply-selector"
 import { AnyElement } from "lib/types"
 
 const constraint_builder_addables = {
-  ...group_builder_addables,
+  ...getGroupAddables(),
   constraint: createConstraintBuilder,
 }
 
-export interface ConstrainedLayoutBuilder extends Omit<GroupBuilder, 'add' | 'appendChild'> {
+export interface ConstrainedLayoutBuilder
+  extends Omit<GroupBuilder, "add" | "appendChild"> {
   add<T extends keyof typeof constraint_builder_addables>(
     builder_type: T,
     callback: (

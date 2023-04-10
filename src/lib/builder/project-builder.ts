@@ -3,11 +3,9 @@ import {
   createGroupBuilder,
   GroupBuilder,
   GroupBuilderCallback,
-  group_builder_addables,
+  GroupBuilderAddables,
 } from "./group-builder"
-import { GenericComponentBuilderCallback } from "./component-builder"
 import { createProjectFromElements } from "../project/create-project-from-elements"
-import { TraceBuilderCallback } from "./trace-builder"
 import convertUnits from "convert-units"
 
 export type ProjectBuilder = Omit<GroupBuilder, "add"> & {
@@ -16,9 +14,9 @@ export type ProjectBuilder = Omit<GroupBuilder, "add"> & {
   addGroup: (groupBuilderCallback: GroupBuilderCallback) => ProjectBuilder
   buildProject: () => Promise<Type.Project>
   build(): Promise<Type.AnyElement[]>
-  add<T extends keyof typeof group_builder_addables>(
+  add<T extends keyof GroupBuilderAddables>(
     builder_type: T,
-    callback: (builder: ReturnType<typeof group_builder_addables[T]>) => unknown
+    callback: (builder: ReturnType<GroupBuilderAddables[T]>) => unknown
   ): ProjectBuilder
   createBuildContext: () => Type.BuildContext
 }
