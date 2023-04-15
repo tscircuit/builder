@@ -16,9 +16,8 @@ import {
 } from "../schematic-symbol-builder"
 import {
   getSpatialBoundsFromSpatialElements,
-  getSpatialElementIncludingChildren,
   toCenteredSpatialObj,
-} from "../constrained-layout-builder"
+} from "../constrained-layout-builder/spatial-util"
 
 export interface BaseComponentBuilder<T> {
   project_builder: ProjectBuilder

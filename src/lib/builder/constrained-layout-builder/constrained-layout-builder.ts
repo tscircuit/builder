@@ -5,7 +5,6 @@
  */
 import * as Type from "lib/types"
 import * as kiwi from "@lume/kiwi"
-import * as CB from "../component-builder"
 
 import {
   createGroupBuilder,
@@ -22,7 +21,10 @@ import {
   createConstraintBuilder,
 } from "./constraint-builder"
 import { applySelector } from "lib/apply-selector"
-import { AnyElement } from "lib/types"
+import {
+  getElementChildren,
+  getSpatialElementIncludingChildren,
+} from "./spatial-util"
 
 const constraint_builder_addables = {
   ...getGroupAddables(),
@@ -41,94 +43,6 @@ export interface ConstrainedLayoutBuilder
     child: Parameters<GroupBuilder["appendChild"]>[0] | ConstraintBuilder
   ): ConstrainedLayoutBuilder
   addConstraint(props: ConstraintBuilderFields): ConstrainedLayoutBuilder
-}
-
-type SpatialElement = { x: number; y: number; w: number; h: number }
-
-export const toCenteredSpatialObj = (obj: any): SpatialElement => {
-  const x = obj.x ?? obj.center?.x
-  const y = obj.y ?? obj.center?.y
-  const w = obj.w ?? obj.width ?? obj.size?.width ?? 0
-  const h = obj.h ?? obj.height ?? obj.size?.height ?? 0
-  const align = obj.align ?? "center"
-  if (x === undefined || y === undefined) {
-    throw new Error(
-      `Cannot convert to spatial obj (no x,y): ${JSON.stringify(
-        obj,
-        null,
-        "  "
-      )}`
-    )
-  }
-  if (align !== "center") {
-    throw new Error(
-      `Cannot convert to spatial obj (align not center not implemented): ${JSON.stringify(
-        obj,
-        null,
-        "  "
-      )}`
-    )
-  }
-
-  return { x, y, w, h }
-}
-
-export const getElementChildren = (
-  matchElm: AnyElement,
-  elements: AnyElement[]
-) => {
-  // TODO get deep children
-  return elements.filter(
-    (elm) =>
-      elm[`${matchElm.type}_id`] === matchElm[`${matchElm.type}_id`] &&
-      elm !== matchElm
-  )
-}
-
-export const getSpatialBoundsFromSpatialElements = (
-  elements: SpatialElement[]
-) => {
-  if (elements.length === 0) return { x: 0, y: 0, w: 0, h: 0 }
-  let { x: lx, y: ly, w, h } = elements[0]
-  lx -= w / 2
-  ly -= h / 2
-  let hx = lx + w / 2
-  let hy = ly + h / 2
-  for (let i = 1; i < elements.length; i++) {
-    const { x, y, w, h } = elements[i]
-    lx = Math.min(lx, x - w / 2)
-    ly = Math.min(ly, y - h / 2)
-    hx = Math.max(hx, x + w / 2)
-    hy = Math.max(hy, y + h / 2)
-  }
-  return {
-    x: (lx + hx) / 2,
-    y: (ly + hy) / 2,
-    w: hx - lx,
-    h: hy - ly,
-  }
-}
-
-/**
- * Get element size with any children elements. e.g. for a pcb component,
- * compute it's size from it's children.
- */
-export const getSpatialElementIncludingChildren = (
-  elm: AnyElement,
-  elements: AnyElement[]
-) => {
-  if (elm.type === "pcb_component") {
-    const children = getElementChildren(elm, elements).map((e) =>
-      toCenteredSpatialObj(e)
-    )
-    return getSpatialBoundsFromSpatialElements(children)
-    // component size is computed from children
-  } else if (elm.type === "schematic_component") {
-    return toCenteredSpatialObj(elm)
-  }
-  throw new Error(
-    `Get spatial elements including children not implemented for: "${elm.type}"`
-  )
 }
 
 export const constrainable_element_types = [

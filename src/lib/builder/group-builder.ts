@@ -89,6 +89,13 @@ export class GroupBuilderClass implements GroupBuilder {
   }
   add(new_builder_type, callback) {
     if (!this.addables[new_builder_type]) {
+      console.log(
+        Object.keys(this.addables),
+        new_builder_type,
+        this.addables[new_builder_type],
+        new_builder_type in this.addables,
+        CB
+      )
       throw new Error(
         `No addable in group builder for builder_type: "${new_builder_type}"`
       )
