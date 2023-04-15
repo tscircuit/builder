@@ -106,10 +106,6 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
         this.schematic_symbol.appendChild(child)
         return this
       }
-      case "schematic_symbol_builder": {
-        this.schematic_symbol.appendChild(child)
-        return this
-      }
       case "schematic_text_builder": {
         this.schematic_symbol.appendChild(child)
         return this
