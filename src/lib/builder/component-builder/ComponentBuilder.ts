@@ -264,10 +264,10 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
         .filter(Boolean)
     )
 
-    schematic_component.center.x = schematic_spatial_bounds.x
-    schematic_component.center.y = schematic_spatial_bounds.y
-    schematic_component.size.width = schematic_spatial_bounds.w
-    schematic_component.size.height = schematic_spatial_bounds.h
+    // schematic_component.center.x = schematic_spatial_bounds.x
+    // schematic_component.center.y = schematic_spatial_bounds.y
+    // schematic_component.size.width = schematic_spatial_bounds.w
+    // schematic_component.size.height = schematic_spatial_bounds.h
 
     return elements
   }
