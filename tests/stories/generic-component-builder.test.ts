@@ -16,7 +16,7 @@ test("component build from scratch without .add function (only appendChild)", as
   const pins = ["rx", "tx", "d2"]
 
   pb.add("component", (cb) => {
-    cb.setName("PIN3")
+    cb.setName("PIN3_HEADER")
     const port_map: Record<string, PortBuilder> = {}
     for (let i = 0; i < pins.length; i++) {
       const pin = pins[i]

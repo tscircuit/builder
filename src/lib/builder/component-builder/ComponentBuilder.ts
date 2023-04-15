@@ -242,6 +242,14 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
 
     elements.push(pcb_element, ...footprint_elements)
 
+    // SPATIAL ADJUSTMENTS
+    // 1. Transform and rotate according to the specified center and rotation
+    // 2. Compute the spatial bounds of the schematic elements
+    // 3. Shift the component center to reflect the components orientation about
+    //    center
+    // TODO change "center" to "origin" in the api to prevent confusion between
+    // user-specified "center" and computed "center"
+
     const transformed_schematic_elements = transformSchematicElements(
       [...built_ports, ...schematic_elements],
       compose(
@@ -252,6 +260,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
 
     elements.push(...transformed_schematic_elements)
 
+    // Compute the spatial bounds of the schematic elements
     const schematic_spatial_bounds = getSpatialBoundsFromSpatialElements(
       transformed_schematic_elements
         .map((elm) => {
@@ -264,10 +273,10 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
         .filter(Boolean)
     )
 
-    // schematic_component.center.x = schematic_spatial_bounds.x
-    // schematic_component.center.y = schematic_spatial_bounds.y
-    // schematic_component.size.width = schematic_spatial_bounds.w
-    // schematic_component.size.height = schematic_spatial_bounds.h
+    schematic_component.center.x = schematic_spatial_bounds.x
+    schematic_component.center.y = schematic_spatial_bounds.y
+    schematic_component.size.width = schematic_spatial_bounds.w
+    schematic_component.size.height = schematic_spatial_bounds.h
 
     return elements
   }
