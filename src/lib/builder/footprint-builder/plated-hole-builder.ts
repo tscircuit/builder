@@ -5,7 +5,16 @@ import { BuildContext } from "lib/types/build-context"
 export interface PlatedHoleBuilder {
   builder_type: "plated_hole_builder"
   project_builder: ProjectBuilder
-  setProps(props: Partial<Type.PCBPlatedHole>): PlatedHoleBuilder
+  setProps(
+    props: Partial<
+      Type.PCBPlatedHole & {
+        outer_diameter: Type.Dimension
+        inner_diameter: Type.Dimension
+        x: Type.Dimension
+        y: Type.Dimension
+      }
+    >
+  ): PlatedHoleBuilder
   build(bc: BuildContext): Promise<Type.PCBPlatedHole[]>
 }
 
