@@ -100,6 +100,7 @@ export class PowerSourceBuilderClass
       source_component_id,
       pcb_component_id,
     })
+    elements.push(...(await this.footprint.build(bc)))
 
     return elements
   }
