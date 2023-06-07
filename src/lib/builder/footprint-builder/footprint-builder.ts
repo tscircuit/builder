@@ -27,6 +27,7 @@ export interface FootprintBuilder {
     builder_type: T,
     callback: (builder: ReturnType<typeof addables[T]>) => unknown
   ): FootprintBuilder
+  setStandardFootprint(footprint_name: string): FootprintBuilder
   loadStandardFootprint(footprint_name: string): FootprintBuilder
   build(bc: Type.BuildContext): Promise<Type.AnyElement[]>
 }
@@ -93,6 +94,10 @@ export class FootprintBuilderClass implements FootprintBuilder {
       )
     }
     return this
+  }
+
+  setStandardFootprint(footprint_name: string): FootprintBuilder {
+    return this.loadStandardFootprint(footprint_name)
   }
 
   setPosition(x, y) {

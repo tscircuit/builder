@@ -13,6 +13,8 @@ test("render an led circuit project", async (t) => {
               name: "R1",
             })
             .setSchematicCenter(2, 1)
+            .setFootprint("0402")
+            .setFootprintCenter(0, 0)
         )
         .add("capacitor", (cb) =>
           cb
@@ -22,6 +24,8 @@ test("render an led circuit project", async (t) => {
             })
             .setSchematicCenter(4, 2)
             .setSchematicRotation("90deg")
+            .setFootprint("0402")
+            .setFootprintCenter(4, 0)
         )
         .add("resistor", (cb) =>
           cb

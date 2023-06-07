@@ -10,6 +10,8 @@ export type BuildContext = {
   }
 
   schematic_component_id?: string
+  source_component_id?: string
+  pcb_component_id?: string
 
   parent?: BuildContext
   fork: (mutation: Partial<BuildContext>) => BuildContext

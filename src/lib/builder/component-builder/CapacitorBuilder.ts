@@ -56,6 +56,11 @@ export class CapacitorBuilderClass
       name: this.name,
       ...this.source_properties,
     }
+    bc = bc.fork({
+      source_component_id,
+      schematic_component_id,
+      pcb_component_id,
+    })
     elements.push(source_component)
 
     const schematic_component: Type.SchematicComponent = {

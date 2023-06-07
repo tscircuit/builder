@@ -96,6 +96,7 @@ export class SMTPadBuilderClass implements SMTPadBuilder {
           width: bc.convert(this.width),
           height: bc.convert(this.height),
           layer: this.layer,
+          pcb_component_id: bc.pcb_component_id,
         },
       ]
     } else if (this.shape === "circle") {
@@ -107,6 +108,7 @@ export class SMTPadBuilderClass implements SMTPadBuilder {
           y: bc.convert(this.y),
           radius: bc.convert(this.radius),
           layer: this.layer,
+          pcb_component_id: bc.pcb_component_id,
         },
       ]
     }

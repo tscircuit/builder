@@ -46,6 +46,10 @@ export interface BaseComponentBuilder<T> {
   setSchematicProperties(
     properties: Partial<Type.SchematicComponent>
   ): BaseComponentBuilder<T>
+  setFootprintCenter(
+    x: number | string,
+    y: number | string
+  ): BaseComponentBuilder<T>
   setFootprint(fp: FootprintBuilder | string): BaseComponentBuilder<T>
   modifyFootprint(cb: (fb: FootprintBuilder) => any): BaseComponentBuilder<T>
   labelPort(position: number, name: string): BaseComponentBuilder<T>
@@ -150,6 +154,11 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
     return this
   }
 
+  setFootprintCenter(x, y) {
+    this.footprint.setPosition(x, y)
+    return this
+  }
+
   setSchematicRotation(rotation) {
     if (typeof rotation === "number") {
       this.schematic_rotation = rotation
@@ -195,7 +204,11 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
     const source_component_id = pb.getId("generic")
     const schematic_component_id = pb.getId(`schematic_generic_component`)
     const pcb_component_id = pb.getId(`pcb_generic_component`)
-    bc = bc.fork({ schematic_component_id })
+    bc = bc.fork({
+      source_component_id,
+      schematic_component_id,
+      pcb_component_id,
+    })
 
     const source_component = {
       type: "source_component",
@@ -228,6 +241,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
       source_component_id,
       pcb_component_id,
     }
+
     const footprint_elements = await this.footprint.build(bc)
 
     for (const fe of footprint_elements) {

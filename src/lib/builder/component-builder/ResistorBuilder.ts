@@ -48,6 +48,11 @@ export class ResistorBuilderClass
       `schematic_component_${ftype}`
     )
     const pcb_component_id = project_builder.getId(`pcb_component_${ftype}`)
+    bc = bc.fork({
+      source_component_id,
+      schematic_component_id,
+      pcb_component_id,
+    })
     const source_component = {
       type: "source_component",
       source_component_id,
