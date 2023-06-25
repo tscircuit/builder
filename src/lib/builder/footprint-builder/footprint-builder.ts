@@ -8,6 +8,7 @@ import {
   transformSchematicElement,
 } from "../transform-elements"
 import { SMTPadBuilder, createSMTPadBuilder } from "./smt-pad-builder"
+import sparkfunPackages from "@tscircuit/sparkfun-packages"
 
 export type FootprintBuilderCallback = (rb: FootprintBuilder) => unknown
 
@@ -73,6 +74,7 @@ export class FootprintBuilderClass implements FootprintBuilder {
   }
 
   loadStandardFootprint(footprint_name: string) {
+    // TODO check sparkfun footprints
     if (footprint_name === "0402") {
       this.addPad((smtpad) => {
         smtpad.setShape("rect")
@@ -88,6 +90,8 @@ export class FootprintBuilderClass implements FootprintBuilder {
         smtpad.setPosition(0.5, 0)
         smtpad.setLayer("top")
       })
+    } else if (footprint_name in sparkfunPackages) {
+      // TODO convert package to builder pads
     } else {
       throw new Error(
         `Unknown standard footprint name: "${footprint_name}" (examples: 0402, 0603)`
