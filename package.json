@@ -33,6 +33,7 @@
     "@tscircuit/eagle-xml-converter": "^0.0.7",
     "@tscircuit/sparkfun-packages": "^1.0.3",
     "convert-units": "^2.3.4",
+    "minisearch": "^6.1.0",
     "parsel-js": "^1.0.2",
     "rectilinear-router": "^1.0.1",
     "svg-path-bounds": "^1.0.2",

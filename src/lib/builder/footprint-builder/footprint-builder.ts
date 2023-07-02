@@ -9,6 +9,16 @@ import {
 } from "../transform-elements"
 import { SMTPadBuilder, createSMTPadBuilder } from "./smt-pad-builder"
 import sparkfunPackages from "@tscircuit/sparkfun-packages"
+import MiniSearch from "minisearch"
+
+const SPARKFUN_PACKAGE_NAMES = Object.keys(sparkfunPackages)
+
+const miniSearch = new MiniSearch({
+  fields: ["name"],
+  storeFields: ["name"],
+  idField: "name",
+})
+miniSearch.addAll(SPARKFUN_PACKAGE_NAMES.map((name) => ({ name })))
 
 export type FootprintBuilderCallback = (rb: FootprintBuilder) => unknown
 
@@ -73,7 +83,9 @@ export class FootprintBuilderClass implements FootprintBuilder {
     return this
   }
 
-  loadStandardFootprint(footprint_name: string) {
+  loadStandardFootprint(
+    footprint_name: "0402" | keyof typeof sparkfunPackages
+  ) {
     // TODO check sparkfun footprints
     if (footprint_name === "0402") {
       this.addPad((smtpad) => {
@@ -93,8 +105,12 @@ export class FootprintBuilderClass implements FootprintBuilder {
     } else if (footprint_name in sparkfunPackages) {
       // TODO convert package to builder pads
     } else {
+      const closest_sf_pkg_name = miniSearch.search(footprint_name)
       throw new Error(
-        `Unknown standard footprint name: "${footprint_name}" (examples: 0402, 0603)`
+        `Unknown standard footprint name: "${footprint_name}" (examples: 0402, 0603, ${closest_sf_pkg_name
+          .slice(0, 3)
+          .map((v) => v.name)
+          .join(",")})`
       )
     }
     return this
