@@ -103,7 +103,17 @@ export class FootprintBuilderClass implements FootprintBuilder {
         smtpad.setLayer("top")
       })
     } else if (footprint_name in sparkfunPackages) {
-      // TODO convert package to builder pads
+      const sf_pkg = sparkfunPackages[footprint_name]
+      for (const smd of sf_pkg.smd) {
+        this.addPad((smtpad) => {
+          smtpad.setShape("rect")
+          smtpad.setSize(smd.dx, smd.dy)
+          smtpad.setPosition(smd.x, smd.y)
+          smtpad.setLayer(smd.layer === 1 ? "top" : "silkscreen")
+        })
+      }
+      // TODO sf_pkg.wire
+      // TODO sf_pkg.text
     } else {
       const closest_sf_pkg_name = miniSearch.search(footprint_name)
       throw new Error(

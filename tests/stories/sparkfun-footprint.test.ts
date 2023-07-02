@@ -2,7 +2,7 @@ import test from "ava"
 import { createProjectBuilder } from "lib/builder/project-builder"
 import { logLayout } from "../utils/log-layout"
 
-test("sparkfun footprint 0805_RES", async (t) => {
+test("sparkfun footprint 0805", async (t) => {
   const projectBuilder = await createProjectBuilder().add("resistor", (rb) =>
     rb
       .setSourceProperties({
