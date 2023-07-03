@@ -158,10 +158,7 @@ export class FootprintBuilderClass implements FootprintBuilder {
 
     const transformed_elements = transformPCBElements(
       built_elements,
-      compose(
-        translate(my_position.x, my_position.y)
-        // rotate(this.rotation)
-      )
+      compose(translate(my_position.x, my_position.y), rotate(this.rotation))
     )
 
     return built_elements
