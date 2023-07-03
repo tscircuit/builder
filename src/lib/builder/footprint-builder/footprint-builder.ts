@@ -38,8 +38,9 @@ export interface FootprintBuilder {
     builder_type: T,
     callback: (builder: ReturnType<typeof addables[T]>) => unknown
   ): FootprintBuilder
-  setStandardFootprint(footprint_name: string): FootprintBuilder
-  loadStandardFootprint(footprint_name: string): FootprintBuilder
+  setStandardFootprint(footprint_name: SparkfunComponentId): FootprintBuilder
+  loadStandardFootprint(footprint_name: SparkfunComponentId): FootprintBuilder
+  setRotation: (rotation: number | `${number}deg`) => FootprintBuilder
   build(bc: Type.BuildContext): Promise<Type.AnyElement[]>
 }
 
@@ -48,6 +49,7 @@ export class FootprintBuilderClass implements FootprintBuilder {
   project_builder: ProjectBuilder
   addables = addables
   position: Type.Point
+  rotation: number = 0
 
   children: SMTPadBuilder[] = []
 
@@ -126,13 +128,22 @@ export class FootprintBuilderClass implements FootprintBuilder {
     return this
   }
 
-  setStandardFootprint(footprint_name: string): FootprintBuilder {
+  setStandardFootprint(footprint_name: SparkfunComponentId): FootprintBuilder {
     return this.loadStandardFootprint(footprint_name)
   }
 
   setPosition(x, y) {
     this.position.x = x
     this.position.y = y
+    return this
+  }
+
+  setRotation(rotation) {
+    if (typeof rotation === "number") {
+      this.rotation = rotation
+    } else {
+      this.rotation = (parseFloat(rotation.split("deg")[0]) / 180) * Math.PI
+    }
     return this
   }
 

@@ -50,6 +50,9 @@ export interface BaseComponentBuilder<T> {
     x: number | string,
     y: number | string
   ): BaseComponentBuilder<T>
+  setFootprintRotation(
+    rotation: number | `${number}deg`
+  ): BaseComponentBuilder<T>
   setFootprint(fp: FootprintBuilder | string): BaseComponentBuilder<T>
   modifyFootprint(cb: (fb: FootprintBuilder) => any): BaseComponentBuilder<T>
   labelPort(position: number, name: string): BaseComponentBuilder<T>
@@ -166,6 +169,11 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
       this.schematic_rotation =
         (parseFloat(rotation.split("deg")[0]) / 180) * Math.PI
     }
+    return this
+  }
+
+  setFootprintRotation(rotation: number | `${number}deg`) {
+    this.footprint.setRotation(rotation)
     return this
   }
 
