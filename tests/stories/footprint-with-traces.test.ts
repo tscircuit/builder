@@ -24,7 +24,7 @@ test("sparkfun_resistor_traces", async (t) => {
         .setFootprintRotation("90deg")
         .setFootprint("0603")
     )
-    .add("trace", (tb) => tb.addConnections([".R1 > .left", ".R2 > .right"]))
+    .add("trace", (tb) => tb.addConnections([".R1 > .right", ".R2 > .left"]))
 
   const projectBuilderOutput = await projectBuilder.build()
 
