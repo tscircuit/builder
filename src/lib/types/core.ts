@@ -256,6 +256,8 @@ export interface PCBPort {
   type: "pcb_port"
   pcb_port_id: string
   source_port_id: string
+  x: number
+  y: number
 }
 
 export interface PCBGroup {

@@ -8,6 +8,7 @@ import { applySelector } from "lib/apply-selector"
 export { convertToReadableTraceTree } from "./convert-to-readable-route-tree"
 import { straightRouteSolver } from "./straight-route-solver"
 import { rmstSolver } from "./rmst-solver"
+import { findRoute } from "@tscircuit/routing"
 
 export type TraceBuilderCallback = (cb: TraceBuilder) => unknown
 export interface TraceBuilder {
@@ -137,6 +138,8 @@ export const createTraceBuilder = (
         )
       return pcb_port
     })
+
+    console.log({ pcb_terminals })
 
     const pcb_route = []
 
