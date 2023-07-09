@@ -48,7 +48,7 @@ export const logLayout = async (
 
   for (const layout_name of ["schematic", "pcb"]) {
     await axios.post("/api/soup_group/add_soup", {
-      soup_group_name: layout_group_name,
+      soup_group_name: `builder: ${layout_group_name}`,
       soup_name: layout_name,
       username: "tmp",
       content: {
