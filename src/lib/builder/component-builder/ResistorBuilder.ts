@@ -5,6 +5,7 @@ import { transformSchematicElements } from "../transform-elements"
 import { compose, rotate, translate } from "transformation-matrix"
 import { PortsBuilder } from "../ports-builder/ports-builder"
 import { Except } from "type-fest"
+import { matchPCBPortsWithFootprintAndMutate } from "../trace-builder/match-pcb-ports-with-footprint"
 
 export type ResistorBuilderCallback = (rb: ResistorBuilder) => unknown
 export interface ResistorBuilder extends BaseComponentBuilder<ResistorBuilder> {
@@ -137,6 +138,12 @@ export class ResistorBuilderClass
     })
 
     const footprint_elements = await this.footprint.build(bc)
+
+    matchPCBPortsWithFootprintAndMutate({
+      footprint_elements,
+      pcb_ports: elements.filter((elm) => elm.type === "pcb_port"),
+      source_ports: elements.filter((elm) => elm.type === "source_port"),
+    } as any)
 
     console.dir(
       {
