@@ -185,7 +185,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
     return this
   }
 
-  setFootprint(fp: FootprintBuilder | string) {
+  setFootprint(fp: FootprintBuilder | SparkfunComponentId) {
     if (typeof fp === "string") {
       this.footprint.loadStandardFootprint(fp)
     } else {
