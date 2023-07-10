@@ -36,14 +36,17 @@ export const matchPCBPortsWithFootprintAndMutate = ({
   }
 
   for (let i = 0; i < footprint_elements.length; i++) {
-    if (!("port_hints" in footprint_elements[i]))
-      throw new Error(
+    if (!("port_hints" in footprint_elements[i])) {
+      // TODO error
+      console.warn(
         `Footprint element has an undefined port_hints array: ${JSON.stringify(
           footprint_elements[i],
           null,
           "  "
         )}`
       )
+      footprint_elements[i].port_hints = []
+    }
     for (const port_hint of footprint_elements[i].port_hints) {
       addPossibleLabel(i, port_hint)
     }

@@ -140,28 +140,31 @@ export const createTraceBuilder = (
     })
 
     const pcb_route: Type.PCBTrace["route"] = []
+    try {
+      const solved_route = findRoute({
+        grid: {
+          marginSegments: 2,
+          maxGranularSearchSegments: 50,
+          segmentSize: 1, // mm
+        },
+        obstacles: [],
+        pointsToConnect: pcb_terminals,
+      })
 
-    const solved_route = findRoute({
-      grid: {
-        marginSegments: 2,
-        maxGranularSearchSegments: 50,
-        segmentSize: 1, // mm
-      },
-      obstacles: [],
-      pointsToConnect: pcb_terminals,
-    })
-
-    if (solved_route.pathFound) {
-      for (const point of solved_route.points) {
-        pcb_route.push({
-          route_type: "wire",
-          layer: { name: "top" },
-          width: 0.5,
-          x: point.x,
-          y: point.y,
-          // TODO add start_pcb_port_id & end_pcb_port_id
-        })
+      if (solved_route.pathFound) {
+        for (const point of solved_route.points) {
+          pcb_route.push({
+            route_type: "wire",
+            layer: { name: "top" },
+            width: 0.5,
+            x: point.x,
+            y: point.y,
+            // TODO add start_pcb_port_id & end_pcb_port_id
+          })
+        }
       }
+    } catch (e) {
+      console.warn(`Error while pcb-trace-route solving: ${e.toString()}`)
     }
 
     // TODO construct route from pcb_terminals

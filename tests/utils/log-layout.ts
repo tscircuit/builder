@@ -1,4 +1,4 @@
-import defaultAxios from "axios"
+import defaultAxios from "redaxios"
 import { AnyElement } from "lib/types"
 
 const DEBUG_SRV = `https://debug.tscircuit.com`
@@ -38,7 +38,7 @@ export const logLayout = async (
     try {
       await axios.get("/api/health", {
         timeout: 1000,
-      })
+      } as any)
       layout_server_healthy = true
     } catch (e) {
       layout_server_healthy = false
@@ -47,20 +47,25 @@ export const logLayout = async (
   }
 
   for (const layout_name of ["schematic", "pcb"]) {
-    await axios.post("/api/soup_group/add_soup", {
-      soup_group_name: `builder: ${layout_group_name}`,
-      soup_name: layout_name,
-      username: "tmp",
-      content: {
-        elements: objects
-          .filter(
-            (o) => o.type?.includes(layout_name) || o.type.startsWith("source_")
-          )
-          .map((o: any) => ({
-            ...o,
-            source: findSource(o, objects),
-          })),
-      },
-    })
+    await axios
+      .post("/api/soup_group/add_soup", {
+        soup_group_name: `builder: ${layout_group_name}`,
+        soup_name: layout_name,
+        username: "tmp",
+        content: {
+          elements: objects
+            .filter(
+              (o) =>
+                o.type?.includes(layout_name) || o.type.startsWith("source_")
+            )
+            .map((o: any) => ({
+              ...o,
+              source: findSource(o, objects),
+            })),
+        },
+      })
+      .catch((e) => {
+        console.warn(`Couldn't log layout: ${layout_group_name}`)
+      })
   }
 }
