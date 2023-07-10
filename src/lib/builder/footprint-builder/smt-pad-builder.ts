@@ -10,6 +10,7 @@ export interface SMTPadBuilder {
   setRadius(radius: number): SMTPadBuilder
   setLayer(layer: Type.PCBSMTPad["layer"] | string): SMTPadBuilder
   setPosition(x: number, y: number): SMTPadBuilder
+  addPortHints(port_hints: string[]): SMTPadBuilder
   build(bc: Type.BuildContext): Promise<Type.PCBSMTPad[]>
 }
 
@@ -25,12 +26,14 @@ export class SMTPadBuilderClass implements SMTPadBuilder {
   radius: Dimension
   x: Dimension
   y: Dimension
+  port_hints: string[]
 
   layer: Type.LayerRef
   shape: Type.PCBSMTPad["shape"]
 
   constructor(project_builder: ProjectBuilder) {
     this.project_builder = project_builder
+    this.port_hints = []
   }
 
   setProps(props: Type.PCBSMTPad) {
@@ -85,6 +88,11 @@ export class SMTPadBuilderClass implements SMTPadBuilder {
     return this
   }
 
+  addPortHints(port_hints: string[]) {
+    this.port_hints = this.port_hints.concat(port_hints)
+    return this
+  }
+
   async build(bc: Type.BuildContext): Promise<Type.PCBSMTPad[]> {
     if (this.shape === "rect") {
       return [
@@ -97,6 +105,7 @@ export class SMTPadBuilderClass implements SMTPadBuilder {
           height: bc.convert(this.height),
           layer: this.layer,
           pcb_component_id: bc.pcb_component_id,
+          port_hints: this.port_hints,
         },
       ]
     } else if (this.shape === "circle") {
@@ -109,6 +118,7 @@ export class SMTPadBuilderClass implements SMTPadBuilder {
           radius: bc.convert(this.radius),
           layer: this.layer,
           pcb_component_id: bc.pcb_component_id,
+          port_hints: this.port_hints,
         },
       ]
     }

@@ -16,6 +16,11 @@ const getCenterOfFootprintElement = (elm: PCBSMTPad | PCBPlatedHole): Point => {
   return elm
 }
 
+/**
+ * Matches footprint pads/holes with pcb ports (and the schematic)
+ *
+ * See match-pcb-ports-with-footprint.test.ts for example
+ */
 export const matchPCBPortsWithFootprintAndMutate = ({
   footprint_elements,
   pcb_ports,
@@ -30,25 +35,19 @@ export const matchPCBPortsWithFootprintAndMutate = ({
     possible_labels_for_element_map[elm_index].push(label)
   }
 
-  if (footprint_elements.length === 2) {
-    const [elm0, elm1] = footprint_elements
-    if (elm0.x < elm1.x) {
-      addPossibleLabel(0, "left")
-      addPossibleLabel(1, "right")
-    } else if (elm1.x < elm0.x) {
-      addPossibleLabel(1, "left")
-      addPossibleLabel(0, "right")
-    }
-    if (elm0.y < elm1.y) {
-      addPossibleLabel(0, "bottom")
-      addPossibleLabel(1, "top")
-    } else if (elm1.y < elm0.y) {
-      addPossibleLabel(1, "bottom")
-      addPossibleLabel(0, "top")
+  for (let i = 0; i < footprint_elements.length; i++) {
+    if (!("port_hints" in footprint_elements[i]))
+      throw new Error(
+        `Footprint element has an undefined port_hints array: ${JSON.stringify(
+          footprint_elements[i],
+          null,
+          "  "
+        )}`
+      )
+    for (const port_hint of footprint_elements[i].port_hints) {
+      addPossibleLabel(i, port_hint)
     }
   }
-
-  // TODO Add 1,2,3,4,5,... numbering for each pad based on it's CW location
 
   for (let i = 0; i < pcb_ports.length, i < source_ports.length; i++) {
     const pcb_port = pcb_ports[i]
@@ -67,8 +66,8 @@ export const matchPCBPortsWithFootprintAndMutate = ({
         if (source_port.name === possible_label) {
           ;(footprint_element as any).pcb_port_id = pcb_port.pcb_port_id
           const { x, y } = getCenterOfFootprintElement(footprint_element)
-          pcb_port.x = x
-          pcb_port.y = y
+          ;(pcb_port as any).x = x
+          ;(pcb_port as any).y = y
           break
         }
       }

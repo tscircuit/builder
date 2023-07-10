@@ -145,15 +145,6 @@ export class ResistorBuilderClass
       source_ports: elements.filter((elm) => elm.type === "source_port"),
     } as any)
 
-    console.dir(
-      {
-        footprint_elements,
-        pcb_ports: elements.filter((elm) => elm.type === "pcb_port"),
-        source_ports: elements.filter((elm) => elm.type === "source_port"),
-      },
-      { depth: null }
-    )
-
     elements.push(...footprint_elements)
 
     return elements

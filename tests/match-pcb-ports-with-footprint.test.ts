@@ -13,6 +13,7 @@ test("match pcb ports with footprint", async (t) => {
         height: 0.6,
         layer: { name: "top" },
         pcb_component_id: "pcb_component_simple_resistor_0",
+        port_hints: ["left", "1"],
       },
       {
         type: "pcb_smtpad" as const,
@@ -23,6 +24,7 @@ test("match pcb ports with footprint", async (t) => {
         height: 0.6,
         layer: { name: "top" },
         pcb_component_id: "pcb_component_simple_resistor_0",
+        port_hints: ["right", "2"],
       },
     ],
     pcb_ports: [

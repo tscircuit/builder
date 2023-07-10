@@ -95,6 +95,7 @@ export class FootprintBuilderClass implements FootprintBuilder {
         smtpad.setSize(0.6, 0.6)
         smtpad.setPosition(-0.5, 0)
         smtpad.setLayer("top")
+        smtpad.addPortHints(["left", "1"])
         // smtpad.setSize("0.5mm", "0.5mm")
         // smtpad.setPosition("-0.5mm", "0mm")
       })
@@ -103,6 +104,7 @@ export class FootprintBuilderClass implements FootprintBuilder {
         smtpad.setSize(0.6, 0.6)
         smtpad.setPosition(0.5, 0)
         smtpad.setLayer("top")
+        smtpad.addPortHints(["right", "2"])
       })
     } else if (footprint_name in sparkfunPackages) {
       const sf_pkg = sparkfunPackages[footprint_name]
@@ -112,6 +114,18 @@ export class FootprintBuilderClass implements FootprintBuilder {
           smtpad.setSize(smd.dx, smd.dy)
           smtpad.setPosition(smd.x, smd.y)
           smtpad.setLayer(smd.layer === 1 ? "top" : "silkscreen")
+
+          const position_hints = []
+
+          if (sf_pkg.smd.length === 2) {
+            const other_smd = sf_pkg.smd.find((s) => s !== smd)
+            if (smd.x < other_smd.x) {
+              smtpad.addPortHints(["left"])
+            } else if (smd.x > other_smd.x) {
+              smtpad.addPortHints(["right"])
+            }
+          }
+          smtpad.addPortHints([smd.name.toString()])
         })
       }
       // TODO sf_pkg.wire

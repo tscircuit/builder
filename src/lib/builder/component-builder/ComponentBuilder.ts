@@ -18,6 +18,7 @@ import {
   getSpatialBoundsFromSpatialElements,
   toCenteredSpatialObj,
 } from "../constrained-layout-builder/spatial-util"
+import { matchPCBPortsWithFootprintAndMutate } from "../trace-builder/match-pcb-ports-with-footprint"
 
 export interface BaseComponentBuilder<T> {
   project_builder: ProjectBuilder
@@ -257,6 +258,12 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
     }
 
     const schematic_elements = await this.schematic_symbol.build(bc)
+
+    matchPCBPortsWithFootprintAndMutate({
+      footprint_elements,
+      pcb_ports: elements.filter((elm) => elm.type === "pcb_port"),
+      source_ports: elements.filter((elm) => elm.type === "source_port"),
+    } as any)
 
     elements.push(pcb_element, ...footprint_elements)
 

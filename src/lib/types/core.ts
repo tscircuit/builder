@@ -154,6 +154,9 @@ export interface PCBPlatedHole {
   hole_diameter: number
   x: number
   y: number
+  port_hints?: string[]
+  pcb_component_id?: string
+  pcb_port_id?: string
 }
 
 export interface PCBHole {
@@ -209,6 +212,7 @@ export type PCBSMTPad =
       y: number
       radius: number
       layer: LayerRef
+      port_hints?: string[]
       pcb_component_id?: string
       pcb_port_id?: string
     }
@@ -220,6 +224,7 @@ export type PCBSMTPad =
       width: number
       height: number
       layer: LayerRef
+      port_hints?: string[]
       pcb_component_id?: string
       pcb_port_id?: string
     }
