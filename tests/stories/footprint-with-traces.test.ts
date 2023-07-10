@@ -2,7 +2,7 @@ import test from "ava"
 import { createProjectBuilder } from "lib/builder/project-builder"
 import { logLayout } from "../utils/log-layout"
 
-test("sparkfun_resistor_traces", async (t) => {
+test("footprint-with-traces", async (t) => {
   const projectBuilder = await createProjectBuilder()
     .add("resistor", (rb) =>
       rb
@@ -28,6 +28,6 @@ test("sparkfun_resistor_traces", async (t) => {
 
   const projectBuilderOutput = await projectBuilder.build()
 
-  await logLayout("sparkfun_resistor_traces", projectBuilderOutput)
+  await logLayout("footprint-with-traces", projectBuilderOutput)
   t.snapshot(projectBuilderOutput)
 })
