@@ -5,6 +5,7 @@ import { transformSchematicElements } from "../transform-elements"
 import { compose, rotate, translate } from "transformation-matrix"
 import { PortsBuilder } from "../ports-builder/ports-builder"
 import getPortPosition from "./get-port-position"
+import { matchPCBPortsWithFootprintAndMutate } from "../trace-builder/match-pcb-ports-with-footprint"
 
 export type InductorBuilderCallback = (rb: InductorBuilder) => unknown
 export interface InductorBuilder extends BaseComponentBuilder<InductorBuilder> {
@@ -95,7 +96,14 @@ export class InductorBuilderClass
       source_component_id,
       pcb_component_id,
     })
-    elements.push(...(await this.footprint.build(bc)))
+    const footprint_elements = await this.footprint.build(bc)
+
+    matchPCBPortsWithFootprintAndMutate({
+      footprint_elements,
+      pcb_ports: elements.filter((elm) => elm.type === "pcb_port"),
+      source_ports: elements.filter((elm) => elm.type === "source_port"),
+    } as any)
+    elements.push(...footprint_elements)
 
     return elements
   }

@@ -1,3 +1,4 @@
+import { matchPCBPortsWithFootprintAndMutate } from "./../trace-builder/match-pcb-ports-with-footprint"
 import { ProjectBuilder } from "../project-builder"
 import { BaseComponentBuilder, ComponentBuilderClass } from "./ComponentBuilder"
 import * as Type from "lib/types"
@@ -121,7 +122,14 @@ export class CapacitorBuilderClass
       source_component_id,
       pcb_component_id,
     })
-    elements.push(...(await this.footprint.build(bc)))
+    const footprint_elements = await this.footprint.build(bc)
+
+    matchPCBPortsWithFootprintAndMutate({
+      footprint_elements,
+      pcb_ports: elements.filter((elm) => elm.type === "pcb_port"),
+      source_ports: elements.filter((elm) => elm.type === "source_port"),
+    } as any)
+    elements.push(...footprint_elements)
 
     return elements
   }
