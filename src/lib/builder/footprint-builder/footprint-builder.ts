@@ -1,4 +1,9 @@
-import { BaseComponentBuilder, ProjectBuilder } from "lib/project"
+import {
+  BaseComponentBuilder,
+  ProjectBuilder,
+  createHoleBuilder,
+  createPlatedHoleBuilder,
+} from "lib/project"
 import * as Type from "lib/types"
 import { Builder } from "lib/types/builders"
 import { compose, rotate, translate } from "transformation-matrix"
@@ -24,6 +29,8 @@ export type FootprintBuilderCallback = (rb: FootprintBuilder) => unknown
 
 const addables = {
   smtpad: createSMTPadBuilder,
+  // hole: createHoleBuilder,
+  // platedhole: createPlatedHoleBuilder,
 } as const
 
 export interface FootprintBuilder {
