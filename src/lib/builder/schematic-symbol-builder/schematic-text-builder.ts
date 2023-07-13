@@ -1,4 +1,4 @@
-import {Dimension} from "lib/types"
+import { Dimension } from "lib/types"
 import { ProjectBuilder } from "../project-builder"
 import { createSimpleDataBuilderClass } from "../simple-data-builder"
 
@@ -13,7 +13,10 @@ export interface SchematicTextBuilder {
   builder_type: "schematic_text_builder"
   props: SchematicTextBuilderFields
   setProps(props: Partial<SchematicTextBuilderFields>): SchematicTextBuilder
-  build(): Omit<SchematicTextBuilderFields, 'x' | 'y'> & { x: number, y: number }
+  build(): Omit<SchematicTextBuilderFields, "x" | "y"> & {
+    x: number
+    y: number
+  }
 }
 
 export const SchematicTextBuilder = createSimpleDataBuilderClass(

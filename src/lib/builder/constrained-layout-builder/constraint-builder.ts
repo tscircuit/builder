@@ -1,4 +1,4 @@
-import {BuildContext, Dimension} from "lib/types"
+import { BuildContext, Dimension } from "lib/types"
 import { RequireAtLeastOne } from "type-fest"
 import { ProjectBuilder } from "../project-builder"
 import { createSimpleDataBuilderClass } from "../simple-data-builder"
@@ -26,7 +26,9 @@ export interface ConstraintBuilder {
   builder_type: "constraint_builder"
   props: ConstraintBuilderFields
   setProps(props: Partial<ConstraintBuilderFields>): ConstraintBuilder
-  build(bc: BuildContext): Omit<ConstraintBuilderFields, "dist"> & { dist: number }
+  build(
+    bc: BuildContext
+  ): Omit<ConstraintBuilderFields, "dist"> & { dist: number }
 }
 
 export const ConstraintBuilderClass = createSimpleDataBuilderClass<
