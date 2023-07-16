@@ -1,9 +1,6 @@
-import {
-  BaseComponentBuilder,
-  ProjectBuilder,
-  createHoleBuilder,
-  createPlatedHoleBuilder,
-} from "lib/project"
+import { type ProjectBuilder } from "lib/project"
+import { createPlatedHoleBuilder } from "./plated-hole-builder"
+import { createHoleBuilder } from "./hole-builder"
 import * as Type from "lib/types"
 import { Builder } from "lib/types/builders"
 import { compose, rotate, translate } from "transformation-matrix"
@@ -27,23 +24,28 @@ miniSearch.addAll(SPARKFUN_PACKAGE_NAMES.map((name) => ({ name })))
 
 export type FootprintBuilderCallback = (rb: FootprintBuilder) => unknown
 
-const addables = {
-  smtpad: createSMTPadBuilder,
-  // hole: createHoleBuilder,
-  // platedhole: createPlatedHoleBuilder,
-} as const
+const getFootprintBuilderAddables = () =>
+  ({
+    smtpad: createSMTPadBuilder,
+    hole: createHoleBuilder,
+    platedhole: createPlatedHoleBuilder,
+  } as const)
+
+export type FootprintBuilderAddables = ReturnType<
+  typeof getFootprintBuilderAddables
+>
 
 export interface FootprintBuilder {
   builder_type: "footprint_builder"
   project_builder: ProjectBuilder
-  addables: typeof addables
+  addables: FootprintBuilderAddables
   position: Type.Point
   setPosition: (x: number | string, y: number | string) => FootprintBuilder
   appendChild: (child: Builder) => FootprintBuilder
   addPad(cb: (smtpadbuilder: SMTPadBuilder) => unknown): FootprintBuilder
-  add<T extends keyof typeof addables>(
+  add<T extends keyof FootprintBuilderAddables>(
     builder_type: T,
-    callback: (builder: ReturnType<typeof addables[T]>) => unknown
+    callback: (builder: ReturnType<FootprintBuilderAddables[T]>) => unknown
   ): FootprintBuilder
   setStandardFootprint(footprint_name: SparkfunComponentId): FootprintBuilder
   loadStandardFootprint(footprint_name: SparkfunComponentId): FootprintBuilder
@@ -54,7 +56,7 @@ export interface FootprintBuilder {
 export class FootprintBuilderClass implements FootprintBuilder {
   builder_type: "footprint_builder"
   project_builder: ProjectBuilder
-  addables = addables
+  addables: FootprintBuilderAddables
   position: Type.Point
   rotation: number = 0
 
@@ -62,6 +64,7 @@ export class FootprintBuilderClass implements FootprintBuilder {
 
   constructor(project_builder: ProjectBuilder) {
     this.project_builder = project_builder
+    this.addables = getFootprintBuilderAddables()
     this.position = { x: 0, y: 0 }
   }
 
@@ -79,7 +82,7 @@ export class FootprintBuilderClass implements FootprintBuilder {
   }
 
   add(new_builder_type, cb) {
-    const new_builder = addables[new_builder_type](this.project_builder)
+    const new_builder = this.addables[new_builder_type](this.project_builder)
     cb(new_builder)
     this.children.push(new_builder)
     return this

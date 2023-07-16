@@ -7,7 +7,10 @@ export interface PlatedHoleBuilder {
   project_builder: ProjectBuilder
   setProps(
     props: Partial<
-      Type.PCBPlatedHole & {
+      Omit<
+        Type.PCBPlatedHole,
+        "x" | "y" | "outer_diameter" | "inner_diameter"
+      > & {
         outer_diameter: Type.Dimension
         inner_diameter: Type.Dimension
         x: Type.Dimension
@@ -51,6 +54,8 @@ export class PlatedHoleBuilderClass implements PlatedHoleBuilder {
   }
 }
 
-export const createPlatedHoleBuilder = (project_builder: ProjectBuilder) => {
+export const createPlatedHoleBuilder = (
+  project_builder: ProjectBuilder
+): PlatedHoleBuilder => {
   return new PlatedHoleBuilderClass(project_builder)
 }

@@ -6,8 +6,13 @@ test("footprint hole should be created", async (t) => {
   const projectBuilder = await createProjectBuilder().add(
     "generic_component",
     (gb) =>
-      gb.footprint.add("smtpad", (sp) =>
-        sp.setShape("rect").setPosition(0, 0).setLayer("top").setSize(1, 1)
+      gb.footprint.add("platedhole", (ph) =>
+        ph.setProps({
+          inner_diameter: "1mm",
+          outer_diameter: "1.5mm",
+          x: 0,
+          y: 0,
+        })
       )
   )
 
