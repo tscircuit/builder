@@ -1,4 +1,4 @@
-import { AnyElement } from "@tscircuit/builder"
+import { AnyElement } from "lib/types/core"
 import { getDebugLayoutObject } from "./get-layout-debug-object"
 
 export const findBoundsAndCenter = (
