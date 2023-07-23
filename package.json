@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "test": "ava",
-    "build": "tsup ./src --sourcemap --dts",
+    "build": "tsup ./src/index.ts --sourcemap --dts",
     "build:docs": "typedoc",
     "typecheck": "tsc --noEmit",
     "check:circular": "dpdm --skip-dynamic-imports circular --no-warning --no-tree -T --exit-code circular:1 ./src/index.ts",
