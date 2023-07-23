@@ -1,5 +1,6 @@
 import test from "ava"
 import { createProjectBuilder } from "../../src"
+import { logLayout } from "../utils/log-layout"
 
 test("three-sided bug", async (t) => {
   const result = await createProjectBuilder()
@@ -10,17 +11,16 @@ test("three-sided bug", async (t) => {
           port_arrangement: {
             left_size: 3,
             right_size: 3,
+            top_size: 0,
+            bottom_size: 5,
           },
         })
-        .labelPort(1, "PWR")
-        .labelPort(2, "NC")
-        .labelPort(3, "RG")
-        .labelPort(4, "D0")
-        .labelPort(5, "D1")
-        .labelPort(6, "GND")
+        .labelPort(1, "D0")
+        .labelPort(2, "D1")
         .setSchematicCenter(8, 3)
     )
     .build()
 
-  console.log(result)
+  await logLayout(`three-sided bug`, result)
+  t.pass()
 })

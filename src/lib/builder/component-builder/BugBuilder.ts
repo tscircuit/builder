@@ -5,7 +5,8 @@ import { transformSchematicElements } from "../transform-elements"
 import { compose, rotate, translate } from "transformation-matrix"
 import { PortsBuilder } from "../ports-builder"
 import { Except } from "type-fest"
-import getPortPosition from "./get-port-position"
+import getPortPosition, { getPortArrangementSize } from "./get-port-position"
+import { convertSideToDirection } from "lib/utils/convert-side-to-direction"
 
 export type BugBuilderCallback = (rb: BugBuilder) => unknown
 export interface BugBuilder extends BaseComponentBuilder<BugBuilder> {
@@ -58,23 +59,15 @@ export class BugBuilderClass
     elements.push(source_component)
 
     const port_arrangement = this.schematic_properties?.port_arrangement
+    const port_arrangement_size = getPortArrangementSize(port_arrangement)
     const schematic_component: Type.SchematicComponent = {
       type: "schematic_component",
       source_component_id,
       schematic_component_id,
       rotation: this.schematic_rotation ?? 0,
       size: {
-        width:
-          Math.max(
-            port_arrangement.top_size ?? 0,
-            port_arrangement.bottom_size ?? 0,
-            1
-          ) + 0.5,
-        height: Math.max(
-          (port_arrangement.left_size ?? 0) / 2,
-          (port_arrangement.right_size ?? 0) / 2,
-          1
-        ),
+        width: port_arrangement_size.width - 0.5,
+        height: port_arrangement_size.height - 0.5,
       },
       center: this.schematic_position || { x: 0, y: 0 },
       ...this.schematic_properties,
@@ -88,31 +81,30 @@ export class BugBuilderClass
 
     // add ports based on port arrangement and give appropriate labels
     const { port_labels } = this.schematic_properties
-    for (
-      let i = 0;
-      i < port_arrangement.left_size + port_arrangement.right_size;
-      i++
-    ) {
+    const { total_ports } = port_arrangement_size
+
+    for (let i = 0; i < total_ports; i++) {
       const is_left = i < port_arrangement.left_size
-      const portPosition = getPortPosition(port_arrangement, i)
+      const portPosition = getPortPosition(port_arrangement, i + 1)
       this.ports.add({
         name: port_labels[i + 1],
-        center: portPosition,
-        facing_direction: is_left ? "left" : "right",
+        center: { x: portPosition.x, y: portPosition.y },
+        facing_direction: convertSideToDirection(portPosition.side),
       })
       const schematic_text_id = this.project_builder.getId("schematic_text")
-      const portText: Type.SchematicText = {
-        type: "schematic_text",
-        schematic_text_id,
-        schematic_component_id,
-        text: port_labels[i + 1],
-        anchor: is_left ? "left" : "right",
-        position: {
-          x: portPosition.x + (is_left ? 0.3 : -0.3),
-          y: portPosition.y,
-        },
-      }
-      textElements.push(portText)
+
+      // const portText: Type.SchematicText = {
+      //   type: "schematic_text",
+      //   schematic_text_id,
+      //   schematic_component_id,
+      //   text: port_labels[i + 1],
+      //   anchor: is_left ? "left" : "right",
+      //   position: {
+      //     x: portPosition.x + (is_left ? 0.3 : -0.3),
+      //     y: portPosition.y,
+      //   },
+      // }
+      // textElements.push(portText)
     }
 
     elements.push(
