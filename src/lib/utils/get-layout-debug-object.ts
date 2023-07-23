@@ -51,6 +51,6 @@ export const getDebugLayoutObject = (lo: any): LayoutDebugObject | null => {
     height,
     title,
     content,
-    bg_color: colors[stringHash((lo as any).type || title) % colors.length][4],
+    bg_color: colors[stringHash((lo as any).type || title) % colors.length]?.[4] ?? "#f00",
   }
 }
