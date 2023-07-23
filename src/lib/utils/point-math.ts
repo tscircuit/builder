@@ -1,4 +1,4 @@
-export type Point = { x: number; y: number }
+type Point = { x: number; y: number }
 
 export function sub(p1: Point, p2: Point) {
   return { x: p1.x - p2.x, y: p1.y - p2.y }
