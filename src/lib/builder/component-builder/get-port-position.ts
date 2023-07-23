@@ -59,18 +59,18 @@ export const getPortPosition = (
 
   let side: "top" | "bottom" | "left" | "right"
   let index: number
-  if (position <= top_size) {
-    side = "top"
-    index = position - 1
-  } else if (position <= top_size + right_size) {
-    side = "right"
-    index = position - top_size - 1
-  } else if (position <= top_size + right_size + bottom_size) {
-    side = "bottom"
-    index = position - top_size - right_size - 1
-  } else {
+  if (position <= left_size) {
     side = "left"
-    index = position - top_size - right_size - bottom_size - 1
+    index = position - 1
+  } else if (position <= bottom_size + left_size) {
+    side = "bottom"
+    index = position - left_size - 1
+  } else if (position <= bottom_size + left_size + right_size) {
+    side = "right"
+    index = position - left_size - bottom_size - 1
+  } else {
+    side = "top"
+    index = position - left_size - bottom_size - right_size - 1
   }
 
   const { width, height } = getPortArrangementSize(port_arrangement)

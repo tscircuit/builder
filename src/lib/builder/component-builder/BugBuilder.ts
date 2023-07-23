@@ -84,7 +84,6 @@ export class BugBuilderClass
     const { total_ports } = port_arrangement_size
 
     for (let i = 0; i < total_ports; i++) {
-      const is_left = i < port_arrangement.left_size
       const portPosition = getPortPosition(port_arrangement, i + 1)
       this.ports.add({
         name: port_labels[i + 1],
@@ -93,18 +92,22 @@ export class BugBuilderClass
       })
       const schematic_text_id = this.project_builder.getId("schematic_text")
 
-      // const portText: Type.SchematicText = {
-      //   type: "schematic_text",
-      //   schematic_text_id,
-      //   schematic_component_id,
-      //   text: port_labels[i + 1],
-      //   anchor: is_left ? "left" : "right",
-      //   position: {
-      //     x: portPosition.x + (is_left ? 0.3 : -0.3),
-      //     y: portPosition.y,
-      //   },
-      // }
-      // textElements.push(portText)
+      if (["left", "right"].includes(portPosition.side)) {
+        const is_left = portPosition.side === "left"
+        const portText: Type.SchematicText = {
+          type: "schematic_text",
+          schematic_text_id,
+          schematic_component_id,
+          text: port_labels[i + 1],
+          anchor: is_left ? "left" : "right",
+
+          position: {
+            x: portPosition.x + (is_left ? 0.4 : -0.4),
+            y: portPosition.y,
+          },
+        }
+        textElements.push(portText)
+      }
     }
 
     elements.push(
