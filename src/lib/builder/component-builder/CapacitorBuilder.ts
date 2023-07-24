@@ -6,7 +6,7 @@ import { transformSchematicElements } from "../transform-elements"
 import { compose, rotate, translate } from "transformation-matrix"
 import { PortsBuilder } from "../ports-builder/ports-builder"
 import { Except } from "type-fest"
-import getPortPosition from "./get-port-position"
+import getPortPosition from "../../utils/get-port-position"
 
 export type CapacitorBuilderCallback = (rb: CapacitorBuilder) => unknown
 export interface CapacitorBuilder

@@ -4,7 +4,7 @@ import * as Type from "lib/types"
 import { transformSchematicElements } from "../transform-elements"
 import { compose, rotate, translate } from "transformation-matrix"
 import { PortsBuilder } from "../ports-builder/ports-builder"
-import getPortPosition from "./get-port-position"
+import getPortPosition from "../../utils/get-port-position"
 import { matchPCBPortsWithFootprintAndMutate } from "../trace-builder/match-pcb-ports-with-footprint"
 
 export type InductorBuilderCallback = (rb: InductorBuilder) => unknown

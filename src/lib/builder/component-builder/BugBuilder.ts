@@ -5,7 +5,9 @@ import { transformSchematicElements } from "../transform-elements"
 import { compose, rotate, translate } from "transformation-matrix"
 import { PortsBuilder } from "../ports-builder"
 import { Except } from "type-fest"
-import getPortPosition, { getPortArrangementSize } from "./get-port-position"
+import getPortPosition, {
+  getPortArrangementSize,
+} from "../../utils/get-port-position"
 import { convertSideToDirection } from "lib/utils/convert-side-to-direction"
 
 export type BugBuilderCallback = (rb: BugBuilder) => unknown

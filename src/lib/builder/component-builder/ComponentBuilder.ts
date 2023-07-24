@@ -7,7 +7,7 @@ import {
 } from "lib/builder/ports-builder/ports-builder"
 import { compose, rotate, transform, translate } from "transformation-matrix"
 import { transformSchematicElements } from "lib/builder/transform-elements"
-import getPortPosition from "./get-port-position"
+import getPortPosition from "../../utils/get-port-position"
 import { AnyElement, Point, SchematicComponent } from "lib/types"
 import { createFootprintBuilder, FootprintBuilder } from "../footprint-builder"
 import {

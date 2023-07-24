@@ -5,7 +5,7 @@ import { transformSchematicElements } from "../transform-elements"
 import { compose, rotate, translate } from "transformation-matrix"
 import { PortsBuilder } from "../ports-builder/ports-builder"
 import { Except } from "type-fest"
-import getPortPosition from "./get-port-position"
+import getPortPosition from "../../utils/get-port-position"
 import { matchPCBPortsWithFootprintAndMutate } from "../trace-builder/match-pcb-ports-with-footprint"
 
 export type DiodeBuilderCallback = (rb: DiodeBuilder) => unknown
