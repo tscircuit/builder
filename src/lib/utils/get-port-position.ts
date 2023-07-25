@@ -11,13 +11,20 @@ const MIN_SIDE_DIST = 1.5
 const PORT_SPACING = 0.5
 
 export const getPortArrangementSize = (port_arrangement: {
-  left_size: number
-  right_size: number
-  top_size: number
-  bottom_size: number
+  left_size?: number
+  right_size?: number
+  top_size?: number
+  bottom_size?: number
 }): { width: number; height: number; total_ports: number } => {
-  const { top_size, right_size, bottom_size, left_size } = port_arrangement
+  const {
+    top_size = 0,
+    right_size = 0,
+    bottom_size = 0,
+    left_size = 0,
+  } = port_arrangement
+
   const total_ports = top_size + right_size + bottom_size + left_size
+
   const width = Math.max(
     MIN_SIDE_DIST,
     (top_size + 1) * PORT_SPACING,
@@ -38,10 +45,10 @@ export const getPortArrangementSize = (port_arrangement: {
  */
 export const getPortPosition = (
   port_arrangement: {
-    left_size: number
-    right_size: number
-    top_size: number
-    bottom_size: number
+    left_size?: number
+    right_size?: number
+    top_size?: number
+    bottom_size?: number
   },
   position: number
 ): {
@@ -49,7 +56,12 @@ export const getPortPosition = (
   y: number
   side: "top" | "bottom" | "left" | "right"
 } => {
-  const { top_size, right_size, bottom_size, left_size } = port_arrangement
+  const {
+    top_size = 0,
+    right_size = 0,
+    bottom_size = 0,
+    left_size = 0,
+  } = port_arrangement
   const total = top_size + right_size + bottom_size + left_size
   if (position < 1 || position > total) {
     throw new Error(
