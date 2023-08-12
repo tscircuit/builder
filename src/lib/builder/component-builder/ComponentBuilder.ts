@@ -218,9 +218,11 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
     const pb = this.project_builder
     const elements = []
 
-    const source_component_id = pb.getId("generic")
-    const schematic_component_id = pb.getId(`schematic_generic_component`)
-    const pcb_component_id = pb.getId(`pcb_generic_component`)
+    const ftype = this.source_properties.ftype ?? "generic"
+
+    const source_component_id = pb.getId(ftype)
+    const schematic_component_id = pb.getId(`schematic_${ftype}_component`)
+    const pcb_component_id = pb.getId(`pcb_${ftype}_component`)
     bc = bc.fork({
       source_component_id,
       schematic_component_id,
@@ -231,6 +233,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
       type: "source_component",
       source_component_id,
       name: this.name,
+      ftype: this.source_properties.ftype,
     }
 
     elements.push(source_component)
