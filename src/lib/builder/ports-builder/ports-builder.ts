@@ -14,7 +14,7 @@ export interface PortsBuilder {
    * @deprecated this add function doesn't match the other "add" patterns, will
    * be refactored and the method signature will change/will be renamed
    */
-  add: ((portName: string, schematicPosition: Type.Point) => PortsBuilder) &
+  addPort: ((portName: string, schematicPosition: Type.Point) => PortsBuilder) &
     ((params: {
       name: string
       center: { x: number; y: number }
@@ -48,7 +48,7 @@ export class PortsBuilderClass implements PortsBuilder {
     throw new Error(`"ports_builder" can only append "port_builder"`)
   }
 
-  add(...params) {
+  addPort(...params) {
     if (params.length === 1) {
       this.ports.push(
         createPortBuilder(this.project_builder)

@@ -71,8 +71,8 @@ export class InductorBuilderClass
 
     const textElements = []
 
-    this.ports.add("left", { x: -0.5, y: 0 })
-    this.ports.add("right", { x: 0.5, y: 0 })
+    this.ports.addPort("left", { x: -0.5, y: 0 })
+    this.ports.addPort("right", { x: 0.5, y: 0 })
     textElements.push({
       type: "schematic_text",
       text: source_component.name,

@@ -74,8 +74,8 @@ export class DiodeBuilderClass
 
     const textElements = []
 
-    this.ports.add("left", { x: -0.5, y: 0 })
-    this.ports.add("right", { x: 0.5, y: 0 })
+    this.ports.addPort("left", { x: -0.5, y: 0 })
+    this.ports.addPort("right", { x: 0.5, y: 0 })
 
     const isFlipped = Math.abs(schematic_component.rotation) >= Math.PI
     textElements.push({

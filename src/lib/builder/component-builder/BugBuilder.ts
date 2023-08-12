@@ -87,7 +87,7 @@ export class BugBuilderClass
 
     for (let i = 0; i < total_ports; i++) {
       const portPosition = getPortPosition(port_arrangement, i + 1)
-      this.ports.add({
+      this.ports.addPort({
         name: port_labels[i + 1],
         center: { x: portPosition.x, y: portPosition.y },
         facing_direction: convertSideToDirection(portPosition.side),

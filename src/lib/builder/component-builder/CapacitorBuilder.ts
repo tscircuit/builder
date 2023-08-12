@@ -80,12 +80,12 @@ export class CapacitorBuilderClass
 
     const textElements = []
 
-    this.ports.add({
+    this.ports.addPort({
       name: "left",
       center: { x: -0.5, y: 0 },
       facing_direction: "left",
     })
-    this.ports.add({
+    this.ports.addPort({
       name: "right",
       center: { x: 0.5, y: 0 },
       facing_direction: "right",

@@ -76,7 +76,7 @@ export class GroundBuilderClass
 
     const textElements = []
 
-    this.ports.add({
+    this.ports.addPort({
       name: "gnd",
       center: { x: 0, y: -0.2 },
       facing_direction: "up",
