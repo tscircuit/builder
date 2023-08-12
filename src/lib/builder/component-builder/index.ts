@@ -5,6 +5,7 @@ import { GenericComponentBuilder } from "./ComponentBuilder"
 import { DiodeBuilder } from "./DiodeBuilder"
 import { GroundBuilder } from "./GroundBuilder"
 import { InductorBuilder } from "./InductorBuilder"
+import { NetAliasBuilder } from "./NetAliasBuilder"
 import { PowerSourceBuilder } from "./PowerSourceBuilder"
 import { ResistorBuilder } from "./ResistorBuilder"
 
@@ -16,6 +17,7 @@ export * from "./BugBuilder"
 export * from "./DiodeBuilder"
 export * from "./PowerSourceBuilder"
 export * from "./GroundBuilder"
+export * from "./NetAliasBuilder"
 
 export type ComponentBuilder =
   | GenericComponentBuilder
@@ -27,3 +29,4 @@ export type ComponentBuilder =
   | PowerSourceBuilder
   | GroundBuilder
   | TraceBuilder
+  | NetAliasBuilder

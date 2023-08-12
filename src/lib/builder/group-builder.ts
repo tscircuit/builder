@@ -15,6 +15,7 @@ export const getGroupAddables = () =>
     generic_component: CB.createComponentBuilder,
     component: CB.createComponentBuilder,
     resistor: CB.createResistorBuilder,
+    net_alias: CB.createNetAliasBuilder,
     capacitor: CB.createCapacitorBuilder,
     diode: CB.createDiodeBuilder,
     power_source: CB.createPowerSourceBuilder,
