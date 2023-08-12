@@ -4,6 +4,23 @@ import {
   ComponentBuilderClass,
 } from "../component-builder/ComponentBuilder"
 import { z } from "zod"
+import { BuildContext } from "lib/types"
+
+// TODO technically different stages have access to different things, so we
+// might want multiple of these and some documentation on the steps of the build
+export interface ConfigureStageContext<SourceProperties extends z.ZodRawShape> {
+  source_properties: z.infer<z.ZodObject<SourceProperties>>
+}
+
+export const defineComponentConfig = <
+  PascalName extends string,
+  UnderscoreName extends string,
+  SourceProperties extends z.ZodRawShape
+>(
+  opts: NewComponentOpts<PascalName, UnderscoreName, SourceProperties>
+) => {
+  return opts
+}
 
 export interface NewComponentOpts<
   PascalName extends string,
@@ -13,6 +30,18 @@ export interface NewComponentOpts<
   pascal_name: PascalName
   underscore_name: UnderscoreName
   source_properties: z.ZodObject<SourceProperties>
+  configurePorts?: (
+    builder: BaseComponentBuilder<
+      NewComponentBuilder<PascalName, SourceProperties>
+    >,
+    ctx: ConfigureStageContext<SourceProperties> & BuildContext
+  ) => unknown
+  configureSchematicSymbols?: (
+    builder: BaseComponentBuilder<
+      NewComponentBuilder<PascalName, SourceProperties>
+    >,
+    ctx: ConfigureStageContext<SourceProperties> & BuildContext
+  ) => unknown
 }
 
 export type NewComponentBuilder<
@@ -51,6 +80,13 @@ export const defineNewComponent = <
       this.source_properties = {
         ...this.source_properties,
         ftype: opts.underscore_name,
+      }
+      if (opts.configurePorts) {
+        ;(this as any).configurePorts = (bc) => opts.configurePorts(this, bc)
+      }
+      if (opts.configureSchematicSymbols) {
+        ;(this as any).configureSchematicSymbols = (bc) =>
+          opts.configureSchematicSymbols(this, bc)
       }
     }
   }

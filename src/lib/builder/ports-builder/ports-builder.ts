@@ -78,6 +78,25 @@ export class PortsBuilderClass implements PortsBuilder {
     return this
   }
 
+  add(builder_type, callback) {
+    if (!ports_builder_addables[builder_type]) {
+      console.log(
+        Object.keys(ports_builder_addables),
+        builder_type,
+        ports_builder_addables[builder_type],
+        builder_type in ports_builder_addables,
+        CB
+      )
+      throw new Error(
+        `No addable in group builder for builder_type: "${builder_type}"`
+      )
+    }
+    const builder = ports_builder_addables[builder_type](this.project_builder)
+    callback(builder)
+    this.ports.push(builder)
+    return this
+  }
+
   setSourceComponent(source_component_id) {
     this.source_component_id = source_component_id
     return this

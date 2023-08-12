@@ -206,6 +206,14 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
     return this
   }
 
+  configureSchematicSymbols(bc) {
+    return this
+  }
+
+  configurePorts(bc) {
+    return this
+  }
+
   async build(bc: Type.BuildContext) {
     const pb = this.project_builder
     const elements = []
@@ -240,9 +248,9 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
 
     elements.push(schematic_component)
 
-    const built_ports = await this.ports.build(bc)
+    this.configurePorts({ ...bc, source_properties: this.source_properties })
 
-    // elements.push(...this.schematic_symbol.build(bc))
+    const built_ports = await this.ports.build(bc)
 
     // TODO schematic box of some kind
     const pcb_element = {
@@ -257,6 +265,10 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
       ;(fe as any).pcb_component_id = pcb_component_id
     }
 
+    this.configureSchematicSymbols({
+      ...bc,
+      source_properties: this.source_properties,
+    })
     const schematic_elements = await this.schematic_symbol.build(bc)
 
     matchPCBPortsWithFootprintAndMutate({
