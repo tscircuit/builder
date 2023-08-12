@@ -1,5 +1,5 @@
 import { BuildContext } from "lib/types"
-import { defineNewComponent } from "../define-new-component"
+import { NewComponentOpts, defineNewComponent } from "../define-new-component"
 import { z } from "zod"
 import { BaseComponentBuilder } from "./ComponentBuilder"
 import { createPortBuilder } from "../ports-builder"
@@ -10,7 +10,9 @@ const config = {
   source_properties: z.object({
     net: z.string(),
   }),
-  configurePorts: (builder: BaseComponentBuilder<any>) => {},
+  // configurePorts: (builder: BaseComponentBuilder<any>) => {
+  //   builder.ports.add("port", (pb) => pb.setName(builder.source_properties.net))
+  // },
 } as const
 
 export const { NetAliasBuilderClass, createNetAliasBuilder } =

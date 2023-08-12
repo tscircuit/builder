@@ -4,6 +4,11 @@ import { Except, Simplify } from "type-fest"
 import { ProjectBuilder } from "../project-builder"
 import { createPortBuilder, PortBuilder } from "./port-builder"
 
+export const ports_builder_addables = {
+  port: createPortBuilder,
+}
+export type PortsBuilderAddables = typeof ports_builder_addables
+
 export type PortsBuilderCallback = (cb: PortsBuilder) => unknown
 export interface PortsBuilder {
   builder_type: "ports_builder"
@@ -20,6 +25,12 @@ export interface PortsBuilder {
       center: { x: number; y: number }
       facing_direction: "up" | "down" | "left" | "right"
     }) => PortsBuilder)
+
+  add<T extends keyof PortsBuilderAddables>(
+    builder_type: T,
+    callback: (builder: ReturnType<PortsBuilderAddables[T]>) => unknown
+  ): PortsBuilder
+
   setSourceComponent: (source_component_id: string) => PortsBuilder
   setSchematicComponent: (schematic_component_id: string) => PortsBuilder
   setPCBComponent: (pcb_component_id: string) => PortsBuilder
