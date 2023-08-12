@@ -8,12 +8,21 @@ export const { NetAliasBuilderClass, createNetAliasBuilder } =
     source_properties: z.object({
       net: z.string(),
     }),
-    configurePorts: (builder, ctx) => {
-      console.log("ports built")
+    configurePorts(builder, ctx) {
       builder.ports.add("port", (pb) =>
         pb.setName(ctx.source_properties.net).setSchematicPosition({
           x: 0,
           y: 0,
+        })
+      )
+    },
+    configureSchematicSymbols(builder, ctx) {
+      builder.schematic_symbol.add("schematic_box", (sb) =>
+        sb.setProps({
+          x: 0,
+          y: 0,
+          width: "4mm",
+          height: "4mm",
         })
       )
     },

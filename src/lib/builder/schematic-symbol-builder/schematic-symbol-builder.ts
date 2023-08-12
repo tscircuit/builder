@@ -1,9 +1,21 @@
 import * as Type from "lib/types"
 import { Builder, SchematicDrawing } from "lib/types"
 import { ProjectBuilder } from "../project-builder"
-import { SchematicBoxBuilder } from "./schematic-box-builder"
-import { SchematicLineBuilder } from "./schematic-line-builder"
-import { SchematicTextBuilder } from "./schematic-text-builder"
+import {
+  SchematicBoxBuilder,
+  createSchematicBoxBuilder,
+} from "./schematic-box-builder"
+import {
+  SchematicLineBuilder,
+  createSchematicLineBuilder,
+} from "./schematic-line-builder"
+
+const schematic_symbol_addables = {
+  schematic_box: createSchematicBoxBuilder,
+  schematic_line: createSchematicLineBuilder,
+}
+
+type SchematicSymbolAddables = typeof schematic_symbol_addables
 
 type ChildBuilder = SchematicBoxBuilder | SchematicLineBuilder
 // | SchematicTextBuilder
@@ -13,6 +25,10 @@ export interface SchematicSymbolBuilder {
   builder_type: "schematic_symbol_builder"
   appendChild: (child: ChildBuilder) => SchematicSymbolBuilder
   build(bc: Type.BuildContext): SchematicDrawing[]
+  add<T extends keyof SchematicSymbolAddables>(
+    builder_type: T,
+    callback: (builder: ReturnType<SchematicSymbolAddables[T]>) => unknown
+  ): SchematicSymbolBuilder
 }
 
 export class SchematicSymbolBuilderClass implements SchematicSymbolBuilder {
@@ -42,6 +58,20 @@ export class SchematicSymbolBuilderClass implements SchematicSymbolBuilder {
     }
 
     this.children.push(child as any)
+    return this
+  }
+
+  add(builder_type, callback) {
+    if (!schematic_symbol_addables[builder_type]) {
+      throw new Error(
+        `No addable in schematic symbol builder for builder_type: "${builder_type}"`
+      )
+    }
+    const builder = schematic_symbol_addables[builder_type](
+      this.project_builder
+    )
+    callback(builder)
+    this.children.push(builder)
     return this
   }
 
