@@ -34,13 +34,13 @@ export interface NewComponentOpts<
     builder: BaseComponentBuilder<
       NewComponentBuilder<PascalName, SourceProperties>
     >,
-    ctx: ConfigureStageContext<SourceProperties> & BuildContext
+    ctx: ConfigureStageContext<SourceProperties>
   ) => unknown
   configureSchematicSymbols?: (
     builder: BaseComponentBuilder<
       NewComponentBuilder<PascalName, SourceProperties>
     >,
-    ctx: ConfigureStageContext<SourceProperties> & BuildContext
+    ctx: ConfigureStageContext<SourceProperties>
   ) => unknown
 }
 
