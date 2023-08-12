@@ -4,7 +4,7 @@ import { Except, Simplify } from "type-fest"
 import { ProjectBuilder } from "../project-builder"
 import { createPortBuilder, PortBuilder } from "./port-builder"
 
-export type PortBuilderCallback = (cb: PortsBuilder) => unknown
+export type PortsBuilderCallback = (cb: PortsBuilder) => unknown
 export interface PortsBuilder {
   builder_type: "ports_builder"
   project_builder: ProjectBuilder
