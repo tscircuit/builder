@@ -19,6 +19,7 @@ import {
   toCenteredSpatialObj,
 } from "../constrained-layout-builder/spatial-util"
 import { matchPCBPortsWithFootprintAndMutate } from "../trace-builder/match-pcb-ports-with-footprint"
+import { omitBy, isNil } from "lodash"
 
 export interface BaseComponentBuilder<T> {
   project_builder: ProjectBuilder
@@ -229,12 +230,15 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
       pcb_component_id,
     })
 
-    const source_component = {
-      type: "source_component",
-      source_component_id,
-      name: this.name,
-      ftype: this.source_properties.ftype,
-    }
+    const source_component = omitBy(
+      {
+        type: "source_component",
+        source_component_id,
+        name: this.name,
+        ftype: this.source_properties.ftype,
+      },
+      isNil
+    )
 
     elements.push(source_component)
 

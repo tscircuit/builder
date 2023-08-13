@@ -6,74 +6,65 @@ import {
 import { z } from "zod"
 import { BuildContext } from "lib/types"
 
-// TODO technically different stages have access to different things, so we
-// might want multiple of these and some documentation on the steps of the build
-export interface ConfigureStageContext<SourceProperties extends z.ZodRawShape> {
-  source_properties: z.infer<z.ZodObject<SourceProperties>>
+export type OptsDef<
+  PascalName extends string,
+  UnderscoreName extends string,
+  TZodSrcProps extends z.ZodType<any>,
+  TSrcProps = z.infer<TZodSrcProps>,
+  Builder = BaseComponentBuilder<NewComponentBuilder<PascalName, TZodSrcProps>>
+> = {
+  pascal_name: PascalName
+  underscore_name: UnderscoreName
+  source_properties: TZodSrcProps
+
+  configurePorts?: (
+    builder: Builder,
+    ctx: { source_properties: TSrcProps }
+  ) => any
+  configureSchematicSymbols?: (
+    builder: Builder,
+    ctx: { source_properties: TSrcProps }
+  ) => unknown
 }
 
 export const defineComponentConfig = <
-  PascalName extends string,
-  UnderscoreName extends string,
-  SourceProperties extends z.ZodRawShape
+  TPN extends string,
+  TUN extends string,
+  TZodSrcProps extends z.ZodType<any>
 >(
-  opts: NewComponentOpts<PascalName, UnderscoreName, SourceProperties>
-) => {
-  return opts
-}
-
-export interface NewComponentOpts<
-  PascalName extends string,
-  UnderscoreName extends string,
-  SourceProperties extends z.ZodRawShape
-> {
-  pascal_name: PascalName
-  underscore_name: UnderscoreName
-  source_properties: z.ZodObject<SourceProperties>
-  configurePorts?: (
-    builder: BaseComponentBuilder<
-      NewComponentBuilder<PascalName, SourceProperties>
-    >,
-    ctx: ConfigureStageContext<SourceProperties>
-  ) => unknown
-  configureSchematicSymbols?: (
-    builder: BaseComponentBuilder<
-      NewComponentBuilder<PascalName, SourceProperties>
-    >,
-    ctx: ConfigureStageContext<SourceProperties>
-  ) => unknown
-}
+  opts: OptsDef<TPN, TUN, TZodSrcProps>
+) => opts
 
 export type NewComponentBuilder<
   PascalName extends string,
-  SourceProperties extends z.ZodRawShape
-> = BaseComponentBuilder<NewComponentBuilder<PascalName, SourceProperties>> & {
+  TZodSrcProps extends z.ZodType<any>
+> = BaseComponentBuilder<NewComponentBuilder<PascalName, TZodSrcProps>> & {
   builder_type: `${PascalName}Builder`
   setSourceProperties(
-    properties: z.infer<z.ZodObject<SourceProperties>>
-  ): NewComponentBuilder<PascalName, SourceProperties>
+    properties: z.infer<TZodSrcProps>
+  ): NewComponentBuilder<PascalName, TZodSrcProps>
 }
 
 export const defineNewComponent = <
   PascalName extends string,
   UnderscoreName extends string,
-  SourceProperties extends z.ZodRawShape
+  TZodSrcProps extends z.ZodType<any>
   // TODO custom functions
 >(
-  opts: NewComponentOpts<PascalName, UnderscoreName, SourceProperties>
+  opts: OptsDef<PascalName, UnderscoreName, TZodSrcProps>
 ): {
   [createFunc in `create${PascalName}Builder`]: (
     project_builder: ProjectBuilder
-  ) => NewComponentBuilder<PascalName, SourceProperties>
+  ) => NewComponentBuilder<PascalName, TZodSrcProps>
 } & {
   [classDef in `${PascalName}BuilderClass`]: NewComponentBuilder<
     PascalName,
-    SourceProperties
+    TZodSrcProps
   >
 } => {
   class NewComponentBuilderClass
     extends ComponentBuilderClass
-    implements NewComponentBuilder<PascalName, SourceProperties>
+    implements NewComponentBuilder<PascalName, TZodSrcProps>
   {
     constructor(project_builder: ProjectBuilder) {
       super(project_builder)
@@ -98,7 +89,7 @@ export const defineNewComponent = <
     [builder_class_name]: NewComponentBuilderClass,
     [create_builder_name]: (
       project_builder: ProjectBuilder
-    ): NewComponentBuilder<PascalName, SourceProperties> => {
+    ): NewComponentBuilder<PascalName, TZodSrcProps> => {
       return new NewComponentBuilderClass(project_builder)
     },
   } as any

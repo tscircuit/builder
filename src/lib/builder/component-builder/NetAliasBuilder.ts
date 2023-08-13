@@ -25,12 +25,7 @@ export const { NetAliasBuilderClass, createNetAliasBuilder } =
           height: "4mm",
         })
       )
-      // .add("schematic_text", (stb) =>
-      //   stb.setProps({
-      //     text: ctx.source_properties.net,
-      //   })
-      // )
     },
-  } as const)
+  })
 
 export type NetAliasBuilder = ReturnType<typeof createNetAliasBuilder>
