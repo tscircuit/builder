@@ -13,18 +13,29 @@ export const { NetAliasBuilderClass, createNetAliasBuilder } =
         pb.setName(ctx.source_properties.net).setSchematicPosition({
           x: 0,
           y: 0,
-        })
+        }),
       )
     },
     configureSchematicSymbols(builder, ctx) {
-      builder.schematic_symbol.add("schematic_box", (sb) =>
-        sb.setProps({
-          x: 0,
-          y: 0,
-          width: "4mm",
-          height: "4mm",
-        })
-      )
+      builder.schematic_symbol
+        .add("schematic_line", (sb) =>
+          sb.setProps({
+            x1: "-0.5mm",
+            y1: 0,
+            x2: "0.5mm",
+            y2: 0,
+          }),
+        )
+        .add("schematic_text", (stb) =>
+          stb.setProps({
+            text: ctx.source_properties.net,
+            anchor: "center",
+            position: {
+              x: 0,
+              y: 0,
+            },
+          }),
+        )
     },
   })
 

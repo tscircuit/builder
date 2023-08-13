@@ -14,7 +14,7 @@ import { createSchematicTextBuilder } from "./schematic-text-builder"
 const schematic_symbol_addables = {
   schematic_box: createSchematicBoxBuilder,
   schematic_line: createSchematicLineBuilder,
-  // schematic_text: createSchematicTextBuilder,
+  schematic_text: createSchematicTextBuilder,
 }
 
 type SchematicSymbolAddables = typeof schematic_symbol_addables
