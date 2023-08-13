@@ -8,7 +8,7 @@ import { ProjectBuilder } from "./project-builder"
 export interface SimpleDataBuilder<
   BuilderType extends string,
   Fields extends Object,
-  UnitFields extends keyof Fields = never
+  UnitFields extends keyof Fields = never,
 > {
   builder_type: BuilderType
   project_builder: ProjectBuilder
@@ -22,17 +22,15 @@ export interface SimpleDataBuilder<
 export const createSimpleDataBuilderClass = <
   BuilderType extends string,
   Fields,
-  UnitField extends keyof Fields = keyof Fields
+  UnitField extends keyof Fields = keyof Fields,
 >(
   builder_type: BuilderType,
   default_fields: Partial<Fields>,
-  unit_fields: UnitField[] = []
+  unit_fields: UnitField[] = [],
 ): {
-  new (project_builder: ProjectBuilder): SimpleDataBuilder<
-    BuilderType,
-    Fields,
-    UnitField
-  >
+  new (
+    project_builder: ProjectBuilder,
+  ): SimpleDataBuilder<BuilderType, Fields, UnitField>
 } => {
   class SimpleDataBuilderClass
     implements SimpleDataBuilder<BuilderType, Fields>

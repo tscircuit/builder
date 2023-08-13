@@ -9,8 +9,8 @@ export interface SchematicTextBuilder {
   props: SchematicTextBuilderFields
   setProps(props: Partial<SchematicTextBuilderFields>): SchematicTextBuilder
   build(): Omit<SchematicTextBuilderFields, "x" | "y"> & {
-    x: number
-    y: number
+    x: Dimension
+    y: Dimension
   }
 }
 
@@ -21,6 +21,7 @@ export const SchematicTextBuilder = createSimpleDataBuilderClass(
     type: "schematic_text",
     position: { x: 0, y: 0 },
   } as SchematicTextBuilder["props"],
+  ["position"],
 )
 
 export const createSchematicTextBuilder = (

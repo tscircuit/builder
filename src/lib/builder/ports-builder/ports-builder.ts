@@ -28,7 +28,7 @@ export interface PortsBuilder {
 
   add<T extends keyof PortsBuilderAddables>(
     builder_type: T,
-    callback: (builder: ReturnType<PortsBuilderAddables[T]>) => unknown
+    callback: (builder: ReturnType<PortsBuilderAddables[T]>) => unknown,
   ): PortsBuilder
 
   setSourceComponent: (source_component_id: string) => PortsBuilder
@@ -65,14 +65,14 @@ export class PortsBuilderClass implements PortsBuilder {
         createPortBuilder(this.project_builder)
           .setSchematicPosition(params[0].center)
           .setName(params[0].name)
-          .setSchematicDirection(params[0].facing_direction)
+          .setSchematicDirection(params[0].facing_direction),
       )
     } else {
       const [name, schematic_position] = params
       this.ports.push(
         createPortBuilder(this.project_builder)
           .setSchematicPosition(schematic_position)
-          .setName(name)
+          .setName(name),
       )
     }
     return this
@@ -81,7 +81,7 @@ export class PortsBuilderClass implements PortsBuilder {
   add(builder_type, callback) {
     if (!ports_builder_addables[builder_type]) {
       throw new Error(
-        `No addable in ports builder for builder_type: "${builder_type}"`
+        `No addable in ports builder for builder_type: "${builder_type}"`,
       )
     }
     const builder = ports_builder_addables[builder_type](this.project_builder)
@@ -134,7 +134,7 @@ export class PortsBuilderClass implements PortsBuilder {
 }
 
 export const createPortsBuilder = (
-  project_builder: ProjectBuilder
+  project_builder: ProjectBuilder,
 ): PortsBuilder => {
   return new PortsBuilderClass(project_builder)
 }
