@@ -13,7 +13,7 @@ export const { NetAliasBuilderClass, createNetAliasBuilder } =
         pb.setName(ctx.source_properties.net).setSchematicPosition({
           x: 0,
           y: "1mm",
-        }),
+        })
       )
     },
     configureSchematicSymbols(builder, ctx) {
@@ -24,7 +24,7 @@ export const { NetAliasBuilderClass, createNetAliasBuilder } =
             y1: 0,
             x2: "2mm",
             y2: 0,
-          }),
+          })
         )
         .add("schematic_line", (sb) =>
           sb.setProps({
@@ -32,7 +32,7 @@ export const { NetAliasBuilderClass, createNetAliasBuilder } =
             y1: 0,
             x2: 0,
             y2: "1mm",
-          }),
+          })
         )
         .add("schematic_text", (stb) =>
           stb.setProps({
@@ -42,7 +42,7 @@ export const { NetAliasBuilderClass, createNetAliasBuilder } =
               x: 0,
               y: "-0.25mm",
             },
-          }),
+          })
         )
     },
   })
