@@ -19,7 +19,8 @@ import {
   toCenteredSpatialObj,
 } from "../constrained-layout-builder/spatial-util"
 import { matchPCBPortsWithFootprintAndMutate } from "../trace-builder/match-pcb-ports-with-footprint"
-import { omitBy, isNil } from "lodash"
+import omitBy from "lodash/omitBy"
+import isNil from "lodash/isNil"
 
 export interface BaseComponentBuilder<T> {
   project_builder: ProjectBuilder

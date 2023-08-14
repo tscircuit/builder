@@ -22,6 +22,7 @@
     "esbuild": "^0.15.18",
     "esbuild-register": "^3.3.3",
     "esbuild-runner": "^2.2.1",
+    "lodash": "^4.17.21",
     "prettier": "^2.7.1",
     "redaxios": "^0.5.1",
     "tsup": "^6.7.0",
