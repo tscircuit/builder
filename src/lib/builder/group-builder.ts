@@ -48,7 +48,7 @@ export interface GroupBuilder {
   addCapacitor(
     capacitorBuilderCallback: CB.CapacitorBuilderCallback
   ): GroupBuilder
-  addDiode(capacitorBuilderCallback: CB.DiodeBuilderCallback): GroupBuilder
+  addDiode(diodeBuilderCallback: CB.DiodeBuilderCallback): GroupBuilder
   addBug(bugBuilderCallback: CB.BugBuilderCallback): GroupBuilder
   addPowerSource(
     powerSourceBuilderCallback: CB.PowerSourceBuilderCallback

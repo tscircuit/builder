@@ -69,4 +69,7 @@ export const { DiodeBuilderClass, createDiodeBuilder } = defineNewComponent({
   },
 })
 
-export type NetAliasBuilder = ReturnType<typeof createDiodeBuilder>
+export type DiodeBuilder = ReturnType<typeof createDiodeBuilder>
+
+// Added for legacy compat
+export type DiodeBuilderCallback = (rb: DiodeBuilder) => unknown

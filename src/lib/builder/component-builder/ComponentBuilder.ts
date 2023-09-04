@@ -33,10 +33,7 @@ export interface BaseComponentBuilder<T> {
   appendChild(child: { builder_type: string }): BaseComponentBuilder<T>
   setSourceProperties(
     properties: Simplify<
-      Except<
-        Type.SourceComponent,
-        "type" | "source_component_id" | "ftype" | "name"
-      >
+      Except<Type.SourceComponent, "type" | "source_component_id" | "ftype">
     > & { name?: string }
   ): BaseComponentBuilder<T>
   setSchematicCenter(
@@ -148,6 +145,9 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
   }
 
   setSourceProperties(props) {
+    if (props.name) {
+      this.name = props.name
+    }
     this.source_properties = {
       ...this.source_properties,
       ...props,
