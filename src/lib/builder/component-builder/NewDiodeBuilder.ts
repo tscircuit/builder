@@ -31,33 +31,41 @@ export const { DiodeBuilderClass, createDiodeBuilder } = defineNewComponent({
 
     // Vertical line
     // M 0.8033 -0.2295 V 0.2295
-    builder.schematic_symbol
-      .add("schematic_line", (sb) =>
-        sb.setProps({
-          x1: "-2mm",
-          y1: 0,
-          x2: "2mm",
-          y2: 0,
-        })
+
+    const h1 = { x1: 0, y1: 0, x2: 0.3443, y2: 0 }
+    const h2 = { x1: 0.8033, y1: 0, x2: 0.9672, y2: 0 }
+
+    const t1 = { x1: 0.8033, y1: 0, x2: 0.3443, y2: 0.2295 }
+    const t2 = { x1: 0.3443, y1: 0.2295, x2: 0.3443, y2: -0.2295 }
+    const t3 = { x1: 0.3443, y1: -0.2295, x2: 0.8033, y2: 0 }
+
+    const v1 = { x1: 0.8033, y1: -0.2295, x2: 0.8033, y2: 0.2295 }
+
+    const lines = [h1, h2, t1, t2, t3, v1]
+
+    for (const line of lines) {
+      builder.schematic_symbol.add(
+        "schematic_line",
+        (sb) => sb.setProps(line)
+        // sb.setProps({
+        //   x1: `${line.x1}mm`,
+        //   y1: `${line.y1}mm`,
+        //   x2: `${line.x2}mm`,
+        //   y2: `${line.y2}mm`,
+        // })
       )
-      .add("schematic_line", (sb) =>
-        sb.setProps({
-          x1: 0,
-          y1: 0,
-          x2: 0,
-          y2: "1mm",
-        })
-      )
-      .add("schematic_text", (stb) =>
-        stb.setProps({
-          text: ctx.source_properties.name,
-          anchor: "center",
-          position: {
-            x: 0,
-            y: "-0.25mm",
-          },
-        })
-      )
+    }
+
+    builder.schematic_symbol.add("schematic_text", (stb) =>
+      stb.setProps({
+        text: ctx.source_properties.name,
+        anchor: "center",
+        position: {
+          x: 0,
+          y: "-0.25mm",
+        },
+      })
+    )
   },
 })
 
