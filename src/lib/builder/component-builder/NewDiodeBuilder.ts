@@ -19,6 +19,18 @@ export const { DiodeBuilderClass, createDiodeBuilder } = defineNewComponent({
     // { stroke: "red", strokeWidth: 2, d: "M 49,0 H 59" },
     // { stroke: "red", strokeWidth: 2, d: "M 49,0 L 21 14 V -14 Z" },
     // { stroke: "red", strokeWidth: 2, d: "M 49,-14 V 14" },
+
+    // scaled to be 1mm wide
+
+    // Horizontal start and end line
+    // M 0 0 H 0.3443
+    // M 0.8033 0 H 0.9672
+
+    // triangle
+    // M 0.8033 0 L 0.3443 0.2295 V -0.2295 Z
+
+    // Vertical line
+    // M 0.8033 -0.2295 V 0.2295
     builder.schematic_symbol
       .add("schematic_line", (sb) =>
         sb.setProps({
