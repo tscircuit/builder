@@ -6,6 +6,8 @@ import {
 import { z } from "zod"
 import { BuildContext } from "lib/types"
 
+type DefaultSrcProps = { name: string }
+
 export type OptsDef<
   PascalName extends string,
   UnderscoreName extends string,
@@ -19,11 +21,11 @@ export type OptsDef<
 
   configurePorts?: (
     builder: Builder,
-    ctx: { source_properties: TSrcProps }
+    ctx: { source_properties: TSrcProps & Partial<DefaultSrcProps> }
   ) => any
   configureSchematicSymbols?: (
     builder: Builder,
-    ctx: { source_properties: TSrcProps }
+    ctx: { source_properties: TSrcProps & Partial<DefaultSrcProps> }
   ) => unknown
 }
 
@@ -41,7 +43,7 @@ export type NewComponentBuilder<
 > = BaseComponentBuilder<NewComponentBuilder<PascalName, TZodSrcProps>> & {
   builder_type: `${PascalName}Builder`
   setSourceProperties(
-    properties: z.infer<TZodSrcProps>
+    properties: z.infer<TZodSrcProps> & Partial<DefaultSrcProps>
   ): NewComponentBuilder<PascalName, TZodSrcProps>
 }
 
