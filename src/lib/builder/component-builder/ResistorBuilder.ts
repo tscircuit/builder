@@ -13,7 +13,7 @@ export interface ResistorBuilder extends BaseComponentBuilder<ResistorBuilder> {
   setSourceProperties(
     properties: Except<
       Type.SimpleResistor,
-      "type" | "source_component_id" | "ftype" | "name"
+      "type" | "source_component_id" | "ftype"
     > & { name?: string }
   ): ResistorBuilder
 }

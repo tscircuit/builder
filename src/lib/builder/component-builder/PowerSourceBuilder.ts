@@ -15,7 +15,7 @@ export interface PowerSourceBuilder
   setSourceProperties(
     properties: Except<
       Type.SimplePowerSource,
-      "type" | "source_component_id" | "ftype" | "name"
+      "type" | "source_component_id" | "ftype"
     > & { name?: string }
   ): PowerSourceBuilder
 }

@@ -15,7 +15,7 @@ export interface CapacitorBuilder
   setSourceProperties(
     properties: Except<
       Type.SimpleCapacitor,
-      "type" | "source_component_id" | "ftype" | "name"
+      "type" | "source_component_id" | "ftype"
     > & { name?: string }
   ): CapacitorBuilder
 }
