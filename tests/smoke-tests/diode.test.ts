@@ -20,8 +20,6 @@ test("[smoke] diode", async (t) => {
   t.is(srcComp.name, "D1")
   t.is(srcComp.ftype, "simple_diode")
 
-  console.table(projectBuilderOutput)
-
   await logLayout("diode", projectBuilderOutput)
   t.pass()
 })

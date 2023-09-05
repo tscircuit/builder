@@ -13,7 +13,7 @@ export const { DiodeBuilderClass, createDiodeBuilder } = defineNewComponent({
         pb.setName("left").setSchematicPosition({ x: -0.5, y: 0 })
       )
       .add("port", (pb) =>
-        pb.setName("right").setSchematicPosition({ x: -0.5, y: 0 })
+        pb.setName("right").setSchematicPosition({ x: 0.5, y: 0 })
       )
   },
   configureSchematicSymbols(builder, ctx) {
@@ -48,7 +48,13 @@ export const { DiodeBuilderClass, createDiodeBuilder } = defineNewComponent({
     for (const line of lines) {
       builder.schematic_symbol.add(
         "schematic_line",
-        (sb) => sb.setProps(line)
+        (sb) =>
+          sb.setProps({
+            x1: line.x1 - 0.5,
+            y1: line.y1,
+            x2: line.x2 - 0.5,
+            y2: line.y2,
+          })
         // sb.setProps({
         //   x1: `${line.x1}mm`,
         //   y1: `${line.y1}mm`,
