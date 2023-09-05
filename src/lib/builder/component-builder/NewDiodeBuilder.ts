@@ -35,7 +35,7 @@ export const { DiodeBuilderClass, createDiodeBuilder } = defineNewComponent({
     // M 0.8033 -0.2295 V 0.2295
 
     const h1 = { x1: 0, y1: 0, x2: 0.3443, y2: 0 }
-    const h2 = { x1: 0.8033, y1: 0, x2: 0.9672, y2: 0 }
+    const h2 = { x1: 0.8033, y1: 0, x2: 1, y2: 0 }
 
     const t1 = { x1: 0.8033, y1: 0, x2: 0.3443, y2: 0.2295 }
     const t2 = { x1: 0.3443, y1: 0.2295, x2: 0.3443, y2: -0.2295 }
