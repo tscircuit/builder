@@ -5,6 +5,7 @@ import {
 } from "../component-builder/ComponentBuilder"
 import { z } from "zod"
 import { BuildContext } from "lib/types"
+import { getZodSchemaDefaults } from "lib/utils/get-zod-schema-defaults"
 
 type DefaultSrcProps = { name: string }
 
@@ -71,8 +72,8 @@ export const defineNewComponent = <
     constructor(project_builder: ProjectBuilder) {
       super(project_builder)
       this.source_properties = {
-        ...this.source_properties,
         ftype: opts.underscore_name,
+        ...getZodSchemaDefaults(opts.source_properties as any),
       }
       if (opts.configurePorts) {
         ;(this as any).configurePorts = (bc) => opts.configurePorts(this, bc)

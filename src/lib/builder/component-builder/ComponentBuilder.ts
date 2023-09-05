@@ -225,6 +225,12 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
     const source_component_id = pb.getId(ftype)
     const schematic_component_id = pb.getId(`schematic_${ftype}_component`)
     const pcb_component_id = pb.getId(`pcb_${ftype}_component`)
+
+    this.ports
+      .setSchematicComponent(schematic_component_id)
+      .setSourceComponent(source_component_id)
+      .setPCBComponent(pcb_component_id)
+
     bc = bc.fork({
       source_component_id,
       schematic_component_id,

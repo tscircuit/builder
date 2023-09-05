@@ -4,7 +4,9 @@ import { z } from "zod"
 export const { DiodeBuilderClass, createDiodeBuilder } = defineNewComponent({
   pascal_name: "Diode",
   underscore_name: "diode",
-  source_properties: z.object({}),
+  source_properties: z.object({
+    ftype: z.literal("simple_diode").default("simple_diode"),
+  }),
   configurePorts(builder, ctx) {
     builder.ports
       .add("port", (pb) =>
