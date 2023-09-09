@@ -295,6 +295,11 @@ export interface SourcePort {
   source_component_id: string
 }
 
+export interface SourceError {
+  type: "source_error"
+  message: string
+}
+
 export interface Project {
   type: "project"
   schematic_config: SchematicConfig
@@ -340,6 +345,7 @@ export type AnyElement =
   | SchematicPort
   | SchematicText
   | SchematicDrawing
+  | SourceError
 
 export type ElementType = AnyElement["type"]
 export type ElementOfType<T extends ElementType> = Extract<

@@ -1,3 +1,4 @@
+import { extractIds } from "./../../utils/extract-ids"
 // TODO rename this to trace-builder
 
 import * as Type from "lib/types"
@@ -61,17 +62,28 @@ export const createTraceBuilder = (
     for (const portSelector of internal.portSelectors) {
       const selectedElms = applySelector(parentElements, portSelector)
       if (selectedElms.length === 0) {
-        throw new Error(`No elements found for selector: ${portSelector}`)
+        return [
+          {
+            type: "source_error",
+            message: `No elements found for selector: ${portSelector}`,
+            ...extractIds(parentElements?.[0] ?? {}),
+          },
+        ]
       }
       for (const selectedElm of selectedElms) {
-        if (selectedElm.type !== "source_port")
-          throw new Error(
-            `non-source_port "${JSON.stringify(
-              selectedElm,
-              null,
-              "  "
-            )}" selected by selector "${portSelector}" `
-          )
+        if (selectedElm.type !== "source_port") {
+          return [
+            {
+              type: "source_error",
+              message: `non-source_port "${JSON.stringify(
+                selectedElm,
+                null,
+                "  "
+              )}" selected by selector "${portSelector}" `,
+              ...extractIds(selectedElm),
+            },
+          ]
+        }
         sourcePortsInRoute.push(selectedElm)
       }
     }
