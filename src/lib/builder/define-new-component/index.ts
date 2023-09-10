@@ -83,7 +83,7 @@ export const defineNewComponent = <
           opts.configureSchematicSymbols(this, bc)
       }
       this.settable_source_properties = [
-        "name",
+        ...this.settable_source_properties,
         ...Object.keys((opts.source_properties._def as any).shape()),
       ]
     }
