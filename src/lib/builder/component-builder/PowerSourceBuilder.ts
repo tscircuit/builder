@@ -31,6 +31,7 @@ export class PowerSourceBuilderClass
       ...this.source_properties,
       ftype: "simple_power_source",
     }
+    this.settable_source_properties.push(...["voltage"])
   }
 
   setSourceProperties(props: Type.SimplePowerSource) {

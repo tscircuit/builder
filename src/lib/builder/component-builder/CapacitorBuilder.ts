@@ -32,6 +32,7 @@ export class CapacitorBuilderClass
       ...this.source_properties,
       ftype: "simple_capacitor",
     }
+    this.settable_source_properties.push(...["capacitance"])
   }
 
   setSourceProperties(props: Type.SimpleCapacitor) {

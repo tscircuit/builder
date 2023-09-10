@@ -30,6 +30,7 @@ export class ResistorBuilderClass
       ...this.source_properties,
       ftype: "simple_resistor",
     }
+    this.settable_source_properties.push(...["resistance"])
   }
 
   setSourceProperties(props: Type.SimpleResistor) {

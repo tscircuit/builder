@@ -170,7 +170,10 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
 
       if (prop_key === "schematic_x" && "schematic_y" in props) {
         this.setSchematicCenter(prop_val, props.schematic_y)
-      } else if (prop_key === "schematic_center" && point) {
+      } else if (
+        (prop_key === "schematic_center" || prop_key === "center") &&
+        point
+      ) {
         this.setSchematicCenter(point.x, point.y)
       } else if (prop_key === "x" && "y" in props) {
         this.setSchematicCenter(prop_val, props.y)
@@ -184,16 +187,29 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
         this.setSchematicProperties(prop_val)
       } else if (prop_key === "footprint" && typeof prop_val === "string") {
         this.setFootprint(prop_val as any)
-      } else if (prop_key === "schematic_rotation") {
+      } else if (prop_key === "schematic_rotation" || prop_key === "rotation") {
         this.setSchematicRotation(prop_val)
       } else if (prop_key === "footprint_center" && point) {
         this.setFootprintCenter(point.x, point.y)
       } else if (this.settable_source_properties.includes(prop_key)) {
         this.setSourceProperties({ [prop_key]: prop_val })
+      } else if (prop_key === "children") {
+        // SPECIAL CASE: Bug in upstream code causes "children" to sometimes be
+        // passed, we want to totally ignore this and not add it to unused props
       } else {
+        unused_props.push(prop_key)
         console.warn(`Unused property passed: "${prop_key}"`)
       }
     }
+
+    // Legacy Compat: Set all remaining properties as source properties
+    this.setSourceProperties(
+      unused_props.reduce((agg, prop_key) => {
+        agg[prop_key] = props[prop_key]
+        return agg
+      }, {})
+    )
+
     return this
   }
 
