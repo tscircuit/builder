@@ -175,6 +175,10 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
 
       if (prop_key === "schematic_x" && "schematic_y" in props) {
         this.setSchematicCenter(prop_val, props.schematic_y)
+      } else if (prop_key === "sch_x" && "sch_y" in props) {
+        this.setSchematicCenter(prop_val, props.sch_y)
+      } else if (prop_key === "cx" && "cy" in props) {
+        this.setSchematicCenter(prop_val, props.cy)
       } else if (
         (prop_key === "schematic_center" || prop_key === "center") &&
         point
@@ -186,7 +190,9 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
         this.setFootprintCenter(prop_val, props.pcb_y)
       } else if (prop_key === "pcb_center" && point) {
         this.setFootprintCenter(prop_val, props.pcb_y)
-      } else if (["y", "schematic_y", "pcb_y"].includes(prop_key)) {
+      } else if (
+        ["y", "schematic_y", "pcb_y", "sch_y", "cy"].includes(prop_key)
+      ) {
         // covered in check for x
       } else if (prop_key === "schematic_properties") {
         this.setSchematicProperties(prop_val)
