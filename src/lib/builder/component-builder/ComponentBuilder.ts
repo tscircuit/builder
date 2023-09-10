@@ -21,6 +21,7 @@ import {
 import { matchPCBPortsWithFootprintAndMutate } from "../trace-builder/match-pcb-ports-with-footprint"
 import omitBy from "lodash/omitBy"
 import isNil from "lodash/isNil"
+import { maybeConvertToPoint } from "lib/utils/maybe-convert-to-point"
 
 export interface BaseComponentBuilder<T> {
   project_builder: ProjectBuilder
@@ -76,6 +77,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
   schematic_properties: any = {}
   schematic_rotation: number = 0
   schematic_position: Point = { x: 0, y: 0 }
+  settable_source_properties: string[]
   ports: PortsBuilder
   footprint: FootprintBuilder
   schematic_symbol: SchematicSymbolBuilder
@@ -83,6 +85,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
     this.ports = createPortsBuilder(project_builder)
     this.footprint = createFootprintBuilder(project_builder)
     this.schematic_symbol = createSchematicSymbolBuilder(project_builder)
+    this.settable_source_properties = ["name"]
   }
 
   appendChild(child) {
@@ -136,6 +139,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
 
   setName(name) {
     this.name = name
+    this.source_properties.name = name
     return this
   }
 
@@ -151,6 +155,44 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
     this.source_properties = {
       ...this.source_properties,
       ...props,
+    }
+    return this
+  }
+
+  /**
+   * This is the main way that React sets props for a component
+   */
+  setProps(props) {
+    const unused_props = []
+
+    for (const [prop_key, prop_val] of Object.entries(props)) {
+      const point = maybeConvertToPoint(prop_val)
+
+      if (prop_key === "schematic_x" && "schematic_y" in props) {
+        this.setSchematicCenter(prop_val, props.schematic_y)
+      } else if (prop_key === "schematic_center" && point) {
+        this.setSchematicCenter(point.x, point.y)
+      } else if (prop_key === "x" && "y" in props) {
+        this.setSchematicCenter(prop_val, props.y)
+      } else if (prop_key === "pcb_x" && "pcb_y" in props) {
+        this.setFootprintCenter(prop_val, props.pcb_y)
+      } else if (prop_key === "pcb_center" && point) {
+        this.setFootprintCenter(prop_val, props.pcb_y)
+      } else if (["y", "schematic_y", "pcb_y"].includes(prop_key)) {
+        // covered in check for x
+      } else if (prop_key === "schematic_properties") {
+        this.setSchematicProperties(prop_val)
+      } else if (prop_key === "footprint" && typeof prop_val === "string") {
+        this.setFootprint(prop_val as any)
+      } else if (prop_key === "schematic_rotation") {
+        this.setSchematicRotation(prop_val)
+      } else if (prop_key === "footprint_center" && point) {
+        this.setFootprintCenter(point.x, point.y)
+      } else if (this.settable_source_properties.includes(prop_key)) {
+        this.setSourceProperties({ [prop_key]: prop_val })
+      } else {
+        console.warn(`Unused property passed: "${prop_key}"`)
+      }
     }
     return this
   }
