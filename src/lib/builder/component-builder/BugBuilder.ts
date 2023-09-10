@@ -33,7 +33,7 @@ export class BugBuilderClass
       ...this.source_properties,
       ftype: "simple_bug",
     }
-    this.settable_source_properties.push(...["port_labels", "port_arrangement"])
+    this.settable_schematic_properties.push("port_labels", "port_arrangement")
   }
 
   setSourceProperties(props) {

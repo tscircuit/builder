@@ -78,6 +78,8 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
   schematic_rotation: number = 0
   schematic_position: Point = { x: 0, y: 0 }
   settable_source_properties: string[]
+  settable_schematic_properties: string[]
+  settable_pcb_properties: string[]
   ports: PortsBuilder
   footprint: FootprintBuilder
   schematic_symbol: SchematicSymbolBuilder
@@ -86,6 +88,8 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
     this.footprint = createFootprintBuilder(project_builder)
     this.schematic_symbol = createSchematicSymbolBuilder(project_builder)
     this.settable_source_properties = ["name"]
+    this.settable_schematic_properties = []
+    this.settable_pcb_properties = []
   }
 
   appendChild(child) {
@@ -160,7 +164,8 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
   }
 
   /**
-   * This is the main way that React sets props for a component
+   * This is the main way that React sets props for a component. We need to
+   * map the prop to the relevant builder, also handle a lot of shorthands
    */
   setProps(props) {
     const unused_props = []
@@ -193,6 +198,10 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
         this.setFootprintCenter(point.x, point.y)
       } else if (this.settable_source_properties.includes(prop_key)) {
         this.setSourceProperties({ [prop_key]: prop_val })
+      } else if (this.settable_schematic_properties.includes(prop_key)) {
+        this.setSchematicProperties({ [prop_key]: prop_val })
+      } else if (this.settable_pcb_properties.includes(prop_key)) {
+        console.warn("Settable PCB properties not implemented!")
       } else if (prop_key === "children") {
         // SPECIAL CASE: Bug in upstream code causes "children" to sometimes be
         // passed, we want to totally ignore this and not add it to unused props
