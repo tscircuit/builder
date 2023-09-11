@@ -54,6 +54,7 @@ export interface BaseComponentBuilder<T> {
   setFootprintRotation(
     rotation: number | `${number}deg`
   ): BaseComponentBuilder<T>
+  setProps: (props: any) => BaseComponentBuilder<T>
   setFootprint(fp: FootprintBuilder | string): BaseComponentBuilder<T>
   modifyFootprint(cb: (fb: FootprintBuilder) => any): BaseComponentBuilder<T>
   labelPort(position: number, name: string): BaseComponentBuilder<T>
