@@ -34,7 +34,7 @@
   "dependencies": {
     "@lume/kiwi": "^0.1.0",
     "@tscircuit/eagle-xml-converter": "^0.0.7",
-    "@tscircuit/routing": "^1.0.2",
+    "@tscircuit/routing": "^1.2.0",
     "@tscircuit/sparkfun-packages": "^1.0.3",
     "convert-units": "^2.3.4",
     "minisearch": "^6.1.0",
