@@ -9,7 +9,10 @@ import { applySelector } from "lib/apply-selector"
 export { convertToReadableTraceTree } from "./convert-to-readable-route-tree"
 import { straightRouteSolver } from "./straight-route-solver"
 import { rmstSolver } from "./rmst-solver"
+import { route1Solver } from "./route1-solver"
 import { findRoute } from "@tscircuit/routing"
+
+type RouteSolverOrString = Type.RouteSolver | "rmst" | "straight" | "route1"
 
 export type TraceBuilderCallback = (cb: TraceBuilder) => unknown
 export interface TraceBuilder {
@@ -17,7 +20,7 @@ export interface TraceBuilder {
   project_builder: ProjectBuilder
   parent: GroupBuilder
   setProps: (props: { path?: string[] }) => TraceBuilder
-  setRouteSolver: (routeSolver: Type.RouteSolver) => TraceBuilder
+  setRouteSolver: (routeSolver: RouteSolverOrString) => TraceBuilder
   addConnections: (portSelectors: Array<string>) => TraceBuilder
   build(elements: Type.AnyElement[]): Promise<Type.AnyElement[]>
 }
@@ -31,7 +34,7 @@ export const createTraceBuilder = (
   } as any
   const internal: any = {
     portSelectors: [] as string[],
-    routeSolver: rmstSolver,
+    routeSolver: route1Solver,
   }
 
   builder.addConnections = (portSelectors) => {
@@ -39,12 +42,16 @@ export const createTraceBuilder = (
     return builder
   }
 
-  builder.setRouteSolver = (
-    routeSolver: Type.RouteSolver | "rmst" | "straight"
-  ) => {
+  builder.setRouteSolver = (routeSolver: RouteSolverOrString) => {
     if (typeof routeSolver === "string") {
       internal.routeSolver =
-        routeSolver === "straight" ? straightRouteSolver : rmstSolver
+        routeSolver === "rmst"
+          ? rmstSolver
+          : routeSolver === "route1"
+          ? route1Solver
+          : routeSolver === "straight"
+          ? straightRouteSolver
+          : route1Solver // TODO default to rmstOrRoute1Solver
     }
     internal.routeSolver = routeSolver
     return builder

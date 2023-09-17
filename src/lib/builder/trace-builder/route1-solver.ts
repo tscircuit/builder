@@ -32,7 +32,34 @@ export const route1Solver: Type.RouteSolver = async ({
 
   if (!result.pathFound) return []
 
-  // return result.points.map(
+  // TODO this should be handled in findSchematicRoute, but for now
+  // find the point/terminal association for each returned point along
+  // the route
+  // const terminalIndexToPointIndex: Record<number, number> = {}
+  // for (let i = 0; i < terminals.length; i++) {
+  //   const terminal = terminals[i]
+  //   let closestDist = Infinity
+  //   let closestPointIndex = -1
+  //   for (let j = 0; j < result.points.length; j++) {
+  //     const point = result.points[j]
+  //     const dist = Math.hypot(point[0] - terminal[0], point[1] - terminal[1])
+  //     if (dist < closestDist) {
+  //       closestDist = dist
+  //       closestPointIndex = j
+  //     }
+  //   }
+  //   terminalIndexToPointIndex[i] = closestPointIndex
+  // }
 
-  throw new Error("route1Solver not implemented")
+  // const edges = result.points.map(
+  //   ({ from, to, fromTerminalIndex, toTerminalIndex }) => ({
+  //     from: { x: from[0], y: from[1], ti: fromTerminalIndex },
+  //     to: { x: to[0], y: to[1], ti: toTerminalIndex },
+  //   })
+  // )
+
+  return result.points.slice(0, -1).map((point, i) => ({
+    from: point,
+    to: result.points[i + 1],
+  }))
 }
