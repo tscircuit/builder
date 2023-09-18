@@ -11,6 +11,7 @@ import { straightRouteSolver } from "./straight-route-solver"
 import { rmstSolver } from "./rmst-solver"
 import { route1Solver } from "./route1-solver"
 import { findRoute } from "@tscircuit/routing"
+import { getSchematicObstaclesFromElements } from "./get-schematic-obstacles-from-elements"
 
 type RouteSolverOrString = Type.RouteSolver | "rmst" | "straight" | "route1"
 
@@ -130,7 +131,7 @@ export const createTraceBuilder = (
 
     const edges = await internal.routeSolver({
       terminals: schematicTerminals,
-      obstacles: [],
+      obstacles: getSchematicObstaclesFromElements(parentElements),
     })
 
     const schematic_trace: Type.SchematicTrace = {

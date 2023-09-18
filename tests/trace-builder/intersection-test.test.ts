@@ -10,7 +10,7 @@ test("intersection test", async (t) => {
           name: "D1",
         })
         .setSchematicRotation("180deg")
-        .setSchematicCenter(-2, 0.5)
+        .setSchematicCenter(-2, 2)
     )
     .add("resistor", (rb) =>
       rb
@@ -18,8 +18,9 @@ test("intersection test", async (t) => {
         .setSchematicCenter(0, 0)
     )
     .add("trace", (tb) => tb.addConnections([".R1 > .right", ".D1 > .left"]))
-    .add("resistor", (rb) =>
-      rb.setSchematicCenter(-1, 0.5).setSchematicRotation("-90deg")
+    .add(
+      "resistor",
+      (rb) => rb.setSchematicCenter(-0.5, 1) //.setSchematicRotation("-90deg")
     )
 
   const projectBuilderOutput = await projectBuilder.build()
