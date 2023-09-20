@@ -22,6 +22,10 @@ test("intersection test", async (t) => {
       "resistor",
       (rb) => rb.setSchematicCenter(-0.5, 1) //.setSchematicRotation("-90deg")
     )
+    .add(
+      "resistor",
+      (rb) => rb.setSchematicCenter(1, 1) //.setSchematicRotation("-90deg")
+    )
 
   const projectBuilderOutput = await projectBuilder.build()
 

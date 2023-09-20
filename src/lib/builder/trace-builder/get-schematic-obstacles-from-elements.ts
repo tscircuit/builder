@@ -1,27 +1,30 @@
 import * as Type from "lib/types"
-import { Obstacle } from "@tscircuit/routing"
+
+type Obstacle2 = {
+  cx: number
+  cy: number
+  w: number
+  h: number
+}
 
 export const getSchematicObstaclesFromElements = (
   elms: Type.AnyElement[]
-): Obstacle[] => {
-  const obstacles: Obstacle[] = []
+): Array<Obstacle2> => {
+  const obstacles: Obstacle2[] = []
 
   for (const elm of elms) {
     switch (elm.type) {
       case "schematic_component": {
         obstacles.push({
-          center: {
-            x: elm.center.x,
-            y: elm.center.y,
-          },
-          width: elm.size.width,
-          height: elm.size.height,
+          cx: elm.center.x,
+          cy: elm.center.y,
+          w: elm.size.width,
+          h: elm.size.height,
         })
         continue
       }
     }
   }
-  console.log(obstacles)
 
   return obstacles
 }

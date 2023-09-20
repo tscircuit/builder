@@ -20,15 +20,21 @@ export const route1Solver: Type.RouteSolver = async ({
     height: obstacle.h,
   }))
 
-  const result = findSchematicRoute({
+  const pathFindingParams = {
     pointsToConnect: terminals,
     obstacles: transformedObstacles,
     grid: {
-      maxGranularSearchSegments: 200,
-      marginSegments: 1,
+      maxGranularSearchSegments: 50,
+      marginSegments: 2,
       segmentSize: 0.1,
     },
-  })
+  }
+
+  const result = findSchematicRoute(pathFindingParams)
+
+  // TODO log pathFindingParams for submission to
+  // https://routing.tscircuit.com for debugging
+  // console.dir(pathFindingParams, { depth: 10 })
 
   if (!result.pathFound) return []
 
