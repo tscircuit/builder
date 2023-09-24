@@ -90,6 +90,7 @@ export class BugBuilderClass
       const portPosition = getPortPosition(port_arrangement, i + 1)
       this.ports.addPort({
         name: port_labels[i + 1],
+        pin_number: i + 1,
         center: { x: portPosition.x, y: portPosition.y },
         facing_direction: convertSideToDirection(portPosition.side),
       })

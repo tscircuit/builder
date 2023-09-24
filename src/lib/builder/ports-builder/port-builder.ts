@@ -7,13 +7,20 @@ export interface PortBuilder {
   name: string
   schematic_position: { x: Dimension; y: Dimension }
   schematic_direction: "up" | "down" | "left" | "right"
+  pin_number?: number
   setName(name: string): PortBuilder
+  setPinNumber(pin_number: number): PortBuilder
   setSchematicPosition(coords: { x: Dimension; y: Dimension }): PortBuilder
   setSchematicDirection(dir: "up" | "down" | "left" | "right"): PortBuilder
   build(): Type.AnyElement[]
 }
 
-const setable_props = ["name", "schematic_position", "schematic_direction"]
+const settable_props = [
+  "name",
+  "schematic_position",
+  "schematic_direction",
+  "pin_number",
+]
 
 export class PortBuilderClass implements PortBuilder {
   builder_type = "port_builder" as const
@@ -22,6 +29,7 @@ export class PortBuilderClass implements PortBuilder {
 
   schematic_position: Type.Point
   schematic_direction: "up" | "down" | "left" | "right"
+  pin_number?: number
 
   constructor(project_builder: ProjectBuilder) {
     this.project_builder = project_builder
@@ -35,7 +43,7 @@ export class PortBuilderClass implements PortBuilder {
     if (props.direction) this.schematic_direction = props.direction
 
     for (const key of Object.keys(props).filter((k) =>
-      setable_props.includes(k),
+      settable_props.includes(k)
     )) {
       this[key] = props[key]
     }
@@ -44,6 +52,11 @@ export class PortBuilderClass implements PortBuilder {
 
   setName(name) {
     this.name = name
+    return this
+  }
+
+  setPinNumber(pin_number: number) {
+    this.pin_number = pin_number
     return this
   }
 
@@ -64,7 +77,7 @@ export class PortBuilderClass implements PortBuilder {
 }
 
 export const createPortBuilder = (
-  project_builder: ProjectBuilder,
+  project_builder: ProjectBuilder
 ): PortBuilder => {
   return new PortBuilderClass(project_builder)
 }

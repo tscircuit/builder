@@ -22,13 +22,14 @@ export interface PortsBuilder {
   addPort: ((portName: string, schematicPosition: Type.Point) => PortsBuilder) &
     ((params: {
       name: string
+      pin_number?: number
       center: { x: number; y: number }
       facing_direction: "up" | "down" | "left" | "right"
     }) => PortsBuilder)
 
   add<T extends keyof PortsBuilderAddables>(
     builder_type: T,
-    callback: (builder: ReturnType<PortsBuilderAddables[T]>) => unknown,
+    callback: (builder: ReturnType<PortsBuilderAddables[T]>) => unknown
   ): PortsBuilder
 
   setSourceComponent: (source_component_id: string) => PortsBuilder
@@ -65,14 +66,15 @@ export class PortsBuilderClass implements PortsBuilder {
         createPortBuilder(this.project_builder)
           .setSchematicPosition(params[0].center)
           .setName(params[0].name)
-          .setSchematicDirection(params[0].facing_direction),
+          .setPinNumber(params[0].pin_number)
+          .setSchematicDirection(params[0].facing_direction)
       )
     } else {
       const [name, schematic_position] = params
       this.ports.push(
         createPortBuilder(this.project_builder)
           .setSchematicPosition(schematic_position)
-          .setName(name),
+          .setName(name)
       )
     }
     return this
@@ -81,7 +83,7 @@ export class PortsBuilderClass implements PortsBuilder {
   add(builder_type, callback) {
     if (!ports_builder_addables[builder_type]) {
       throw new Error(
-        `No addable in ports builder for builder_type: "${builder_type}"`,
+        `No addable in ports builder for builder_type: "${builder_type}"`
       )
     }
     const builder = ports_builder_addables[builder_type](this.project_builder)
@@ -109,12 +111,14 @@ export class PortsBuilderClass implements PortsBuilder {
       const source_port_id = project_builder.getId("source_port")
       const schematic_port_id = project_builder.getId("schematic_port")
       const pcb_port_id = project_builder.getId("pcb_port")
+      const pin_number = port.pin_number
       return [
         {
           type: "source_port",
           name: port.name,
           source_port_id,
           source_component_id: this.source_component_id,
+          pin_number,
         } as Type.SourcePort,
         {
           type: "schematic_port",
@@ -122,7 +126,22 @@ export class PortsBuilderClass implements PortsBuilder {
           source_port_id,
           center: bc.convert(port.schematic_position),
           facing_direction: port.schematic_direction,
+          schematic_component_id: this.schematic_component_id,
         } as Type.SchematicPort,
+        // add schematic port pin_number text if pin_number is set
+        ...(!pin_number
+          ? []
+          : [
+              {
+                type: "schematic_text",
+                schematic_port_id,
+                schematic_text_id: project_builder.getId("schematic_text"),
+                text: pin_number.toString(),
+                anchor: "center",
+                position: bc.convert(port.schematic_position),
+                schematic_component_id: this.schematic_component_id,
+              } as Type.SchematicText,
+            ]),
         {
           type: "pcb_port",
           pcb_port_id,
@@ -134,7 +153,7 @@ export class PortsBuilderClass implements PortsBuilder {
 }
 
 export const createPortsBuilder = (
-  project_builder: ProjectBuilder,
+  project_builder: ProjectBuilder
 ): PortsBuilder => {
   return new PortsBuilderClass(project_builder)
 }

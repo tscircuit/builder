@@ -107,6 +107,7 @@ export interface SchematicPort {
   type: "schematic_port"
   schematic_port_id: string
   source_port_id: string
+  schematic_component_id?: string
   center: Point
   facing_direction?: "up" | "down" | "left" | "right"
 }
@@ -290,6 +291,7 @@ export interface SourceGroup {
 
 export interface SourcePort {
   type: "source_port"
+  pin_number?: number
   name: string
   source_port_id: string
   source_component_id: string
