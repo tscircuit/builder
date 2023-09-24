@@ -31,13 +31,13 @@ export const getSchematicObstaclesFromElements = (
       case "schematic_port": {
         if (opts?.excluded_schematic_port_ids?.includes(elm.schematic_port_id))
           continue
-        console.log("including schematic port in obstacles", elm)
         obstacles.push({
           cx: elm.center.x,
           cy: elm.center.y,
-          w: 2,
-          h: 2,
+          w: 0.4,
+          h: 0.4,
         })
+        continue
       }
     }
   }

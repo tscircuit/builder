@@ -29,7 +29,7 @@ export const route1Solver: Type.RouteSolver = async ({
     obstacles: transformedObstacles,
     grid: {
       maxGranularSearchSegments: 50,
-      marginSegments: 2,
+      marginSegments: 10,
       segmentSize: 0.1,
     },
   }
