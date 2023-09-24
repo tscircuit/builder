@@ -148,7 +148,7 @@ export class PortsBuilderClass implements PortsBuilder {
                   rotatePoint({
                     point: multPoint(
                       directionToVec(port.schematic_direction),
-                      0.15
+                      0.175
                     ),
                     center: { x: 0, y: 0 },
                     rotationDeg:
