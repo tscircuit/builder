@@ -1,5 +1,9 @@
 import * as Type from "lib/types"
-import { findSchematicRoute } from "@tscircuit/routing"
+import {
+  findSchematicRoute,
+  movePointsOutsideObstacles,
+} from "@tscircuit/routing"
+import { straightRouteSolver } from "./straight-route-solver"
 
 /**
  * Uses a path-finding algorithm with a simplification step. It's tuned to
@@ -30,13 +34,17 @@ export const route1Solver: Type.RouteSolver = async ({
     },
   }
 
-  const result = findSchematicRoute(pathFindingParams)
+  const result = findSchematicRoute(
+    movePointsOutsideObstacles(pathFindingParams)
+  )
 
   // TODO log pathFindingParams for submission to
   // https://routing.tscircuit.com for debugging
   // console.dir(pathFindingParams, { depth: 10 })
 
-  if (!result.pathFound) return []
+  if (!result.pathFound) {
+    return straightRouteSolver({ terminals, obstacles })
+  }
 
   // TODO this should be handled in findSchematicRoute, but for now
   // find the point/terminal association for each returned point along
