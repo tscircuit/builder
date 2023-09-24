@@ -7,8 +7,13 @@ type Obstacle2 = {
   h: number
 }
 
+type Options = {
+  excluded_schematic_port_ids?: string[]
+}
+
 export const getSchematicObstaclesFromElements = (
-  elms: Type.AnyElement[]
+  elms: Type.AnyElement[],
+  opts?: Options
 ): Array<Obstacle2> => {
   const obstacles: Obstacle2[] = []
 
@@ -22,6 +27,17 @@ export const getSchematicObstaclesFromElements = (
           h: elm.size.height,
         })
         continue
+      }
+      case "schematic_port": {
+        if (opts?.excluded_schematic_port_ids?.includes(elm.schematic_port_id))
+          continue
+        console.log("including schematic port in obstacles", elm)
+        obstacles.push({
+          cx: elm.center.x,
+          cy: elm.center.y,
+          w: 2,
+          h: 2,
+        })
       }
     }
   }

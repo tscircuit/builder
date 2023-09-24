@@ -131,7 +131,11 @@ export const createTraceBuilder = (
 
     const edges = await internal.routeSolver({
       terminals: schematicTerminals,
-      obstacles: getSchematicObstaclesFromElements(parentElements),
+      obstacles: getSchematicObstaclesFromElements(parentElements, {
+        excluded_schematic_port_ids: schematicTerminals.map(
+          (t) => t.schematic_port_id
+        ),
+      }),
     })
 
     const schematic_trace: Type.SchematicTrace = {
