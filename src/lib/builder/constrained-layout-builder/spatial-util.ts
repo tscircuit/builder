@@ -27,11 +27,25 @@ export const getSpatialBoundsFromSpatialElements = (
 }
 
 export const toCenteredSpatialObj = (obj: any): SpatialElement => {
-  const x = obj.x ?? obj.center?.x
-  const y = obj.y ?? obj.center?.y
-  const w = obj.w ?? obj.width ?? obj.size?.width ?? 0
-  const h = obj.h ?? obj.height ?? obj.size?.height ?? 0
-  const align = obj.align ?? "center"
+  let x = obj.x ?? obj.center?.x
+  let y = obj.y ?? obj.center?.y
+  let w = obj.w ?? obj.width ?? obj.size?.width ?? 0
+  let h = obj.h ?? obj.height ?? obj.size?.height ?? 0
+  let align = obj.align ?? "center"
+
+  if (
+    obj.x1 !== undefined &&
+    obj.x2 !== undefined &&
+    obj.y1 !== undefined &&
+    obj.y2 !== undefined
+  ) {
+    // It's a line
+    x = (obj.x1 + obj.x2) / 2
+    y = (obj.y1 + obj.y2) / 2
+    w = Math.abs(obj.x1 - obj.x2)
+    h = Math.abs(obj.y1 - obj.y2)
+  }
+
   if (x === undefined || y === undefined) {
     throw new Error(
       `Cannot convert to spatial obj (no x,y): ${JSON.stringify(
