@@ -3,6 +3,7 @@ import { Builder } from "lib/types"
 import { Except, Simplify } from "type-fest"
 import { ProjectBuilder } from "../project-builder"
 import { createPortBuilder, PortBuilder } from "./port-builder"
+import { directionToVec, multPoint, rotatePoint, sumPoints } from "lib/utils"
 
 export const ports_builder_addables = {
   port: createPortBuilder,
@@ -138,7 +139,22 @@ export class PortsBuilderClass implements PortsBuilder {
                 schematic_text_id: project_builder.getId("schematic_text"),
                 text: pin_number.toString(),
                 anchor: "center",
-                position: bc.convert(port.schematic_position),
+                position: sumPoints([
+                  bc.convert(port.schematic_position),
+
+                  // Place the pin number text opposite to the direction the port
+                  // is facing then "up a bit" so it ideally rests above the
+                  // line connecting a bug to the port
+                  rotatePoint({
+                    point: multPoint(
+                      directionToVec(port.schematic_direction),
+                      0.15
+                    ),
+                    center: { x: 0, y: 0 },
+                    rotationDeg:
+                      (port.schematic_direction === "right" ? -1 : 1) * 135,
+                  }),
+                ]),
                 schematic_component_id: this.schematic_component_id,
               } as Type.SchematicText,
             ]),
