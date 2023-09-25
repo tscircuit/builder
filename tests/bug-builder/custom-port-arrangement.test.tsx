@@ -10,15 +10,13 @@ test("custom-port-arrangement bug", async (t) => {
         .setSchematicProperties({
           port_arrangement: {
             left_side: {
-              direction: "down",
               pins: [1],
             },
             bottom_side: {
-              direction: "right",
               pins: [3],
             },
             right_side: {
-              direction: "down",
+              direction: "top-to-bottom",
               pins: [2, 4],
             },
           },
