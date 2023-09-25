@@ -1,3 +1,98 @@
+export type VerticalPortSideConfiguration = {
+  pin_definition_direction?: "top-to-bottom" | "bottom-to-top"
+  pins: number[]
+}
+export type HorizontalPortSideConfiguration = {
+  pin_definition_direction?: "left-to-right" | "right-to-left"
+  pins: number[]
+}
+
+export type ExplicitPinMappingArrangement = {
+  left_side?: HorizontalPortSideConfiguration
+  right_side?: HorizontalPortSideConfiguration
+  top_side?: VerticalPortSideConfiguration
+  bottom_side?: VerticalPortSideConfiguration
+}
+export type SideSizes = {
+  left_size?: number
+  right_size?: number
+  top_size?: number
+  bottom_size?: number
+}
+
+export type PortArrangement = SideSizes | ExplicitPinMappingArrangement
+
+export const hasExplicitPinMapping = (
+  pa: PortArrangement
+): pa is ExplicitPinMappingArrangement => {
+  return (
+    "left_side" in pa ||
+    "right_side" in pa ||
+    "top_side" in pa ||
+    "bottom_side" in pa
+  )
+}
+
+export const getExplicitToNormalPinMapping = (
+  pa: ExplicitPinMappingArrangement
+): number[] => {
+  const normal_to_explicit: number[] = [0]
+  const { left_side, right_side, top_side, bottom_side } = pa
+  for (const [side, flipOrderBcSide] of [
+    [left_side, false],
+    [bottom_side, false],
+    [right_side, true],
+    [top_side, true],
+  ] as const) {
+    if (side) {
+      const definedOrderNormal =
+        side.pin_definition_direction === "left-to-right" ||
+        side.pin_definition_direction === "top-to-bottom"
+
+      const definedPins = [...side.pins]
+      if (flipOrderBcSide) {
+        definedPins.reverse()
+      }
+      if (!definedOrderNormal) {
+        definedPins.reverse()
+      }
+      for (let i = 0; i < definedPins.length; i++) {
+        normal_to_explicit.push(side.pins[i])
+      }
+    }
+  }
+  const explicit_to_normal = []
+  for (let i = 0; i < normal_to_explicit.length; i++) {
+    explicit_to_normal[normal_to_explicit[i]] = i
+  }
+  return explicit_to_normal
+}
+
+export const getSizeOfSidesFromPortArrangement = (
+  pa: PortArrangement
+): {
+  left_size: number
+  right_size: number
+  top_size: number
+  bottom_size: number
+} => {
+  if (hasExplicitPinMapping(pa)) {
+    return {
+      left_size: pa.left_side?.pins.length ?? 0,
+      right_size: pa.right_side?.pins.length ?? 0,
+      top_size: pa.top_side?.pins.length ?? 0,
+      bottom_size: pa.bottom_side?.pins.length ?? 0,
+    }
+  }
+  const {
+    left_size = 0,
+    right_size = 0,
+    top_size = 0,
+    bottom_size = 0,
+  } = pa as any
+  return { left_size, right_size, top_size, bottom_size }
+}
+
 /**
  * Minimum distance between two sides, e.g. if there is only a left_size and
  * right_size provided (only pins on left and right) then the minimum distance
@@ -10,18 +105,15 @@ const MIN_SIDE_DIST = 1.5
  */
 const PORT_SPACING = 0.5
 
-export const getPortArrangementSize = (port_arrangement: {
-  left_size?: number
-  right_size?: number
-  top_size?: number
-  bottom_size?: number
-}): { width: number; height: number; total_ports: number } => {
+export const getPortArrangementSize = (
+  port_arrangement: PortArrangement
+): { width: number; height: number; total_ports: number } => {
   const {
     top_size = 0,
     right_size = 0,
     bottom_size = 0,
     left_size = 0,
-  } = port_arrangement
+  } = getSizeOfSidesFromPortArrangement(port_arrangement)
 
   const total_ports = top_size + right_size + bottom_size + left_size
 
@@ -44,12 +136,7 @@ export const getPortArrangementSize = (port_arrangement: {
  * top-left and traveling down the left side. The index begins with 1.
  */
 export const getPortPosition = (
-  port_arrangement: {
-    left_size?: number
-    right_size?: number
-    top_size?: number
-    bottom_size?: number
-  },
+  port_arrangement: PortArrangement,
   position: number
 ): {
   x: number
@@ -61,12 +148,19 @@ export const getPortPosition = (
     right_size = 0,
     bottom_size = 0,
     left_size = 0,
-  } = port_arrangement
+  } = getSizeOfSidesFromPortArrangement(port_arrangement)
   const total = top_size + right_size + bottom_size + left_size
   if (position < 1 || position > total) {
     throw new Error(
       `Invalid position ${position} on port arrangement with ${total} ports`
     )
+  }
+
+  if (hasExplicitPinMapping(port_arrangement)) {
+    // Map position to equivalent position in a normal port mapping
+    const og_p = position
+    position = getExplicitToNormalPinMapping(port_arrangement)[position]
+    console.log("original position:", og_p, "mapped to:", position)
   }
 
   let side: "top" | "bottom" | "left" | "right"
