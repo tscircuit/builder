@@ -130,6 +130,22 @@ export class BugBuilderClass
         }
         textElements.push(portText)
       }
+      if (portPosition.side === "top") {
+        const portText: Type.SchematicText = {
+          type: "schematic_text",
+          schematic_text_id,
+          schematic_component_id,
+          text: port_labels[i + 1],
+          anchor: "left",
+          rotation: Math.PI / 2,
+
+          position: {
+            x: portPosition.x,
+            y: portPosition.y + 0.4,
+          },
+        }
+        textElements.push(portText)
+      }
     }
 
     elements.push(
