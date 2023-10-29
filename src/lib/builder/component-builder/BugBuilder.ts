@@ -105,9 +105,27 @@ export class BugBuilderClass
           text: port_labels[i + 1],
           anchor: is_left ? "left" : "right",
 
+          rotation: 0,
+
           position: {
             x: portPosition.x + (is_left ? 0.4 : -0.4),
             y: portPosition.y,
+          },
+        }
+        textElements.push(portText)
+      }
+      if (portPosition.side === "bottom") {
+        const portText: Type.SchematicText = {
+          type: "schematic_text",
+          schematic_text_id,
+          schematic_component_id,
+          text: port_labels[i + 1],
+          anchor: "right",
+          rotation: Math.PI / 2,
+
+          position: {
+            x: portPosition.x,
+            y: portPosition.y - 0.4,
           },
         }
         textElements.push(portText)

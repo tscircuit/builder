@@ -139,6 +139,7 @@ export class PortsBuilderClass implements PortsBuilder {
                 schematic_text_id: project_builder.getId("schematic_text"),
                 text: pin_number.toString(),
                 anchor: "center",
+                rotation: 0,
                 position: sumPoints([
                   bc.convert(port.schematic_position),
 

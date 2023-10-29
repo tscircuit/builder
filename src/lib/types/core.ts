@@ -100,6 +100,7 @@ export interface SchematicText {
   schematic_text_id: string
   text: string
   position: Point
+  rotation: number
   anchor: "center" | "left" | "right" | "top" | "bottom"
 }
 
