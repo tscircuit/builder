@@ -2,7 +2,7 @@ import { createProjectBuilder } from "lib/builder"
 import test from "ava"
 import { logLayout } from "../utils/log-layout"
 
-test("no-traces-through-pins", async (t) => {
+test("no-traces-through-schematic-pins", async (t) => {
   const projectBuilder = await createProjectBuilder()
     .add("diode", (db) =>
       db
@@ -22,6 +22,6 @@ test("no-traces-through-pins", async (t) => {
 
   const projectBuilderOutput = await projectBuilder.build()
 
-  await logLayout("no-traces-through-pins", projectBuilderOutput)
+  await logLayout("no-traces-through-schematic-pins", projectBuilderOutput)
   t.pass()
 })
