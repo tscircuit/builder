@@ -163,6 +163,7 @@ export const createTraceBuilder = (
         )
       return pcb_port
     })
+    const pcb_terminal_port_ids = pcb_terminals.map((t) => t.pcb_port_id)
 
     const pcb_route: Type.PCBTrace["route"] = []
     try {
@@ -172,7 +173,28 @@ export const createTraceBuilder = (
           maxGranularSearchSegments: 50,
           segmentSize: 1, // mm
         },
-        obstacles: [],
+        obstacles: [
+          ...parentElements
+            .filter((elm): elm is Type.PCBSMTPad => elm.type === "pcb_smtpad")
+            // Exclude the pads that are connected to the trace
+            .filter((elm) => !pcb_terminal_port_ids.includes(elm.pcb_port_id))
+            .map((pad) => {
+              if (pad.shape === "rect") {
+                return {
+                  center: { x: pad.x, y: pad.y },
+                  width: pad.width,
+                  height: pad.height,
+                }
+              } else if (pad.shape === "circle") {
+                // TODO support better circle obstacles
+                return {
+                  center: { x: pad.x, y: pad.y },
+                  width: pad.radius * 2,
+                  height: pad.radius * 2,
+                }
+              }
+            }),
+        ],
         pointsToConnect: pcb_terminals,
       })
 
@@ -197,7 +219,7 @@ export const createTraceBuilder = (
         pcb_trace_id,
         source_trace_id,
         pcb_component_ids: [], // TODO
-        pcb_port_ids: pcb_terminals.map((t) => t.pcb_port_id),
+        pcb_port_ids: pcb_terminal_port_ids,
       })
     }
 
