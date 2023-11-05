@@ -16,6 +16,7 @@ test("bug that has a footprint and connects to a resistor", async (t) => {
         .setFootprint("sot236")
         .labelPort(1, "D0")
         .labelPort(2, "D1")
+        .setFootprintRotation("90deg")
         .setSchematicCenter(0, 0)
     )
     .add("resistor", (bb) =>

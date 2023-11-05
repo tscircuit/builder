@@ -160,7 +160,7 @@ export const getPortPosition = (
     // Map position to equivalent position in a normal port mapping
     const og_p = position
     position = getExplicitToNormalPinMapping(port_arrangement)[position]
-    console.log("original position:", og_p, "mapped to:", position)
+    // console.log("original position:", og_p, "mapped to:", position)
   }
 
   let side: "top" | "bottom" | "left" | "right"

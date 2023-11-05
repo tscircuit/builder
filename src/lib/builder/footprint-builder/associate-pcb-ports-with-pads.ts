@@ -31,6 +31,4 @@ export const associatePcbPortsWithPads = (elms: Type.AnyElement[]) => {
       pcb_port.y = matched_pad.y
     }
   }
-
-  console.log(elms)
 }
