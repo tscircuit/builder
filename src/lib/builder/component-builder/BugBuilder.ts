@@ -9,6 +9,7 @@ import getPortPosition, {
   getPortArrangementSize,
 } from "../../utils/get-port-position"
 import { convertSideToDirection } from "lib/utils/convert-side-to-direction"
+import { associatePcbPortsWithPads } from "../footprint-builder/associate-pcb-ports-with-pads"
 
 export type BugBuilderCallback = (rb: BugBuilder) => unknown
 export interface BugBuilder extends BaseComponentBuilder<BugBuilder> {
@@ -164,6 +165,8 @@ export class BugBuilderClass
       pcb_component_id,
     })
     elements.push(...(await this.footprint.build(bc)))
+
+    associatePcbPortsWithPads(elements)
 
     return elements
   }

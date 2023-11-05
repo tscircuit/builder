@@ -29,6 +29,7 @@ test("bug that has a footprint and connects to a resistor", async (t) => {
     .build()
 
   const d0_port = result.find((elm) => {
+    if (elm.type !== "pcb_port") return false
     if (!elm.source_port_id) return false
     const elm_source = result.find(
       (e2) =>
@@ -38,7 +39,6 @@ test("bug that has a footprint and connects to a resistor", async (t) => {
     return false
   })
 
-  console.log(d0_port)
   t.truthy(d0_port.x)
   t.truthy(d0_port.y)
 

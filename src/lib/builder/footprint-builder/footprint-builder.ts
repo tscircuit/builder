@@ -12,6 +12,7 @@ import {
 import { SMTPadBuilder, createSMTPadBuilder } from "./smt-pad-builder"
 import sparkfunPackages from "@tscircuit/sparkfun-packages"
 import MiniSearch from "minisearch"
+import { associatePcbPortsWithPads } from "./associate-pcb-ports-with-pads"
 
 const SPARKFUN_PACKAGE_NAMES = Object.keys(sparkfunPackages)
 
@@ -185,7 +186,7 @@ export class FootprintBuilderClass implements FootprintBuilder {
       compose(translate(my_position.x, my_position.y), rotate(this.rotation))
     )
 
-    return built_elements
+    return transformed_elements
   }
 }
 
