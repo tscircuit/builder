@@ -277,6 +277,18 @@ export interface PCBConfig {
   dimension_unit: "mm"
 }
 
+export interface PCBTraceError {
+  pcb_error_id: string
+  type: "pcb_error"
+  error_type: "pcb_trace_error"
+  message: string
+  pcb_trace_id: string
+  source_trace_id: string
+  pcb_component_ids: string[]
+}
+
+export type PCBError = PCBTraceError
+
 export interface SourceTrace {
   type: "source_trace"
   source_trace_id: string
@@ -341,6 +353,7 @@ export type AnyElement =
   | PCBHole
   | PCBPlatedHole
   | PCBVia
+  | PCBError
   | SchematicGroup
   | SchematicComponent
   | SchematicTrace

@@ -149,7 +149,8 @@ export const createTraceBuilder = (
     // PCB ROUTING
     // ----------------------------
 
-    const pcb_trace_id = builder.project_builder.getId("schematic_trace")
+    const pcb_trace_id = builder.project_builder.getId("pcb_trace")
+    const pcb_errors: Type.PCBError[] = []
 
     const pcb_terminals = sourcePortsInRoute.map((sp) => {
       const pcb_port = parentElements.find(
@@ -188,7 +189,15 @@ export const createTraceBuilder = (
         }
       }
     } catch (e) {
-      console.warn(`Error while pcb-trace-route solving: ${e.toString()}`)
+      pcb_errors.push({
+        pcb_error_id: builder.project_builder.getId("pcb_error"),
+        type: "pcb_error",
+        error_type: "pcb_trace_error",
+        message: `Error while pcb-trace-route solving: ${e.toString()}`,
+        pcb_trace_id,
+        source_trace_id,
+        pcb_component_ids: [], // TODO
+      })
     }
 
     // TODO construct route from pcb_terminals
@@ -200,7 +209,7 @@ export const createTraceBuilder = (
       route: pcb_route,
     }
 
-    return [source_trace, schematic_trace, pcb_trace]
+    return [source_trace, schematic_trace, pcb_trace, ...pcb_errors]
   }
 
   return builder
