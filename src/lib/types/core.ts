@@ -285,6 +285,7 @@ export interface PCBTraceError {
   pcb_trace_id: string
   source_trace_id: string
   pcb_component_ids: string[]
+  pcb_port_ids: string[]
 }
 
 export type PCBError = PCBTraceError

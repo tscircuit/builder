@@ -28,6 +28,20 @@ test("bug that has a footprint and connects to a resistor", async (t) => {
     .add("trace", (tb) => tb.addConnections([".B1 > .D0", ".R1 > .right"]))
     .build()
 
+  const d0_port = result.find((elm) => {
+    if (!elm.source_port_id) return false
+    const elm_source = result.find(
+      (e2) =>
+        e2.source_port_id === elm.source_port_id && e2.type === "source_port"
+    )
+    if (elm_source && elm_source.name === "D0") return true
+    return false
+  })
+
+  console.log(d0_port)
+  t.truthy(d0_port.x)
+  t.truthy(d0_port.y)
+
   await logLayout(`bug connected to resistor`, result)
   t.pass()
 })

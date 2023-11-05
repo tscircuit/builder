@@ -197,6 +197,7 @@ export const createTraceBuilder = (
         pcb_trace_id,
         source_trace_id,
         pcb_component_ids: [], // TODO
+        pcb_port_ids: pcb_terminals.map((t) => t.pcb_port_id),
       })
     }
 
