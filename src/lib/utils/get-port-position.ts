@@ -1,3 +1,5 @@
+import range from "lodash/range"
+
 export type VerticalPortSideConfiguration = {
   pin_definition_direction?: "top-to-bottom" | "bottom-to-top"
   pins: number[]
@@ -104,6 +106,30 @@ const MIN_SIDE_DIST = 1.5
  * Distance between ports on the same side
  */
 const PORT_SPACING = 0.5
+
+/**
+ * These are all the defined port indices, for regular bugs all ports are
+ * defined but some bugs have a lot of unused pins, so there will be skipped
+ * ports.
+ */
+export const getPortIndices = (pa: PortArrangement): number[] => {
+  if (hasExplicitPinMapping(pa)) {
+    const port_indices: number[] = []
+    for (const p of [
+      ...pa.left_side?.pins,
+      ...pa.bottom_side?.pins,
+      ...pa.right_side?.pins,
+      ...pa.top_side?.pins,
+    ]) {
+      port_indices.push(p)
+    }
+    return port_indices
+  }
+  const { left_size, right_size, top_size, bottom_size } =
+    getSizeOfSidesFromPortArrangement(pa)
+
+  return range(1, left_size + right_size + top_size + bottom_size + 1)
+}
 
 export const getPortArrangementSize = (
   port_arrangement: PortArrangement

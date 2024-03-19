@@ -10,7 +10,7 @@ test("custom-port-arrangement bug", async (t) => {
         .setSchematicProperties({
           port_arrangement: {
             left_side: {
-              pins: [1],
+              pins: [1, 8],
             },
             bottom_side: {
               pins: [3],
