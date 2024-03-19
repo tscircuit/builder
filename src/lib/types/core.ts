@@ -71,12 +71,31 @@ export interface SchematicComponent {
   // }
 
   // TODO only for schematic-bug
-  port_arrangement?: {
-    left_size: number
-    right_size: number
-    top_size?: number
-    bottom_size?: number
-  }
+  port_arrangement?:
+    | {
+        left_size: number
+        right_size: number
+        top_size?: number
+        bottom_size?: number
+      }
+    | {
+        left_side?: {
+          pins: number[]
+          direction?: "top-to-bottom" | "bottom-to-top"
+        }
+        right_side?: {
+          pins: number[]
+          direction?: "top-to-bottom" | "bottom-to-top"
+        }
+        top_side?: {
+          pins: number[]
+          direction?: "left-to-right" | "right-to-left"
+        }
+        bottom_side?: {
+          pins: number[]
+          direction?: "left-to-right" | "right-to-left"
+        }
+      }
   port_labels?: {
     [port_number: string]: string
   }
