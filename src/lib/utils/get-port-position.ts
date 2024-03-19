@@ -116,10 +116,10 @@ export const getPortIndices = (pa: PortArrangement): number[] => {
   if (hasExplicitPinMapping(pa)) {
     const port_indices: number[] = []
     for (const p of [
-      ...pa.left_side?.pins,
-      ...pa.bottom_side?.pins,
-      ...pa.right_side?.pins,
-      ...pa.top_side?.pins,
+      ...(pa.left_side?.pins ?? []),
+      ...(pa.bottom_side?.pins ?? []),
+      ...(pa.right_side?.pins ?? []),
+      ...(pa.top_side?.pins ?? []),
     ]) {
       port_indices.push(p)
     }
@@ -176,9 +176,12 @@ export const getPortPosition = (
     left_size = 0,
   } = getSizeOfSidesFromPortArrangement(port_arrangement)
   const total = top_size + right_size + bottom_size + left_size
-  if (position < 1 || position > total) {
+  const port_indices = getPortIndices(port_arrangement)
+  if (!port_indices.includes(position)) {
     throw new Error(
-      `Invalid position ${position} on port arrangement with ${total} ports`
+      `Invalid position ${position} on port arrangement with available ports: ${port_indices.join(
+        " "
+      )}`
     )
   }
 

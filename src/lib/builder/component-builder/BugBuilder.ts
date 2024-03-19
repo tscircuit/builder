@@ -7,6 +7,7 @@ import { PortsBuilder } from "../ports-builder"
 import { Except } from "type-fest"
 import getPortPosition, {
   getPortArrangementSize,
+  getPortIndices,
 } from "../../utils/get-port-position"
 import { convertSideToDirection } from "lib/utils/convert-side-to-direction"
 import { associatePcbPortsWithPads } from "../footprint-builder/associate-pcb-ports-with-pads"
@@ -87,11 +88,12 @@ export class BugBuilderClass
     const { port_labels } = this.schematic_properties
     const { total_ports } = port_arrangement_size
 
-    for (let i = 0; i < total_ports; i++) {
-      const portPosition = getPortPosition(port_arrangement, i + 1)
+    const port_indices = getPortIndices(port_arrangement)
+    for (const pn of port_indices) {
+      const portPosition = getPortPosition(port_arrangement, pn)
       this.ports.addPort({
-        name: port_labels[i + 1],
-        pin_number: i + 1,
+        name: port_labels[pn],
+        pin_number: pn,
         center: { x: portPosition.x, y: portPosition.y },
         facing_direction: convertSideToDirection(portPosition.side),
       })
@@ -103,7 +105,7 @@ export class BugBuilderClass
           type: "schematic_text",
           schematic_text_id,
           schematic_component_id,
-          text: port_labels[i + 1],
+          text: port_labels[pn],
           anchor: is_left ? "left" : "right",
 
           rotation: 0,
@@ -120,7 +122,7 @@ export class BugBuilderClass
           type: "schematic_text",
           schematic_text_id,
           schematic_component_id,
-          text: port_labels[i + 1],
+          text: port_labels[pn],
           anchor: "right",
           rotation: Math.PI / 2,
 
@@ -136,7 +138,7 @@ export class BugBuilderClass
           type: "schematic_text",
           schematic_text_id,
           schematic_component_id,
-          text: port_labels[i + 1],
+          text: port_labels[pn],
           anchor: "left",
           rotation: Math.PI / 2,
 
