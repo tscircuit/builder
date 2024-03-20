@@ -199,6 +199,9 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
         this.setSchematicProperties(prop_val)
       } else if (prop_key === "footprint" && typeof prop_val === "string") {
         this.setFootprint(prop_val as any)
+      } else if (prop_key === "footprint") {
+        // TODO check if builder?
+        this.setFootprint(prop_val as any)
       } else if (prop_key === "schematic_rotation" || prop_key === "rotation") {
         this.setSchematicRotation(prop_val)
       } else if (prop_key === "footprint_center" && point) {
