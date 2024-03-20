@@ -55,7 +55,7 @@ export interface FootprintBuilder {
 }
 
 export class FootprintBuilderClass implements FootprintBuilder {
-  builder_type: "footprint_builder"
+  builder_type: "footprint_builder" = "footprint_builder"
   project_builder: ProjectBuilder
   addables: FootprintBuilderAddables
   position: Type.Point
@@ -75,6 +75,16 @@ export class FootprintBuilderClass implements FootprintBuilder {
       return this
     } else if (child.builder_type === "plated_hole_builder") {
       this.children.push(child)
+      return this
+    } else if (child.builder_type === "footprint_builder") {
+      if (this.children.length > 0) {
+        throw new Error(
+          "Footprint builder cannot be replaced by child footprint builder because the parent footprint builder has children. In the future we may support merging footprint builders"
+        )
+      }
+      this.position = child.position
+      this.rotation = child.rotation
+      this.children.push(...child.children)
       return this
     }
     throw new Error(
@@ -169,6 +179,11 @@ export class FootprintBuilderClass implements FootprintBuilder {
     } else {
       this.rotation = (parseFloat(rotation.split("deg")[0]) / 180) * Math.PI
     }
+    return this
+  }
+
+  reset() {
+    this.children = []
     return this
   }
 

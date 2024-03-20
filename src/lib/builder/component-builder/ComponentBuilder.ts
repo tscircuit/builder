@@ -125,6 +125,11 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
         this.schematic_symbol.appendChild(child)
         return this
       }
+      case "footprint_builder": {
+        // TODO merge
+        this.footprint = child
+        return this
+      }
     }
 
     throw new Error(
