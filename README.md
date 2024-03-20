@@ -2,7 +2,7 @@
 
 [Docs](https://tscircuit.github.io/builder) &middot; [Github](https://github.com/tscircuit/builder) &middot; [Examples](#) &middot; [Contributing](#) &middot; [TSCircuit](https://tscircuit.com)
 
-TSCircuit Builder is a Typescript builder pattern for constructing schematic and PCB layouts.
+TSCircuit Builder is a Typescript builder pattern for constructing schematic and PCB layouts. This is an internal detail, [use tscircuit tsx](https://github.com/tscircuit/tscircuit)
 
 TSCircuit TSX eventually renders to a builder. The builder will build
 TSCircuit Builder Output (TSBO), a JSON output. TSBO can be rendered to
