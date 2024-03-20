@@ -204,8 +204,10 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
         this.setSchematicProperties(prop_val)
       } else if (prop_key === "footprint" && typeof prop_val === "string") {
         this.setFootprint(prop_val as any)
-      } else if (prop_key === "footprint") {
-        // TODO check if builder?
+      } else if (
+        prop_key === "footprint" &&
+        (prop_val as any)?.builder_type === "footprint_builder"
+      ) {
         this.setFootprint(prop_val as any)
       } else if (prop_key === "schematic_rotation" || prop_key === "rotation") {
         this.setSchematicRotation(prop_val)
@@ -273,7 +275,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
   setFootprint(fp: FootprintBuilder | SparkfunComponentId) {
     if (typeof fp === "string") {
       this.footprint.loadStandardFootprint(fp)
-    } else {
+    } else if (fp?.builder_type === "footprint_builder") {
       this.footprint = fp
     }
     return this
