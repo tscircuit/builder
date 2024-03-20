@@ -2,7 +2,11 @@ import test from "ava"
 import { createProjectBuilder } from "../../src"
 import { logLayout } from "../utils/log-layout"
 
-test.skip("net_alias routing bug to negative", async (t) => {
+/**
+ * This takes a long time to run, let's figure out why.
+ */
+
+test("net_alias routing bug to negative", async (t) => {
   const result = await createProjectBuilder()
     .add("bug", (bb) =>
       bb
