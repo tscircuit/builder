@@ -27,6 +27,16 @@ export type PortArrangement = SideSizes | ExplicitPinMappingArrangement
 export const hasExplicitPinMapping = (
   pa: PortArrangement
 ): pa is ExplicitPinMappingArrangement => {
+  for (const side of ["left_side", "right_side", "top_side", "bottom_side"]) {
+    if (side in pa && typeof pa[side] === "number") {
+      throw new Error(
+        `A number was specified for "${side}", try using "${side.replace(
+          "side",
+          "size"
+        )}"`
+      )
+    }
+  }
   return (
     "left_side" in pa ||
     "right_side" in pa ||

@@ -194,6 +194,8 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
         this.setSchematicCenter(prop_val, props.y)
       } else if (prop_key === "pcb_x" && "pcb_y" in props) {
         this.setFootprintCenter(prop_val, props.pcb_y)
+      } else if (prop_key === "pcb_cx" && "pcb_cy" in props) {
+        this.setFootprintCenter(prop_val, props.pcb_cy)
       } else if (prop_key === "pcb_center" && point) {
         this.setFootprintCenter(prop_val, props.pcb_y)
       } else if (
