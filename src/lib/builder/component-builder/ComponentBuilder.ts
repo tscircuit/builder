@@ -278,7 +278,17 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
     if (typeof fp === "string") {
       this.footprint.loadStandardFootprint(fp)
     } else if (fp?.builder_type === "footprint_builder") {
+      const old_footprint = this.footprint
       this.footprint = fp
+
+      // Copy position or any other mutations
+      // NOTE: It's not clear this is the right thing to do- maybe the footprint
+      // should get it's own position put on it~
+      this.footprint.setPosition(
+        old_footprint.position.x,
+        old_footprint.position.y
+      )
+      this.footprint.setRotation(old_footprint.rotation)
     }
     return this
   }
