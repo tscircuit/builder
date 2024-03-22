@@ -29,9 +29,11 @@ export class PlatedHoleBuilderClass implements PlatedHoleBuilder {
   hole_diameter: Type.Dimension
   x: Type.Dimension
   y: Type.Dimension
+  port_hints: string[]
 
   constructor(project_builder: ProjectBuilder) {
     this.project_builder = project_builder
+    this.port_hints = []
   }
 
   setProps(props: Partial<{}>): PlatedHoleBuilder {
@@ -49,6 +51,7 @@ export class PlatedHoleBuilderClass implements PlatedHoleBuilder {
         y: bc.convert(this.y),
         hole_diameter: bc.convert(this.hole_diameter),
         outer_diameter: bc.convert(this.outer_diameter),
+        port_hints: this.port_hints,
       },
     ]
   }

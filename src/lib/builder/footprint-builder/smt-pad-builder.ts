@@ -11,6 +11,7 @@ export interface SMTPadBuilder {
   setLayer(layer: Type.PCBSMTPad["layer"] | string): SMTPadBuilder
   setPosition(x: number, y: number): SMTPadBuilder
   addPortHints(port_hints: string[]): SMTPadBuilder
+  setPortHints(port_hints: string[]): SMTPadBuilder
   build(bc: Type.BuildContext): Promise<Type.PCBSMTPad[]>
 }
 
@@ -90,6 +91,11 @@ export class SMTPadBuilderClass implements SMTPadBuilder {
 
   addPortHints(port_hints: string[]) {
     this.port_hints = this.port_hints.concat(port_hints)
+    return this
+  }
+
+  setPortHints(port_hints: string[]) {
+    this.port_hints = port_hints
     return this
   }
 
