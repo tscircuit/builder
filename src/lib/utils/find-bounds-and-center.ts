@@ -1,12 +1,13 @@
 import { AnyElement } from "lib/types/core"
 import { getDebugLayoutObject } from "./get-layout-debug-object"
+import { isTruthy } from "./is-truthy"
 
 export const findBoundsAndCenter = (
   elms: AnyElement[]
 ): { center: { x: number; y: number }; width: number; height: number } => {
   const debugObjects = elms
     .map((elm) => getDebugLayoutObject(elm))
-    .filter((x) => x !== null)
+    .filter(isTruthy)
 
   let minX = debugObjects[0].x
   let maxX = debugObjects[0].x + debugObjects[0].width

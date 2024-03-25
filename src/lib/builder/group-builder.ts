@@ -177,7 +177,7 @@ export class GroupBuilderClass implements GroupBuilder {
     tb(builder)
     return this
   }
-  async build(bc) {
+  async build(bc): Promise<Type.AnyElement[]> {
     const elements = []
     elements.push(
       ...flatten(await Promise.all(this.groups.map((g) => g.build(bc))))

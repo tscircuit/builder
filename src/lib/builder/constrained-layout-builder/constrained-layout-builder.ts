@@ -110,7 +110,7 @@ export class ConstrainedLayoutBuilderClass
     return this
   }
 
-  async build(bc) {
+  async build(bc): Promise<Type.AnyElement[]> {
     const elements: Type.AnyElement[] = await super.build(bc)
 
     // TODO solve groups when all subpositions have been solved, constraints
