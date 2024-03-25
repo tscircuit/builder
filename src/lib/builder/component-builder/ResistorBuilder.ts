@@ -81,7 +81,7 @@ export class ResistorBuilderClass
     this.ports.setSchematicComponent(schematic_component_id)
     this.ports.setSourceComponent(source_component_id)
 
-    const textElements = []
+    const textElements: Type.SchematicText[] = []
 
     this.ports.addPort({
       name: "left",
@@ -112,6 +112,7 @@ export class ResistorBuilderClass
       schematic_component_id,
       anchor: "left",
       position: text_pos1,
+      rotation: 0,
     })
     textElements.push({
       type: "schematic_text",
@@ -120,6 +121,7 @@ export class ResistorBuilderClass
       schematic_component_id,
       anchor: "left",
       position: text_pos2,
+      rotation: 0,
     })
 
     elements.push(

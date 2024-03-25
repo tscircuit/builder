@@ -24,6 +24,7 @@ import isNil from "lodash/isNil"
 import _ from "lodash"
 import { maybeConvertToPoint } from "lib/utils/maybe-convert-to-point"
 import { isTruthy } from "lib/utils/is-truthy"
+import { removeNulls } from "lib/utils/remove-nulls"
 
 export interface BaseComponentBuilder<T> {
   project_builder: ProjectBuilder
@@ -335,15 +336,12 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
       pcb_component_id,
     })
 
-    const source_component = omitBy(
-      {
-        type: "source_component",
-        source_component_id,
-        name: this.name,
-        ftype: this.source_properties.ftype,
-      },
-      isNil
-    )
+    const source_component: Type.SourceComponent = removeNulls({
+      type: "source_component",
+      source_component_id,
+      name: this.name,
+      ftype: this.source_properties.ftype,
+    })
 
     elements.push(source_component)
 

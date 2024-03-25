@@ -69,7 +69,7 @@ export class InductorBuilderClass
     this.ports.setSchematicComponent(schematic_component_id)
     this.ports.setSourceComponent(source_component_id)
 
-    const textElements = []
+    const textElements: Type.SchematicText[] = []
 
     this.ports.addPort("left", { x: -0.5, y: 0 })
     this.ports.addPort("right", { x: 0.5, y: 0 })
@@ -80,6 +80,7 @@ export class InductorBuilderClass
       schematic_component_id,
       anchor: "left",
       position: { x: -0.5, y: -0.3 },
+      rotation: 0,
     })
     elements.push(
       ...transformSchematicElements(
