@@ -73,7 +73,7 @@ export const getExplicitToNormalPinMapping = (
       }
     }
   }
-  const explicit_to_normal = []
+  const explicit_to_normal: number[] = []
   for (let i = 0; i < normal_to_explicit.length; i++) {
     explicit_to_normal[normal_to_explicit[i]] = i
   }
@@ -238,6 +238,8 @@ export const getPortPosition = (
     const i_dist_center = index - (right_size - 1) / 2
     y = i_dist_center * PORT_SPACING
     x = width / 2
+  } else {
+    throw new Error(`Invalid side "${side}", can't set x/y values`)
   }
 
   return { x, y, side }
