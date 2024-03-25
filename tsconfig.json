@@ -15,7 +15,7 @@
     "isolatedModules": true,
     "jsx": "react-jsx",
     "baseUrl": "./src",
-    // "strictNullChecks": true
+    "strictNullChecks": true
   },
   "include": ["next-env.d.ts", "**/*.ts"],
   "exclude": ["node_modules", "**.ts.snap", "dist"]

@@ -17,6 +17,7 @@
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/npm": "^9.0.1",
     "@semantic-release/release-notes-generator": "^10.0.3",
+    "@types/lodash": "^4.17.0",
     "ava": "^4.3.3",
     "dpdm": "^3.13.0",
     "esbuild": "^0.15.18",
