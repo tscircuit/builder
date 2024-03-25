@@ -57,6 +57,15 @@ export type SchematicDrawing =
       y: number
       text: string
     }
+  | {
+      type: "schematic_text"
+      drawing_type: "text"
+      schematic_component_id: string
+      align: string
+      x: number
+      y: number
+      text: string
+    }
 
 export interface SchematicComponent {
   type: "schematic_component"

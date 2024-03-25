@@ -9,7 +9,10 @@ import {
   SchematicLineBuilder,
   createSchematicLineBuilder,
 } from "./schematic-line-builder"
-import { createSchematicTextBuilder } from "./schematic-text-builder"
+import {
+  SchematicTextBuilder,
+  createSchematicTextBuilder,
+} from "./schematic-text-builder"
 
 const schematic_symbol_addables = {
   schematic_box: createSchematicBoxBuilder,
