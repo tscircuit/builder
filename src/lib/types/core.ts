@@ -1,19 +1,14 @@
 import { SourceComponent } from "./source-component"
 import { Dimension } from "./util"
+import * as Soup from "lib/soup"
 
 export interface SchematicConfig {
   type: "schematic_config"
 }
 
-export interface Point {
-  x: number
-  y: number
-}
+export type Point = { x: number; y: number } // Soup.Point
 
-export interface Size {
-  width: number
-  height: number
-}
+export type Size = { width: number; height: number } // Soup.Size
 
 export interface SourceConfig {
   type: "source_config"
@@ -57,15 +52,15 @@ export type SchematicDrawing =
       y: number
       text: string
     }
-  | {
-      type: "schematic_text"
-      drawing_type: "text"
-      schematic_component_id: string
-      align: string
-      x: number
-      y: number
-      text: string
-    }
+// | {
+//     type: "schematic_text"
+//     drawing_type: "text"
+//     schematic_component_id: string
+//     align: string
+//     x: number
+//     y: number
+//     text: string
+//   }
 
 export interface SchematicComponent {
   type: "schematic_component"
