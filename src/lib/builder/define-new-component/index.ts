@@ -76,11 +76,11 @@ export const defineNewComponent = <
         ...getZodSchemaDefaults(opts.source_properties as any),
       }
       if (opts.configurePorts) {
-        ;(this as any).configurePorts = (bc) => opts.configurePorts(this, bc)
+        ;(this as any).configurePorts = (bc) => opts.configurePorts?.(this, bc)
       }
       if (opts.configureSchematicSymbols) {
         ;(this as any).configureSchematicSymbols = (bc) =>
-          opts.configureSchematicSymbols(this, bc)
+          opts.configureSchematicSymbols?.(this, bc)
       }
       this.settable_source_properties = [
         ...this.settable_source_properties,
