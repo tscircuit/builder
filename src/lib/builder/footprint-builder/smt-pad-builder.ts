@@ -22,9 +22,9 @@ export class SMTPadBuilderClass implements SMTPadBuilder {
   project_builder: ProjectBuilder
   builder_type = "smtpad_builder" as const
 
-  width: Dimension
-  height: Dimension
-  radius: Dimension
+  width: Dimension | null
+  height: Dimension | null
+  radius: Dimension | null
   x: Dimension
   y: Dimension
   port_hints: string[]
@@ -68,9 +68,13 @@ export class SMTPadBuilderClass implements SMTPadBuilder {
     }
     if (this.shape === "circle") {
       this.radius = width_or_radius
-    } else if (this.shape === "rect") {
+    } else if (this.shape === "rect" && height !== undefined) {
       this.width = width_or_radius
       this.height = height
+    } else {
+      throw new Error(
+        `Invalid parameters for setting size of "${this.shape}", maybe you forgot to provide the height?`
+      )
     }
     return this
   }
