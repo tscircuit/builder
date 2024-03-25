@@ -10,7 +10,7 @@ export const associatePcbPortsWithPads = (elms: Type.AnyElement[]) => {
         (elm2): elm2 is Type.SourcePort =>
           elm2.type === "source_port" &&
           elm2.source_port_id === elm.source_port_id
-      ),
+      )!,
     }))
 
   const pads = elms.filter(

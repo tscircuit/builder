@@ -130,7 +130,7 @@ export class FootprintBuilderClass implements FootprintBuilder {
       })
     } else if (footprint_name in sparkfunPackages) {
       const sf_pkg = sparkfunPackages[footprint_name]
-      for (const smd of sf_pkg.smd) {
+      for (const smd of sf_pkg.smd!) {
         this.addPad((smtpad) => {
           smtpad.setShape("rect")
           smtpad.setSize(smd.dx, smd.dy)
@@ -139,8 +139,8 @@ export class FootprintBuilderClass implements FootprintBuilder {
 
           const position_hints = []
 
-          if (sf_pkg.smd.length === 2) {
-            const other_smd = sf_pkg.smd.find((s) => s !== smd)
+          if (sf_pkg.smd!.length === 2) {
+            const other_smd = sf_pkg.smd!.find((s) => s !== smd)!
             if (smd.x < other_smd.x) {
               smtpad.addPortHints(["left"])
             } else if (smd.x > other_smd.x) {
@@ -189,7 +189,7 @@ export class FootprintBuilderClass implements FootprintBuilder {
   }
 
   async build(bc: Type.BuildContext): Promise<Type.AnyElement[]> {
-    const built_elements = []
+    const built_elements: Type.AnyElement[] = []
     for (const child of this.children) {
       const built = await child.build(bc)
       built_elements.push(...built)

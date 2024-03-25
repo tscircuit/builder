@@ -23,6 +23,7 @@ export const rotateClockwise = (
   else if (direction === "right") return "down"
   else if (direction === "down") return "left"
   else if (direction === "left") return "up"
+  throw new Error(`Invalid direction: ${direction}`)
 }
 
 export const rotateCounterClockwise = (
@@ -32,6 +33,7 @@ export const rotateCounterClockwise = (
   else if (direction === "left") return "down"
   else if (direction === "down") return "right"
   else if (direction === "right") return "up"
+  throw new Error(`Invalid direction: ${direction}`)
 }
 
 export const rotateDirection = (
