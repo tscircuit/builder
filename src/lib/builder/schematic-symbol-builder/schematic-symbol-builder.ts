@@ -93,7 +93,7 @@ export class SchematicSymbolBuilderClass implements SchematicSymbolBuilder {
       schematic_component_id: bc.schematic_component_id,
     }))
 
-    return components_w_id
+    return components_w_id as any
   }
 }
 

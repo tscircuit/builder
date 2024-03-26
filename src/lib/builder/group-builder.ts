@@ -77,7 +77,7 @@ export class GroupBuilderClass implements GroupBuilder {
   addables: GroupBuilderAddables
 
   constructor(project_builder?: ProjectBuilder) {
-    this.project_builder = project_builder
+    this.project_builder = project_builder!
     this.addables = getGroupAddables()
     this.reset()
   }
@@ -178,7 +178,7 @@ export class GroupBuilderClass implements GroupBuilder {
     return this
   }
   async build(bc): Promise<Type.AnyElement[]> {
-    const elements = []
+    const elements: Type.AnyElement[] = []
     elements.push(
       ...flatten(await Promise.all(this.groups.map((g) => g.build(bc))))
     )

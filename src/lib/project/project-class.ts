@@ -26,7 +26,7 @@ export class ProjectClass {
     return elementArrayKeys.flatMap((k) => this.project[k])
   }
   get(id: string): Type.AnyElement | null {
-    return this.getElements().find((e) => e[`${e.type}_id`] === id)
+    return this.getElements().find((e) => e[`${e.type}_id`] === id) ?? null
   }
   getRelated<T extends Type.ElementType>(
     type: T,
@@ -39,15 +39,21 @@ export class ProjectClass {
     ) as any
   }
   getSourceComponent(id: string): Type.SourceComponent | null {
-    return this.project.source_components.find(
-      (c) => c.source_component_id === id
+    return (
+      this.project.source_components.find(
+        (c) => c.source_component_id === id
+      ) ?? null
     )
   }
   getSourcePort(id: string): Type.SourcePort | null {
-    return this.project.source_ports.find((c) => c.source_port_id === id)
+    return (
+      this.project.source_ports.find((c) => c.source_port_id === id) ?? null
+    )
   }
   getSourceTrace(id: string): Type.SourceTrace | null {
-    return this.project.source_traces.find((c) => c.source_trace_id === id)
+    return (
+      this.project.source_traces.find((c) => c.source_trace_id === id) ?? null
+    )
   }
 }
 

@@ -177,7 +177,7 @@ export const createTraceBuilder = (
           ...parentElements
             .filter((elm): elm is Type.PCBSMTPad => elm.type === "pcb_smtpad")
             // Exclude the pads that are connected to the trace
-            .filter((elm) => !pcb_terminal_port_ids.includes(elm.pcb_port_id))
+            .filter((elm) => !pcb_terminal_port_ids.includes(elm.pcb_port_id!))
             .map((pad) => {
               if (pad.shape === "rect") {
                 return {
@@ -193,6 +193,9 @@ export const createTraceBuilder = (
                   height: pad.radius * 2,
                 }
               }
+              throw new Error(
+                `Invalid pad shape for pcb_smtpad "${(pad as any).shape}"`
+              )
             }),
         ],
         pointsToConnect: pcb_terminals,
