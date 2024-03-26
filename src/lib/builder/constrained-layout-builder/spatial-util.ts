@@ -75,7 +75,7 @@ export const toCenteredSpatialObj = (obj: any): SpatialElement => {
 export const getSpatialElementIncludingChildren = (
   elm: AnyElement,
   elements: AnyElement[]
-) => {
+): SpatialElement => {
   if (elm.type === "pcb_component") {
     const children = getElementChildren(elm, elements).map((e) =>
       toCenteredSpatialObj(e)

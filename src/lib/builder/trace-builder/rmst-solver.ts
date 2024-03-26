@@ -65,8 +65,8 @@ export const rmstSolver: Type.RouteSolver = async ({
       const e1 = edges[i]
       const e2 = edges[i + 1]
       const { p1, p2, corner } = getNonCornerPoints(e1, e2)
-      const p1Dir = terminals[p1.ti]?.facing_direction
-      const p2Dir = terminals[p2.ti]?.facing_direction
+      const p1Dir = terminals[p1.ti!]?.facing_direction
+      const p2Dir = terminals[p2.ti!]?.facing_direction
 
       // Score measures alignment of the port and the edge it's connected to
       let score1 = 0,

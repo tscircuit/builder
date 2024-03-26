@@ -21,7 +21,10 @@ import {
 import { matchPCBPortsWithFootprintAndMutate } from "../trace-builder/match-pcb-ports-with-footprint"
 import omitBy from "lodash/omitBy"
 import isNil from "lodash/isNil"
+import _ from "lodash"
 import { maybeConvertToPoint } from "lib/utils/maybe-convert-to-point"
+import { isTruthy } from "lib/utils/is-truthy"
+import { removeNulls } from "lib/utils/remove-nulls"
 
 export interface BaseComponentBuilder<T> {
   project_builder: ProjectBuilder
@@ -71,7 +74,7 @@ export type GenericComponentBuilderCallback = (
 ) => unknown
 
 export class ComponentBuilderClass implements GenericComponentBuilder {
-  name: string = null
+  name: string | null = null
   builder_type = "generic_component_builder" as any
   tags: string[] = []
   source_properties: any = {}
@@ -174,7 +177,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
    * map the prop to the relevant builder, also handle a lot of shorthands
    */
   setProps(props) {
-    const unused_props = []
+    const unused_props: string[] = []
 
     for (const [prop_key, prop_val] of Object.entries(props)) {
       const point = maybeConvertToPoint(prop_val)
@@ -314,7 +317,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
 
   async build(bc: Type.BuildContext) {
     const pb = this.project_builder
-    const elements = []
+    const elements: Type.AnyElement[] = []
 
     const ftype = this.source_properties.ftype ?? "generic"
 
@@ -333,15 +336,12 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
       pcb_component_id,
     })
 
-    const source_component = omitBy(
-      {
-        type: "source_component",
-        source_component_id,
-        name: this.name,
-        ftype: this.source_properties.ftype,
-      },
-      isNil
-    )
+    const source_component: Type.SourceComponent = removeNulls({
+      type: "source_component",
+      source_component_id,
+      name: this.name,
+      ftype: this.source_properties.ftype,
+    })
 
     elements.push(source_component)
 
@@ -363,7 +363,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
     const built_ports = await this.ports.build(bc)
 
     // TODO schematic box of some kind
-    const pcb_element = {
+    const pcb_element: Type.PCBComponent = {
       type: "pcb_component",
       source_component_id,
       pcb_component_id,
@@ -417,7 +417,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
             return null
           }
         })
-        .filter(Boolean)
+        .filter(isTruthy)
     )
 
     schematic_component.center.x = schematic_spatial_bounds.x

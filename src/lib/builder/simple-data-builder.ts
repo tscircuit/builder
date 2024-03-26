@@ -21,7 +21,7 @@ export interface SimpleDataBuilder<
 
 export const createSimpleDataBuilderClass = <
   BuilderType extends string,
-  Fields,
+  Fields extends object,
   UnitField extends keyof Fields = keyof Fields
 >(
   builder_type: BuilderType,

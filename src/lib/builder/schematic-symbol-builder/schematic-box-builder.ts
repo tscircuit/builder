@@ -9,6 +9,9 @@ export interface SchematicBoxBuilderFields {
   align: "center"
   x: Dimension
   y: Dimension
+  cx: Dimension
+  cy: Dimension
+  center: [Dimension, Dimension]
   name: string
   drawing_type: "box"
 }
@@ -17,11 +20,17 @@ export interface SchematicBoxBuilder {
   builder_type: "schematic_box_builder"
   props: SchematicBoxBuilderFields
   setProps(props: Partial<SchematicBoxBuilderFields>): SchematicBoxBuilder
-  build(): Omit<SchematicBoxBuilderFields, "width" | "height" | "x" | "y"> & {
+  build(): Omit<
+    SchematicBoxBuilderFields,
+    "width" | "height" | "x" | "y" | "cx" | "cy" | "center"
+  > & {
     width: number
     height: number
     x: number
     y: number
+    cx: number
+    cy: number
+    center: [number, number]
   }
 }
 
@@ -31,7 +40,7 @@ export const SchematicBoxBuilderClass = createSimpleDataBuilderClass(
     drawing_type: "box",
     type: "schematic_box",
   } as SchematicBoxBuilder["props"],
-  ["x", "y", "width", "height"]
+  ["x", "y", "cx", "cy", "center", "width", "height"]
 )
 
 export const createSchematicBoxBuilder = (

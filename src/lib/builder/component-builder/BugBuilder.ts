@@ -46,7 +46,7 @@ export class BugBuilderClass
     return this
   }
 
-  async build(bc) {
+  async build(bc): Promise<Type.AnyElement[]> {
     const elements: Type.AnyElement[] = []
     const { project_builder } = this
     const { ftype } = this.source_properties
@@ -82,7 +82,7 @@ export class BugBuilderClass
     this.ports.setSchematicComponent(schematic_component_id)
     this.ports.setSourceComponent(source_component_id)
 
-    const textElements = []
+    const textElements: Type.SchematicText[] = []
 
     // add ports based on port arrangement and give appropriate labels
     const { port_labels } = this.schematic_properties

@@ -25,6 +25,7 @@ import {
   getElementChildren,
   getSpatialElementIncludingChildren,
 } from "./spatial-util"
+import { combined } from "lib/utils/combined"
 
 const constraint_builder_addables = {
   ...getGroupAddables(),
@@ -109,8 +110,8 @@ export class ConstrainedLayoutBuilderClass
     return this
   }
 
-  async build(bc) {
-    const elements = await super.build(bc)
+  async build(bc): Promise<Type.AnyElement[]> {
+    const elements: Type.AnyElement[] = await super.build(bc)
 
     // TODO solve groups when all subpositions have been solved, constraints
     // should be applied to the entire solve group
@@ -118,7 +119,7 @@ export class ConstrainedLayoutBuilderClass
     const solver = new kiwi.Solver()
 
     const spatial_elements = elements.map((elm) => {
-      if (!constrainable_element_types.includes(elm.type)) return null
+      if (!constrainable_element_types.includes(elm.type as any)) return null
       const spatial_elm = getSpatialElementIncludingChildren(elm, elements)
       return spatial_elm
     })
@@ -126,12 +127,15 @@ export class ConstrainedLayoutBuilderClass
 
     // TODO limit to components mentioned in constraints?
     for (let i = 0; i < spatial_elements.length; i++) {
-      if (!spatial_elements[i]) continue
+      const spatial_element = spatial_elements[i]
+      if (!spatial_element) continue
       vars[`elm${i}_x`] = new kiwi.Variable(`elm${i}_x`)
       solver.addEditVariable(vars[`elm${i}_x`], kiwi.Strength.weak)
-      solver.suggestValue(vars[`elm${i}_x`], spatial_elements[i].x)
+      solver.suggestValue(vars[`elm${i}_x`], spatial_element.x)
       vars[`elm${i}_y`] = new kiwi.Variable(`elm${i}_y`)
       solver.addEditVariable(vars[`elm${i}_y`], kiwi.Strength.weak)
+      // solver.suggestValue(vars[`elm${i}_y`], spatial_element.y)
+
       // vars[`elm${i}_w`] = new kiwi.Variable(`elm${i}_w`)
       // solver.suggestValue(vars[`elm${i}_w`], spatial_elements[i].w)
       // vars[`elm${i}_h`] = new kiwi.Variable(`elm${i}_h`)
@@ -157,14 +161,14 @@ export class ConstrainedLayoutBuilderClass
       if (elm.type === "source_component") {
         const { source_component_id } = elm
         const associated_components = elements.filter(
-          (e) => e.source_component_id === source_component_id
+          (e) => combined(e).source_component_id === source_component_id
         )
         if (target_type === "schematic") {
           elm = associated_components.find(
             (c) => c.type === "schematic_component"
-          )
+          )!
         } else if (target_type === "pcb") {
-          elm = associated_components.find((c) => c.type === "pcb_component")
+          elm = associated_components.find((c) => c.type === "pcb_component")!
         } else {
           throw new Error(
             `Unable to properly associate component for constraint solving "${JSON.stringify(
@@ -198,8 +202,8 @@ export class ConstrainedLayoutBuilderClass
         case "xdist": {
           const A = match(props.left, target_type)
           const B = match(props.right, target_type)
-          const lhs = new kiwi.Expression(A.X, A.w / 2, props.dist)
-          const rhs = new kiwi.Expression(B.X, -B.w / 2)
+          const lhs = new kiwi.Expression(A.X, A.w! / 2, props.dist)
+          const rhs = new kiwi.Expression(B.X, -B.w! / 2)
           solver.addConstraint(
             new kiwi.Constraint(
               lhs,
@@ -214,7 +218,7 @@ export class ConstrainedLayoutBuilderClass
             new kiwi.Constraint(
               new kiwi.Expression([0.5, A.X], [0.5, B.X]),
               kiwi.Operator.Eq,
-              (A.x + B.x) / 2,
+              (A.x! + B.x!) / 2,
               kiwi.Strength.weak
             )
           )
@@ -224,8 +228,8 @@ export class ConstrainedLayoutBuilderClass
         case "ydist": {
           const A = match(props.bottom, target_type)
           const B = match(props.top, target_type)
-          const lhs = new kiwi.Expression(A.Y, A.h / 2, props.dist)
-          const rhs = new kiwi.Expression(B.Y, -B.h / 2)
+          const lhs = new kiwi.Expression(A.Y, A.h! / 2, props.dist)
+          const rhs = new kiwi.Expression(B.Y, -B.h! / 2)
           solver.addConstraint(
             new kiwi.Constraint(
               lhs,
@@ -240,7 +244,7 @@ export class ConstrainedLayoutBuilderClass
             new kiwi.Constraint(
               new kiwi.Expression([0.5, A.Y], [0.5, B.Y]),
               kiwi.Operator.Eq,
-              (A.y + B.y) / 2,
+              (A.y! + B.y!) / 2,
               kiwi.Strength.weak
             )
           )
@@ -252,11 +256,12 @@ export class ConstrainedLayoutBuilderClass
     solver.updateVariables()
 
     for (let i = 0; i < spatial_elements.length; i++) {
-      if (!spatial_elements[i]) continue
+      const spatial_element = spatial_elements[i]
+      if (!spatial_element) continue
       const new_x = vars[`elm${i}_x`].value()
       const new_y = vars[`elm${i}_y`].value()
-      const old_x = spatial_elements[i].x
-      const old_y = spatial_elements[i].y
+      const old_x = spatial_element.x
+      const old_y = spatial_element.y
       const changed = new_x !== old_x || new_y !== old_y
 
       if (changed) {
