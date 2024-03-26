@@ -9,7 +9,7 @@ export const straightRouteSolver: Type.RouteSolver = async ({
   terminals,
   obstacles,
 }) => {
-  const edges = []
+  const edges: Type.RouteEdge[] = []
   for (let i = 0; i < terminals.length - 1; i++) {
     edges.push({
       from: terminals[i],

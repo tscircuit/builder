@@ -33,6 +33,7 @@ export class ProjectClass {
     id: string
   ): Array<Type.ElementOfType<T>> {
     const mainElm = this.get(id)
+    if (!mainElm) return []
     const joiningId = mainElm.type + "_id"
     return this.getElements().filter(
       (e) => e.type === type && e[joiningId] === id
