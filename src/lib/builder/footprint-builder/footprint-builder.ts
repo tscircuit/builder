@@ -10,20 +10,13 @@ import {
   transformSchematicElement,
 } from "../transform-elements"
 import { SMTPadBuilder, createSMTPadBuilder } from "./smt-pad-builder"
-import sparkfunPackages from "@tscircuit/sparkfun-packages"
 import MiniSearch from "minisearch"
 import { associatePcbPortsWithPads } from "./associate-pcb-ports-with-pads"
-
-const SPARKFUN_PACKAGE_NAMES = Object.keys(sparkfunPackages)
-
-const miniSearch = new MiniSearch({
-  fields: ["name"],
-  storeFields: ["name"],
-  idField: "name",
-})
-miniSearch.addAll(SPARKFUN_PACKAGE_NAMES.map((name) => ({ name })))
+import * as Footprint from "@tscircuit/footprints"
 
 export type FootprintBuilderCallback = (rb: FootprintBuilder) => unknown
+
+export type StandardFootprintName = "0402" | "0603"
 
 const getFootprintBuilderAddables = () =>
   ({
@@ -49,8 +42,8 @@ export interface FootprintBuilder {
     builder_type: T,
     callback: (builder: ReturnType<FootprintBuilderAddables[T]>) => unknown
   ): FootprintBuilder
-  setStandardFootprint(footprint_name: SparkfunComponentId): FootprintBuilder
-  loadStandardFootprint(footprint_name: SparkfunComponentId): FootprintBuilder
+  setStandardFootprint(footprint_name: StandardFootprintName): FootprintBuilder
+  loadStandardFootprint(footprint_name: StandardFootprintName): FootprintBuilder
   setRotation: (rotation: number | `${number}deg`) => FootprintBuilder
   build(bc: Type.BuildContext): Promise<Type.AnyElement[]>
 }
@@ -107,9 +100,7 @@ export class FootprintBuilderClass implements FootprintBuilder {
     return this
   }
 
-  loadStandardFootprint(
-    footprint_name: "0402" | keyof typeof sparkfunPackages
-  ) {
+  loadStandardFootprint(footprint_name: "0402") {
     // TODO check sparkfun footprints
     if (footprint_name === "0402") {
       this.addPad((smtpad) => {
@@ -164,7 +155,9 @@ export class FootprintBuilderClass implements FootprintBuilder {
     return this
   }
 
-  setStandardFootprint(footprint_name: SparkfunComponentId): FootprintBuilder {
+  setStandardFootprint(
+    footprint_name: StandardFootprintName
+  ): FootprintBuilder {
     return this.loadStandardFootprint(footprint_name)
   }
 
