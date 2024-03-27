@@ -17,6 +17,12 @@ import SparkfunPackages, {
   SparkfunComponentId,
 } from "@tscircuit/sparkfun-packages"
 
+export type StandardFootprint =
+  | "0402"
+  | "0603"
+  | "0805"
+  | "1210"
+  | SparkfunComponentId
 export type FootprintBuilderCallback = (rb: FootprintBuilder) => unknown
 
 const getFootprintBuilderAddables = () =>
@@ -101,8 +107,10 @@ export class FootprintBuilderClass implements FootprintBuilder {
     return this
   }
 
-  loadStandardFootprint(footprint_name: SparkfunComponentId) {
-    // TODO check sparkfun footprints
+  loadStandardFootprint(footprint_name: StandardFootprint) {
+    if (footprint_name === "0805") footprint_name = "sparkfun:0805"
+    if (footprint_name === "0603") footprint_name = "sparkfun:0603"
+    if (footprint_name === "1210") footprint_name = "sparkfun:1210"
     if (footprint_name === "0402") {
       this.addPad((smtpad) => {
         smtpad.setShape("rect")
@@ -152,7 +160,7 @@ export class FootprintBuilderClass implements FootprintBuilder {
     return this
   }
 
-  setStandardFootprint(footprint_name: SparkfunComponentId): FootprintBuilder {
+  setStandardFootprint(footprint_name: StandardFootprint): FootprintBuilder {
     return this.loadStandardFootprint(footprint_name)
   }
 

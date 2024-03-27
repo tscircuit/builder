@@ -9,7 +9,11 @@ import { compose, rotate, transform, translate } from "transformation-matrix"
 import { transformSchematicElements } from "lib/builder/transform-elements"
 import getPortPosition from "../../utils/get-port-position"
 import { AnyElement, Point, SchematicComponent } from "lib/types"
-import { createFootprintBuilder, FootprintBuilder } from "../footprint-builder"
+import {
+  createFootprintBuilder,
+  FootprintBuilder,
+  StandardFootprint,
+} from "../footprint-builder"
 import {
   createSchematicSymbolBuilder,
   SchematicSymbolBuilder,
@@ -59,7 +63,9 @@ export interface BaseComponentBuilder<T> {
     rotation: number | `${number}deg`
   ): BaseComponentBuilder<T>
   setProps: (props: any) => BaseComponentBuilder<T>
-  setFootprint(fp: FootprintBuilder | string): BaseComponentBuilder<T>
+  setFootprint(
+    fp: FootprintBuilder | StandardFootprint
+  ): BaseComponentBuilder<T>
   modifyFootprint(cb: (fb: FootprintBuilder) => any): BaseComponentBuilder<T>
   modifySchematic(
     cb: (fb: SchematicSymbolBuilder) => any
