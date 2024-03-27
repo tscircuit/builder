@@ -13,10 +13,11 @@ import { SMTPadBuilder, createSMTPadBuilder } from "./smt-pad-builder"
 import MiniSearch from "minisearch"
 import { associatePcbPortsWithPads } from "./associate-pcb-ports-with-pads"
 import * as Footprint from "@tscircuit/footprints"
+import SparkfunPackages, {
+  SparkfunComponentId,
+} from "@tscircuit/sparkfun-packages"
 
 export type FootprintBuilderCallback = (rb: FootprintBuilder) => unknown
-
-export type StandardFootprintName = "0402" | "0603"
 
 const getFootprintBuilderAddables = () =>
   ({
@@ -42,8 +43,8 @@ export interface FootprintBuilder {
     builder_type: T,
     callback: (builder: ReturnType<FootprintBuilderAddables[T]>) => unknown
   ): FootprintBuilder
-  setStandardFootprint(footprint_name: StandardFootprintName): FootprintBuilder
-  loadStandardFootprint(footprint_name: StandardFootprintName): FootprintBuilder
+  setStandardFootprint(footprint_name: SparkfunComponentId): FootprintBuilder
+  loadStandardFootprint(footprint_name: SparkfunComponentId): FootprintBuilder
   setRotation: (rotation: number | `${number}deg`) => FootprintBuilder
   build(bc: Type.BuildContext): Promise<Type.AnyElement[]>
 }
@@ -100,7 +101,7 @@ export class FootprintBuilderClass implements FootprintBuilder {
     return this
   }
 
-  loadStandardFootprint(footprint_name: StandardFootprintName) {
+  loadStandardFootprint(footprint_name: SparkfunComponentId) {
     // TODO check sparkfun footprints
     if (footprint_name === "0402") {
       this.addPad((smtpad) => {
@@ -119,8 +120,8 @@ export class FootprintBuilderClass implements FootprintBuilder {
         smtpad.setLayer("top")
         smtpad.addPortHints(["right", "2"])
       })
-    } else if (footprint_name in sparkfunPackages) {
-      const sf_pkg = sparkfunPackages[footprint_name]
+    } else if (footprint_name in SparkfunPackages) {
+      const sf_pkg = SparkfunPackages[footprint_name]
       for (const smd of sf_pkg.smd!) {
         this.addPad((smtpad) => {
           smtpad.setShape("rect")
@@ -144,7 +145,6 @@ export class FootprintBuilderClass implements FootprintBuilder {
       // TODO sf_pkg.wire
       // TODO sf_pkg.text
     } else {
-      const closest_sf_pkg_name = miniSearch.search(footprint_name)
       throw new Error(
         `Unknown standard footprint name: "${footprint_name}" (examples: 0402, 0603, ${closest_sf_pkg_name
           .slice(0, 3)

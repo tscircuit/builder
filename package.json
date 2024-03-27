@@ -36,6 +36,7 @@
     "@tscircuit/eagle-xml-converter": "^0.0.7",
     "@tscircuit/footprints": "^0.0.14",
     "@tscircuit/routing": "^1.3.1",
+    "@tscircuit/sparkfun-packages": "^1.1.0",
     "convert-units": "^2.3.4",
     "minisearch": "^6.1.0",
     "nice-color-palettes": "^3.0.0",
