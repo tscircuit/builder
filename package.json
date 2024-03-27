@@ -1,6 +1,6 @@
 {
   "name": "@tscircuit/builder",
-  "version": "1.5.16",
+  "version": "1.5.17",
   "main": "dist/index.js",
   "type": "module",
   "types": "./dist/index.d.ts",
