@@ -100,7 +100,7 @@ export class FootprintBuilderClass implements FootprintBuilder {
     return this
   }
 
-  loadStandardFootprint(footprint_name: "0402") {
+  loadStandardFootprint(footprint_name: StandardFootprintName) {
     // TODO check sparkfun footprints
     if (footprint_name === "0402") {
       this.addPad((smtpad) => {
