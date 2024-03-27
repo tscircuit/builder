@@ -24,7 +24,7 @@
     "esbuild-runner": "^2.2.1",
     "prettier": "^2.7.1",
     "redaxios": "^0.5.1",
-    "tsup": "^6.7.0",
+    "tsup": "^8.0.2",
     "type-fest": "^2.19.0",
     "typescript": "^5.4.3",
     "zod": "^3.21.4"
