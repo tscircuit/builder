@@ -37,7 +37,7 @@ export interface ConstrainedLayoutBuilder
   add<T extends keyof typeof constraint_builder_addables>(
     builder_type: T,
     callback: (
-      builder: ReturnType<typeof constraint_builder_addables[T]>
+      builder: ReturnType<(typeof constraint_builder_addables)[T]>
     ) => unknown
   ): ConstrainedLayoutBuilder
   appendChild(
