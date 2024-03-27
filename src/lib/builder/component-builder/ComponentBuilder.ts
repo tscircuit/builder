@@ -9,7 +9,11 @@ import { compose, rotate, transform, translate } from "transformation-matrix"
 import { transformSchematicElements } from "lib/builder/transform-elements"
 import getPortPosition from "../../utils/get-port-position"
 import { AnyElement, Point, SchematicComponent } from "lib/types"
-import { createFootprintBuilder, FootprintBuilder } from "../footprint-builder"
+import {
+  createFootprintBuilder,
+  FootprintBuilder,
+  StandardFootprint,
+} from "../footprint-builder"
 import {
   createSchematicSymbolBuilder,
   SchematicSymbolBuilder,
@@ -25,6 +29,7 @@ import _ from "lodash"
 import { maybeConvertToPoint } from "lib/utils/maybe-convert-to-point"
 import { isTruthy } from "lib/utils/is-truthy"
 import { removeNulls } from "lib/utils/remove-nulls"
+import { SparkfunComponentId } from "@tscircuit/sparkfun-packages"
 
 export interface BaseComponentBuilder<T> {
   project_builder: ProjectBuilder
@@ -58,7 +63,9 @@ export interface BaseComponentBuilder<T> {
     rotation: number | `${number}deg`
   ): BaseComponentBuilder<T>
   setProps: (props: any) => BaseComponentBuilder<T>
-  setFootprint(fp: FootprintBuilder | string): BaseComponentBuilder<T>
+  setFootprint(
+    fp: FootprintBuilder | StandardFootprint
+  ): BaseComponentBuilder<T>
   modifyFootprint(cb: (fb: FootprintBuilder) => any): BaseComponentBuilder<T>
   modifySchematic(
     cb: (fb: SchematicSymbolBuilder) => any

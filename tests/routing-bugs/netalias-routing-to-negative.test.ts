@@ -50,7 +50,7 @@ test("net_alias routing bug to negative", async (t) => {
             "21": "GND21",
           },
         })
-        .setFootprint("ssop28Db")
+        .setFootprint("sparkfun:ssop28_db")
     )
     .add("resistor", (rb) =>
       rb

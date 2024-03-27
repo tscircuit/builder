@@ -10,19 +10,19 @@ import {
   transformSchematicElement,
 } from "../transform-elements"
 import { SMTPadBuilder, createSMTPadBuilder } from "./smt-pad-builder"
-import sparkfunPackages from "@tscircuit/sparkfun-packages"
 import MiniSearch from "minisearch"
 import { associatePcbPortsWithPads } from "./associate-pcb-ports-with-pads"
+import * as Footprint from "@tscircuit/footprints"
+import SparkfunPackages, {
+  SparkfunComponentId,
+} from "@tscircuit/sparkfun-packages"
 
-const SPARKFUN_PACKAGE_NAMES = Object.keys(sparkfunPackages)
-
-const miniSearch = new MiniSearch({
-  fields: ["name"],
-  storeFields: ["name"],
-  idField: "name",
-})
-miniSearch.addAll(SPARKFUN_PACKAGE_NAMES.map((name) => ({ name })))
-
+export type StandardFootprint =
+  | "0402"
+  | "0603"
+  | "0805"
+  | "1210"
+  | SparkfunComponentId
 export type FootprintBuilderCallback = (rb: FootprintBuilder) => unknown
 
 const getFootprintBuilderAddables = () =>
@@ -107,10 +107,10 @@ export class FootprintBuilderClass implements FootprintBuilder {
     return this
   }
 
-  loadStandardFootprint(
-    footprint_name: "0402" | keyof typeof sparkfunPackages
-  ) {
-    // TODO check sparkfun footprints
+  loadStandardFootprint(footprint_name: StandardFootprint) {
+    if (footprint_name === "0805") footprint_name = "sparkfun:0805"
+    if (footprint_name === "0603") footprint_name = "sparkfun:0603"
+    if (footprint_name === "1210") footprint_name = "sparkfun:1210"
     if (footprint_name === "0402") {
       this.addPad((smtpad) => {
         smtpad.setShape("rect")
@@ -128,8 +128,8 @@ export class FootprintBuilderClass implements FootprintBuilder {
         smtpad.setLayer("top")
         smtpad.addPortHints(["right", "2"])
       })
-    } else if (footprint_name in sparkfunPackages) {
-      const sf_pkg = sparkfunPackages[footprint_name]
+    } else if (footprint_name in SparkfunPackages) {
+      const sf_pkg = SparkfunPackages[footprint_name]
       for (const smd of sf_pkg.smd!) {
         this.addPad((smtpad) => {
           smtpad.setShape("rect")
@@ -153,18 +153,14 @@ export class FootprintBuilderClass implements FootprintBuilder {
       // TODO sf_pkg.wire
       // TODO sf_pkg.text
     } else {
-      const closest_sf_pkg_name = miniSearch.search(footprint_name)
       throw new Error(
-        `Unknown standard footprint name: "${footprint_name}" (examples: 0402, 0603, ${closest_sf_pkg_name
-          .slice(0, 3)
-          .map((v) => v.name)
-          .join(",")})`
+        `Unknown standard footprint name: "${footprint_name}" (examples: 0402, 0603)`
       )
     }
     return this
   }
 
-  setStandardFootprint(footprint_name: SparkfunComponentId): FootprintBuilder {
+  setStandardFootprint(footprint_name: StandardFootprint): FootprintBuilder {
     return this.loadStandardFootprint(footprint_name)
   }
 
