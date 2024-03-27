@@ -2,11 +2,25 @@
   "name": "@tscircuit/builder",
   "version": "1.5.16",
   "main": "dist/index.js",
+  "type": "module",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
   "repository": "tscircuit/builder",
   "license": "MIT",
   "scripts": {
     "test": "ava",
-    "build": "tsup ./src/index.ts --sourcemap --dts",
+    "build": "tsup",
     "build:docs": "typedoc",
     "typecheck": "tsc --noEmit",
     "check:circular": "dpdm --skip-dynamic-imports circular --no-warning --no-tree -T --exit-code circular:1 ./src/index.ts",
@@ -35,7 +49,6 @@
     "@tscircuit/routing": "^1.3.1",
     "@tscircuit/sparkfun-packages": "^1.2.0",
     "convert-units": "^2.3.4",
-    "nice-color-palettes": "^3.0.0",
     "parsel-js": "^1.0.2",
     "rectilinear-router": "^1.0.1",
     "svg-path-bounds": "^1.0.2",

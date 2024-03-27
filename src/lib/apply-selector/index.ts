@@ -11,7 +11,7 @@ export const applySelector = (
   selectorRaw: string
 ): Type.AnyElement[] => {
   const selectorAST = parsel.parse(selectorRaw)
-  return applySelectorAST(elements, selectorAST)
+  return applySelectorAST(elements, selectorAST!)
 }
 
 export const applySelectorAST = (
@@ -71,7 +71,7 @@ export const applySelectorAST = (
       })
 
       return elements.filter((elm) =>
-        conditionsToMatch.every((condFn) => condFn(elm))
+        conditionsToMatch.every((condFn) => condFn?.(elm))
       )
     }
     case "type": {
