@@ -15,6 +15,9 @@
     "isolatedModules": true,
     "jsx": "react-jsx",
     "baseUrl": "./src",
+    "paths": {
+      "lodash": ["./src/lib/utils/lodash/lodash.custom.js"]
+    },
     "strictNullChecks": true
   },
   "include": ["next-env.d.ts", "**/*.ts"],

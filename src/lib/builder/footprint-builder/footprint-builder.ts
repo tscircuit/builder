@@ -10,7 +10,6 @@ import {
   transformSchematicElement,
 } from "../transform-elements"
 import { SMTPadBuilder, createSMTPadBuilder } from "./smt-pad-builder"
-import MiniSearch from "minisearch"
 import { associatePcbPortsWithPads } from "./associate-pcb-ports-with-pads"
 import * as Footprint from "@tscircuit/footprints"
 import SparkfunPackages, {

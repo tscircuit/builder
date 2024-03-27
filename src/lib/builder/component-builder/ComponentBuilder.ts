@@ -23,8 +23,6 @@ import {
   toCenteredSpatialObj,
 } from "../constrained-layout-builder/spatial-util"
 import { matchPCBPortsWithFootprintAndMutate } from "../trace-builder/match-pcb-ports-with-footprint"
-import omitBy from "lodash/omitBy"
-import isNil from "lodash/isNil"
 import _ from "lodash"
 import { maybeConvertToPoint } from "lib/utils/maybe-convert-to-point"
 import { isTruthy } from "lib/utils/is-truthy"

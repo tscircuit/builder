@@ -1,4 +1,4 @@
-import range from "lodash/range"
+import _ from "lodash"
 
 export type VerticalPortSideConfiguration = {
   pin_definition_direction?: "top-to-bottom" | "bottom-to-top"
@@ -138,7 +138,7 @@ export const getPortIndices = (pa: PortArrangement): number[] => {
   const { left_size, right_size, top_size, bottom_size } =
     getSizeOfSidesFromPortArrangement(pa)
 
-  return range(1, left_size + right_size + top_size + bottom_size + 1)
+  return _.range(1, left_size + right_size + top_size + bottom_size + 1)
 }
 
 export const getPortArrangementSize = (
