@@ -25,6 +25,7 @@ import _ from "lodash"
 import { maybeConvertToPoint } from "lib/utils/maybe-convert-to-point"
 import { isTruthy } from "lib/utils/is-truthy"
 import { removeNulls } from "lib/utils/remove-nulls"
+import { SparkfunComponentId } from "@tscircuit/sparkfun-packages"
 
 export interface BaseComponentBuilder<T> {
   project_builder: ProjectBuilder

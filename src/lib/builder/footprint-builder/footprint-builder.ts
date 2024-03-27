@@ -146,18 +146,13 @@ export class FootprintBuilderClass implements FootprintBuilder {
       // TODO sf_pkg.text
     } else {
       throw new Error(
-        `Unknown standard footprint name: "${footprint_name}" (examples: 0402, 0603, ${closest_sf_pkg_name
-          .slice(0, 3)
-          .map((v) => v.name)
-          .join(",")})`
+        `Unknown standard footprint name: "${footprint_name}" (examples: 0402, 0603)`
       )
     }
     return this
   }
 
-  setStandardFootprint(
-    footprint_name: StandardFootprintName
-  ): FootprintBuilder {
+  setStandardFootprint(footprint_name: SparkfunComponentId): FootprintBuilder {
     return this.loadStandardFootprint(footprint_name)
   }
 
