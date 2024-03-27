@@ -13,11 +13,13 @@ import {
   SchematicTextBuilder,
   createSchematicTextBuilder,
 } from "./schematic-text-builder"
+import { createSchematicPathBuilder } from "./schematic-path-builder"
 
 const schematic_symbol_addables = {
   schematic_box: createSchematicBoxBuilder,
   schematic_line: createSchematicLineBuilder,
   schematic_text: createSchematicTextBuilder,
+  schematic_path: createSchematicPathBuilder,
 }
 
 type SchematicSymbolAddables = typeof schematic_symbol_addables
