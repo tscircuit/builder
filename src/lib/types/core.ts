@@ -127,6 +127,8 @@ export interface SchematicText {
   anchor: "center" | "left" | "right" | "top" | "bottom"
 }
 
+export type SchematicPath = Soup.SchematicPath
+
 export interface SchematicPort {
   type: "schematic_port"
   schematic_port_id: string
