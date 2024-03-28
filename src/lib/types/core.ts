@@ -42,17 +42,7 @@ type SchematicComponent = Soup.SchematicComponent
 
 type SchematicTrace = Soup.SchematicTrace
 
-export interface SchematicText {
-  type: "schematic_text"
-  schematic_component_id: string
-  schematic_text_id: string
-  text: string
-  position: Point
-  rotation: number
-  anchor: "center" | "left" | "right" | "top" | "bottom"
-}
-
-type SchematicPath = Soup.SchematicPath
+type SchematicText = Soup.SchematicText
 
 export interface SchematicPort {
   type: "schematic_port"
