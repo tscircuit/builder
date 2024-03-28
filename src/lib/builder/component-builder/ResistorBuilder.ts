@@ -68,12 +68,12 @@ export class ResistorBuilderClass
       type: "schematic_component",
       source_component_id,
       schematic_component_id,
-      rotation: this.schematic_rotation,
+      rotation: bc.convert(this.schematic_rotation),
       size: {
         width: 1,
         height: 12 / 40,
       },
-      center: this.schematic_position || { x: 0, y: 0 },
+      center: bc.convert(this.schematic_position) || { x: 0, y: 0 },
       ...this.schematic_properties,
     }
     elements.push(schematic_component)

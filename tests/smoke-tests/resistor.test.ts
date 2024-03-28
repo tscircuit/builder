@@ -9,7 +9,7 @@ test("[smoke] resistor", async (t) => {
         resistance: "10 ohm",
         name: "R1",
       })
-      .setSchematicCenter(2, 1)
+      .setSchematicCenter("2mm", 1)
       .setFootprint("0402")
   )
 
