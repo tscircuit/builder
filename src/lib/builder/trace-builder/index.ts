@@ -20,7 +20,11 @@ export interface TraceBuilder {
   builder_type: "trace_builder"
   project_builder: ProjectBuilder
   parent: GroupBuilder
-  setProps: (props: { path?: string[] }) => TraceBuilder
+  setProps: (props: {
+    path?: string[]
+    from?: string
+    to?: string
+  }) => TraceBuilder
   setRouteSolver: (routeSolver: RouteSolverOrString) => TraceBuilder
   addConnections: (portSelectors: Array<string>) => TraceBuilder
   build(elements: Type.AnyElement[]): Promise<Type.AnyElement[]>
@@ -61,6 +65,9 @@ export const createTraceBuilder = (
   builder.setProps = (props) => {
     if (props.path) {
       builder.addConnections(props.path)
+    }
+    if (props.from && props.to) {
+      builder.addConnections([props.from, props.to])
     }
     return builder
   }
