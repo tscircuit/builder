@@ -8,7 +8,6 @@ import {
 import { compose, rotate, transform, translate } from "transformation-matrix"
 import { transformSchematicElements } from "lib/builder/transform-elements"
 import getPortPosition from "../../utils/get-port-position"
-import { AnyElement, Point, SchematicComponent } from "lib/types"
 import {
   createFootprintBuilder,
   FootprintBuilder,
@@ -88,7 +87,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
   source_properties: any = {}
   schematic_properties: any = {}
   schematic_rotation: number = 0
-  schematic_position: Point = { x: 0, y: 0 }
+  schematic_position: Type.Point = { x: 0, y: 0 }
   settable_source_properties: string[]
   settable_schematic_properties: string[]
   settable_pcb_properties: string[]
@@ -355,7 +354,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
 
     // Build schematic component
 
-    const schematic_component: SchematicComponent = {
+    const schematic_component: Type.SchematicComponent = {
       type: "schematic_component",
       schematic_component_id,
       source_component_id,

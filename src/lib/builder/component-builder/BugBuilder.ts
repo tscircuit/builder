@@ -1,6 +1,7 @@
 import { ProjectBuilder } from "../project-builder"
 import { BaseComponentBuilder, ComponentBuilderClass } from "./ComponentBuilder"
 import * as Type from "lib/types"
+import * as Soup from "lib/soup"
 import { transformSchematicElements } from "../transform-elements"
 import { compose, rotate, translate } from "transformation-matrix"
 import { PortsBuilder } from "../ports-builder"
@@ -70,7 +71,7 @@ export class BugBuilderClass
     }
 
     const port_arrangement_size = getPortArrangementSize(port_arrangement)
-    const schematic_component: Type.SchematicComponent = {
+    const schematic_component: Soup.SchematicComponent = {
       type: "schematic_component",
       source_component_id,
       schematic_component_id,

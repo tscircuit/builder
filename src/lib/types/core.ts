@@ -6,9 +6,8 @@ export interface SchematicConfig {
   type: "schematic_config"
 }
 
-export type Point = { x: number; y: number } // Soup.Point
-
-export type Size = { width: number; height: number } // Soup.Size
+type Point = Soup.Point
+type Size = Soup.Size
 
 export interface SourceConfig {
   type: "source_config"
@@ -39,19 +38,9 @@ export type SchematicDrawing =
       text: string
     }
 
-export type SchematicComponent = Soup.SchematicComponent
+type SchematicComponent = Soup.SchematicComponent
 
-export interface SchematicTrace {
-  type: "schematic_trace"
-  schematic_trace_id: string
-  source_trace_id: string
-  edges: Array<{
-    from: { x: number; y: number }
-    to: { x: number; y: number }
-    from_schematic_port_id?: string
-    to_schematic_port_id?: string
-  }>
-}
+type SchematicTrace = Soup.SchematicTrace
 
 export interface SchematicText {
   type: "schematic_text"
@@ -63,7 +52,7 @@ export interface SchematicText {
   anchor: "center" | "left" | "right" | "top" | "bottom"
 }
 
-export type SchematicPath = Soup.SchematicPath
+type SchematicPath = Soup.SchematicPath
 
 export interface SchematicPort {
   type: "schematic_port"
