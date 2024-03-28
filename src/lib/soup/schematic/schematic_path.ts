@@ -4,7 +4,7 @@ import { point } from "../common/point"
 export const schematic_path = z.object({
   type: z.literal("schematic_path"),
   schematic_component_id: z.string(),
-  fill_color: z.string().optional(),
+  fill_color: z.enum(["red", "blue"]).optional(),
   is_filled: z.boolean().optional(),
   position: point,
   points: z.array(point),

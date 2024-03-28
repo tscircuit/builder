@@ -25,14 +25,7 @@ export interface SchematicGroup {
 }
 
 export type SchematicDrawing =
-  | {
-      type: "schematic_box"
-      schematic_component_id: string
-      width: number
-      height: number
-      x: number
-      y: number
-    }
+  | Soup.SchematicBox
   | {
       type: "schematic_line"
       schematic_component_id: string
@@ -62,48 +55,7 @@ export type SchematicDrawing =
 //     text: string
 //   }
 
-export interface SchematicComponent {
-  type: "schematic_component"
-  rotation: number
-  size: Size
-  center: Point
-  source_component_id: string
-  schematic_component_id: string
-
-  // drawing?: {
-  //   elements: Array<SchematicDrawing>
-  // }
-
-  // TODO only for schematic-bug
-  port_arrangement?:
-    | {
-        left_size: number
-        right_size: number
-        top_size?: number
-        bottom_size?: number
-      }
-    | {
-        left_side?: {
-          pins: number[]
-          direction?: "top-to-bottom" | "bottom-to-top"
-        }
-        right_side?: {
-          pins: number[]
-          direction?: "top-to-bottom" | "bottom-to-top"
-        }
-        top_side?: {
-          pins: number[]
-          direction?: "left-to-right" | "right-to-left"
-        }
-        bottom_side?: {
-          pins: number[]
-          direction?: "left-to-right" | "right-to-left"
-        }
-      }
-  port_labels?: {
-    [port_number: string]: string
-  }
-}
+export type SchematicComponent = Soup.SchematicComponent
 
 export interface SchematicTrace {
   type: "schematic_trace"

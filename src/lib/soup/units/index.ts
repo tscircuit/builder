@@ -51,10 +51,11 @@ import { z } from "zod"
 //   | `${number}${SIPrefix}${UnitOrAbbreviation}`
 //   | `${number} ${SIPrefix}${UnitOrAbbreviation}`
 
-export const resistance = z.string()
-export const capacitance = z.string()
-export const inductance = z.string()
-export const voltage = z.string()
-export const length = z.string()
-export const current = z.string()
-export const time = z.string()
+export const resistance = z.string().or(z.number())
+export const capacitance = z.string().or(z.number())
+export const inductance = z.string().or(z.number())
+export const voltage = z.string().or(z.number())
+export const length = z.string().or(z.number())
+export const current = z.string().or(z.number())
+export const time = z.string().or(z.number())
+export const rotation = z.string().or(z.number())
