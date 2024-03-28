@@ -2,16 +2,8 @@
   "name": "@tscircuit/builder",
   "version": "1.5.19",
   "type": "module",
-  "types": "./dist/index.d.ts",
+  "types": "./dist/index.d.cts",
   "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
-  "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs",
-      "types": "./dist/index.d.ts"
-    }
-  },
   "repository": "tscircuit/builder",
   "license": "MIT",
   "files": [
