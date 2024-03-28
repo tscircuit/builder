@@ -41,20 +41,31 @@ function getSiPrefixMultiplierFromUnit(v: string): number {
   return 1
 }
 
-export const parseAndConvertSiUnit = (
-  v: string | number | undefined | { x: string | number; y: string | number }
-): { unit: string | null; value: null | number | { x: number; y: number } } => {
+export const parseAndConvertSiUnit = <
+  T extends
+    | string
+    | number
+    | undefined
+    | { x: string | number; y: string | number }
+>(
+  v: T
+): {
+  unit: string | null
+  value: T extends { x: string | number; y: string | number }
+    ? null | { x: number; y: number }
+    : null | number
+} => {
   if (typeof v === "undefined") return { unit: null, value: null }
   if (typeof v === "string" && v.match(/^[\d\.]+$/))
-    return { value: parseFloat(v), unit: null }
-  if (typeof v === "number") return { value: v, unit: null }
+    return { value: parseFloat(v) as any, unit: null }
+  if (typeof v === "number") return { value: v as any, unit: null }
   if (typeof v === "object" && "x" in v && "y" in v) {
     return {
       unit: parseAndConvertSiUnit(v.x).unit,
       value: {
         x: parseAndConvertSiUnit(v.x as any).value as number,
         y: parseAndConvertSiUnit(v.y as any).value as number,
-      },
+      } as any,
     }
   }
   const unit_reversed = v
@@ -76,7 +87,7 @@ export const parseAndConvertSiUnit = (
   } else {
     return {
       unit,
-      value: getSiPrefixMultiplierFromUnit(unit) * parseFloat(value),
+      value: (getSiPrefixMultiplierFromUnit(unit) * parseFloat(value)) as any,
     }
   }
 }

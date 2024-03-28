@@ -1,3 +1,4 @@
+import { parseAndConvertSiUnit } from "lib/utils/convert-si-unit-to-number"
 import { z } from "zod"
 
 // // Currently, removing uncommon SI Prefixes for type simplicity.
@@ -51,11 +52,45 @@ import { z } from "zod"
 //   | `${number}${SIPrefix}${UnitOrAbbreviation}`
 //   | `${number} ${SIPrefix}${UnitOrAbbreviation}`
 
-export const resistance = z.string().or(z.number())
-export const capacitance = z.string().or(z.number())
-export const inductance = z.string().or(z.number())
-export const voltage = z.string().or(z.number())
-export const length = z.string().or(z.number())
-export const current = z.string().or(z.number())
-export const time = z.string().or(z.number())
-export const rotation = z.string().or(z.number())
+// TODO lots of validation to make sure the unit is valid etc.
+export const resistance = z
+  .string()
+  .or(z.number())
+  .transform((v) => (arg) => parseAndConvertSiUnit(v).value!)
+
+export const capacitance = z
+  .string()
+  .or(z.number())
+  .transform((v) => (arg) => parseAndConvertSiUnit(v).value!)
+
+export const inductance = z
+  .string()
+  .or(z.number())
+  .transform((v) => (arg) => parseAndConvertSiUnit(v).value!)
+
+export const voltage = z
+  .string()
+  .or(z.number())
+  .transform((v) => (arg) => parseAndConvertSiUnit(v).value!)
+
+export const length = z
+  .string()
+  .or(z.number())
+  .transform((v) => (arg) => parseAndConvertSiUnit(v).value!)
+
+export const distance = length
+
+export const current = z
+  .string()
+  .or(z.number())
+  .transform((v) => (arg) => parseAndConvertSiUnit(v).value!)
+
+export const time = z
+  .string()
+  .or(z.number())
+  .transform((v) => (arg) => parseAndConvertSiUnit(v).value!)
+
+export const rotation = z
+  .string()
+  .or(z.number())
+  .transform((v) => (arg) => parseAndConvertSiUnit(v).value!)
