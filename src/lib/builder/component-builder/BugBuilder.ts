@@ -64,6 +64,11 @@ export class BugBuilderClass
     elements.push(source_component)
 
     const port_arrangement = this.schematic_properties?.port_arrangement
+
+    if (!port_arrangement) {
+      throw new Error("port_arrangement is required when building a <bug />")
+    }
+
     const port_arrangement_size = getPortArrangementSize(port_arrangement)
     const schematic_component: Type.SchematicComponent = {
       type: "schematic_component",
@@ -87,6 +92,10 @@ export class BugBuilderClass
     // add ports based on port arrangement and give appropriate labels
     const { port_labels } = this.schematic_properties
     const { total_ports } = port_arrangement_size
+
+    if (!port_labels) {
+      throw new Error("port_labels is required when building a <bug />")
+    }
 
     const port_indices = getPortIndices(port_arrangement)
     for (const pn of port_indices) {

@@ -56,41 +56,41 @@ import { z } from "zod"
 export const resistance = z
   .string()
   .or(z.number())
-  .transform((v) => (arg) => parseAndConvertSiUnit(v).value!)
+  .transform((v) => parseAndConvertSiUnit(v).value!)
 
 export const capacitance = z
   .string()
   .or(z.number())
-  .transform((v) => (arg) => parseAndConvertSiUnit(v).value!)
+  .transform((v) => parseAndConvertSiUnit(v).value!)
 
 export const inductance = z
   .string()
   .or(z.number())
-  .transform((v) => (arg) => parseAndConvertSiUnit(v).value!)
+  .transform((v) => parseAndConvertSiUnit(v).value!)
 
 export const voltage = z
   .string()
   .or(z.number())
-  .transform((v) => (arg) => parseAndConvertSiUnit(v).value!)
+  .transform((v) => parseAndConvertSiUnit(v).value!)
 
 export const length = z
   .string()
   .or(z.number())
-  .transform((v) => (arg) => parseAndConvertSiUnit(v).value!)
+  .transform((v) => parseAndConvertSiUnit(v).value!)
 
 export const distance = length
 
 export const current = z
   .string()
   .or(z.number())
-  .transform((v) => (arg) => parseAndConvertSiUnit(v).value!)
+  .transform((v) => parseAndConvertSiUnit(v).value!)
 
 export const time = z
   .string()
   .or(z.number())
-  .transform((v) => (arg) => parseAndConvertSiUnit(v).value!)
+  .transform((v) => parseAndConvertSiUnit(v).value!)
 
 export const rotation = z
   .string()
   .or(z.number())
-  .transform((v) => (arg) => parseAndConvertSiUnit(v).value!)
+  .transform((v) => parseAndConvertSiUnit(v).value!)
