@@ -1,10 +1,12 @@
-import { Dimension, SchematicPath } from "lib/types"
+import { Dimension } from "lib/types"
 import { ProjectBuilder } from "../project-builder"
 import { createSimpleDataBuilderClass } from "../simple-data-builder"
+import * as Soup from "lib/soup"
 
 export type SchematicPathBuilderFields = Partial<
-  Omit<SchematicPath, "position"> & {
+  Omit<Soup.SchematicPath, "position" | "points"> & {
     position: { x: Dimension; y: Dimension }
+    points: { x: Dimension; y: Dimension }[]
   }
 >
 
@@ -12,10 +14,7 @@ export interface SchematicPathBuilder {
   builder_type: "schematic_path_builder"
   props: SchematicPathBuilderFields
   setProps(props: Partial<SchematicPathBuilderFields>): SchematicPathBuilder
-  build(): Omit<SchematicPathBuilderFields, "x" | "y"> & {
-    x: Dimension
-    y: Dimension
-  }
+  build(): Soup.SchematicPath[]
 }
 
 export const SchematicPathBuilder = createSimpleDataBuilderClass(
@@ -24,7 +23,14 @@ export const SchematicPathBuilder = createSimpleDataBuilderClass(
     type: "schematic_path",
     points: [],
   } as SchematicPathBuilder["props"],
-  ["position"]
+  ["position"],
+  (props, bc) => ({
+    ...props,
+    points: props.points.map((point) => ({
+      x: bc.convert(point.x),
+      y: bc.convert(point.y),
+    })),
+  })
 )
 
 export const createSchematicPathBuilder = (

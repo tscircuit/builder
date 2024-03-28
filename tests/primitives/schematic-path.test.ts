@@ -8,9 +8,11 @@ test("render a simple schematic path", async (t) => {
       cb.modifySchematic((sb) =>
         sb.add("schematic_path", (sp) =>
           sp.setProps({
+            is_filled: true,
             points: [
               { x: 0, y: 0 },
-              { x: 100, y: 100 },
+              { x: "1mm", y: "1mm" },
+              { x: 0, y: "1mm" },
             ],
           })
         )

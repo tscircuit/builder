@@ -54,6 +54,7 @@ export class SchematicSymbolBuilderClass implements SchematicSymbolBuilder {
         "schematic_box_builder",
         "schematic_line_builder",
         "schematic_text_builder",
+        "schematic_path_builder",
       ].includes(child.builder_type)
     ) {
       if ((child as any).builder_type === "schematic_symbol_builder") {

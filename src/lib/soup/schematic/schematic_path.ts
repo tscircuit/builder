@@ -6,6 +6,7 @@ export const schematic_path = z.object({
   schematic_component_id: z.string(),
   fill_color: z.string().optional(),
   is_filled: z.boolean().optional(),
+  position: point,
   points: z.array(point),
 })
 

@@ -22,11 +22,13 @@ export interface SimpleDataBuilder<
 export const createSimpleDataBuilderClass = <
   BuilderType extends string,
   Fields extends object,
-  UnitField extends keyof Fields = keyof Fields
+  UnitField extends keyof Fields = keyof Fields,
+  OutputFields extends object = Fields
 >(
   builder_type: BuilderType,
   default_fields: Partial<Fields>,
-  unit_fields: UnitField[] = []
+  unit_fields: UnitField[] = [],
+  propsPostprocessor?: (props: Fields, bc: BuildContext) => OutputFields
 ): {
   new (project_builder: ProjectBuilder): SimpleDataBuilder<
     BuilderType,
@@ -56,6 +58,9 @@ export const createSimpleDataBuilderClass = <
       const ret_obj: any = { ...this.props }
       for (const unit_field of unit_fields) {
         ret_obj[unit_field] = bc.convert(ret_obj[unit_field])
+      }
+      if (propsPostprocessor) {
+        return propsPostprocessor(ret_obj, bc)
       }
       return ret_obj
     }
