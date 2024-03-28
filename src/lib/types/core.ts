@@ -26,14 +26,7 @@ export interface SchematicGroup {
 
 export type SchematicDrawing =
   | Soup.SchematicBox
-  | {
-      type: "schematic_line"
-      schematic_component_id: string
-      x1: number
-      x2: number
-      y1: number
-      y2: number
-    }
+  | Soup.SchematicLine
   // TODO this text type seems redundant with schematic_text...
   // It's attached to the symbol, so probably shouldn't be used often
   | {
@@ -45,15 +38,6 @@ export type SchematicDrawing =
       y: number
       text: string
     }
-// | {
-//     type: "schematic_text"
-//     drawing_type: "text"
-//     schematic_component_id: string
-//     align: string
-//     x: number
-//     y: number
-//     text: string
-//   }
 
 export type SchematicComponent = Soup.SchematicComponent
 
