@@ -10,4 +10,5 @@ export const schematic_line = z.object({
   y2: distance,
 })
 
+export type SchematicLineInput = z.input<typeof schematic_line>
 export type SchematicLine = z.infer<typeof schematic_line>

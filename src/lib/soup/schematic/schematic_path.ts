@@ -10,4 +10,5 @@ export const schematic_path = z.object({
   points: z.array(point),
 })
 
+export type SchematicPathInput = z.input<typeof schematic_path>
 export type SchematicPath = z.infer<typeof schematic_path>

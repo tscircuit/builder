@@ -16,4 +16,5 @@ export const schematic_text = z.object({
     .default("center"),
 })
 
+export type SchematicTextInput = z.input<typeof schematic_text>
 export type SchematicText = z.infer<typeof schematic_text>

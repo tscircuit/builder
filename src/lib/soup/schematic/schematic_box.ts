@@ -1,12 +1,14 @@
 import { z } from "zod"
+import { distance } from "../units"
 
 export const schematic_box = z.object({
   type: z.literal("schematic_box"),
   schematic_component_id: z.string(),
-  width: z.number(),
-  height: z.number(),
-  x: z.number(),
-  y: z.number(),
+  width: distance,
+  height: distance,
+  x: distance,
+  y: distance,
 })
 
+export type SchematicBoxInput = z.input<typeof schematic_box>
 export type SchematicBox = z.infer<typeof schematic_box>

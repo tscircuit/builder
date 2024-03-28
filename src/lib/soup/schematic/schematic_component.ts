@@ -49,4 +49,5 @@ export const schematic_component = z.object({
   port_labels: z.record(z.string()).optional(),
 })
 
+export type SchematicComponentInput = z.input<typeof schematic_component>
 export type SchematicComponent = z.infer<typeof schematic_component>

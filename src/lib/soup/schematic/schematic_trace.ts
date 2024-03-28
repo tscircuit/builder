@@ -21,4 +21,5 @@ export const schematic_trace = z.object({
   ),
 })
 
+export type SchematicTraceInput = z.input<typeof schematic_trace>
 export type SchematicTrace = z.infer<typeof schematic_trace>
