@@ -218,6 +218,8 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
         this.setFootprint(prop_val as any)
       } else if (prop_key === "schematic_rotation" || prop_key === "rotation") {
         this.setSchematicRotation(prop_val)
+      } else if (prop_key === "pcb_rotation") {
+        this.setFootprintRotation(prop_val as any)
       } else if (prop_key === "footprint_center" && point) {
         this.setFootprintCenter(point.x, point.y)
       } else if (this.settable_source_properties.includes(prop_key)) {
