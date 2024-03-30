@@ -35,6 +35,11 @@ export interface TraceBuilder {
   build(elements: Type.AnyElement[]): Promise<Type.AnyElement[]>
 }
 
+export interface PCBRouteHint extends InputPoint {
+  via?: boolean
+  via_to_layer?: string
+}
+
 export const createTraceBuilder = (
   project_builder: ProjectBuilder
 ): TraceBuilder => {
@@ -149,11 +154,14 @@ export const createTraceBuilder = (
       }
     })
 
-    const obstacles = getSchematicObstaclesFromElements(parentElements, {
-      excluded_schematic_port_ids: schematicTerminals.map(
-        (t) => t.schematic_port_id
-      ),
-    })
+    const schematic_obstacles = getSchematicObstaclesFromElements(
+      parentElements,
+      {
+        excluded_schematic_port_ids: schematicTerminals.map(
+          (t) => t.schematic_port_id
+        ),
+      }
+    )
 
     // TODO search for <routehint /> in soup, then construct a routehints array
 
@@ -163,7 +171,7 @@ export const createTraceBuilder = (
 
     if (schematicTerminals.length !== 2 && schematic_route_hints.length > 0) {
       throw new Error(
-        "Route hints currently aren't supported for traces with more than 2 terminals"
+        "Schematic route hints currently aren't supported for traces with more than 2 terminals"
       )
     }
 
@@ -180,7 +188,7 @@ export const createTraceBuilder = (
     if (schematic_route_hints.length === 0) {
       edges = await internal.routeSolver({
         terminals: schematicTerminals,
-        obstacles,
+        obstacles: schematic_obstacles,
       })
     } else {
       edges = (
@@ -188,7 +196,7 @@ export const createTraceBuilder = (
           pairs(ordered_terminals).map(([a, b]) =>
             internal.routeSolver({
               terminals: [a, b],
-              obstacles,
+              obstacles: schematic_obstacles,
             })
           )
         )
@@ -222,68 +230,92 @@ export const createTraceBuilder = (
     })
     const pcb_terminal_port_ids = pcb_terminals.map((t) => t.pcb_port_id)
 
-    const pcb_route: Type.PCBTrace["route"] = []
-    try {
-      const solved_route = findRoute({
-        grid: {
-          marginSegments: 2,
-          maxGranularSearchSegments: 50,
-          segmentSize: 1, // mm
-        },
-        obstacles: [
-          ...parentElements
-            .filter((elm): elm is Type.PCBSMTPad => elm.type === "pcb_smtpad")
-            // Exclude the pads that are connected to the trace
-            .filter((elm) => !pcb_terminal_port_ids.includes(elm.pcb_port_id!))
-            .map((pad) => {
-              if (pad.shape === "rect") {
-                return {
-                  center: { x: pad.x, y: pad.y },
-                  width: pad.width,
-                  height: pad.height,
-                }
-              } else if (pad.shape === "circle") {
-                // TODO support better circle obstacles
-                return {
-                  center: { x: pad.x, y: pad.y },
-                  width: pad.radius * 2,
-                  height: pad.radius * 2,
-                }
-              }
-              throw new Error(
-                `Invalid pad shape for pcb_smtpad "${(pad as any).shape}"`
-              )
-            }),
-        ],
-        pointsToConnect: pcb_terminals,
-      })
-
-      if (solved_route.pathFound) {
-        for (const point of solved_route.points) {
-          pcb_route.push({
-            route_type: "wire",
-            layer: { name: "top" },
-            width: 0.5,
-            x: point.x,
-            y: point.y,
-            // TODO add start_pcb_port_id & end_pcb_port_id
-          })
-        }
-      }
-    } catch (e) {
-      pcb_errors.push({
-        pcb_error_id: builder.project_builder.getId("pcb_error"),
-        type: "pcb_error",
-        error_type: "pcb_trace_error",
-        message: `Error while pcb-trace-route solving: ${e.toString()}`,
-        pcb_trace_id,
-        source_trace_id,
-        pcb_component_ids: [], // TODO
-        pcb_port_ids: pcb_terminal_port_ids,
-      })
+    if (internal.pcb_route_hints.length > 0 && pcb_terminals.length !== 2) {
+      throw new Error(
+        "PCB route hints currently aren't supported for traces with more than 2 terminals"
+      )
     }
 
-    // TODO construct route from pcb_terminals
+    const pcb_obstacles = [
+      ...parentElements
+        .filter((elm): elm is Type.PCBSMTPad => elm.type === "pcb_smtpad")
+        // Exclude the pads that are connected to the trace
+        .filter((elm) => !pcb_terminal_port_ids.includes(elm.pcb_port_id!))
+        .map((pad) => {
+          if (pad.shape === "rect") {
+            return {
+              center: { x: pad.x, y: pad.y },
+              width: pad.width,
+              height: pad.height,
+            }
+          } else if (pad.shape === "circle") {
+            // TODO support better circle obstacles
+            return {
+              center: { x: pad.x, y: pad.y },
+              width: pad.radius * 2,
+              height: pad.radius * 2,
+            }
+          }
+          throw new Error(
+            `Invalid pad shape for pcb_smtpad "${(pad as any).shape}"`
+          )
+        }),
+    ]
+    const pcb_solver_grid = {
+      marginSegments: 2,
+      maxGranularSearchSegments: 50,
+      segmentSize: 0.2, // mm
+    }
+
+    const pcb_route: Type.PCBTrace["route"] = []
+
+    function solveAndAddToRoute(terminals: Point[]) {
+      try {
+        const solved_route = findRoute({
+          grid: pcb_solver_grid,
+          obstacles: pcb_obstacles,
+          pointsToConnect: terminals,
+        })
+
+        if (solved_route.pathFound) {
+          for (const point of solved_route.points) {
+            pcb_route.push({
+              route_type: "wire",
+              layer: { name: "top" },
+              width: 0.5,
+              x: point.x,
+              y: point.y,
+              // TODO add start_pcb_port_id & end_pcb_port_id
+            })
+          }
+        }
+      } catch (e) {
+        pcb_errors.push({
+          pcb_error_id: builder.project_builder.getId("pcb_error"),
+          type: "pcb_error",
+          error_type: "pcb_trace_error",
+          message: `Error while pcb-trace-route solving: ${e.toString()}`,
+          pcb_trace_id,
+          source_trace_id,
+          pcb_component_ids: [], // TODO
+          pcb_port_ids: pcb_terminal_port_ids,
+        })
+      }
+    }
+
+    if (internal.pcb_route_hints.length === 0) {
+      solveAndAddToRoute(pcb_terminals)
+    } else {
+      // TODO add support for more than 2 terminals w/ hints
+      const ordered_pcb_terminals_and_hints = [
+        pcb_terminals[0],
+        ...(internal.pcb_route_hints as any),
+        pcb_terminals[1],
+      ]
+      for (const [a, b] of pairs(ordered_pcb_terminals_and_hints)) {
+        solveAndAddToRoute([a, b])
+      }
+    }
 
     const pcb_trace: Type.PCBTrace = {
       type: "pcb_trace",
