@@ -34,7 +34,7 @@ const projectBuilderOutput = await projectBuilder.build()
 
 
 /*
-// TSBO JSON, very verbose! Looks easy to render though!
+// Soup JSON, very verbose! Looks easy to render though!
 [
   {
     ftype: 'simple_resistor',
