@@ -5,7 +5,7 @@
 TSCircuit Builder is a Typescript builder pattern for constructing schematic and PCB layouts. `@tscircuit/builder` is an internal module, [use tscircuit tsx instead](https://github.com/tscircuit/tscircuit)
 
 TSCircuit TSX eventually renders to a builder. The builder will build
-TSCircuit Builder Output (TSBO), a JSON output. TSBO can be rendered to
+TSCircuit Soup, a JSON output. Soup can be rendered to
 a webpage as either a schematic or PCB layout.
 
 > Why not go directly from TSX -> Schematic/PCB?
