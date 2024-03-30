@@ -1,3 +1,4 @@
+import { InputPoint } from "./../../soup/common/point"
 import { extractIds } from "./../../utils/extract-ids"
 // TODO rename this to trace-builder
 
@@ -11,7 +12,9 @@ import { straightRouteSolver } from "./straight-route-solver"
 import { rmstSolver } from "./rmst-solver"
 import { route1Solver } from "./route1-solver"
 import { findRoute } from "@tscircuit/routing"
+import { Point } from "lib/soup"
 import { getSchematicObstaclesFromElements } from "./get-schematic-obstacles-from-elements"
+import { pairs } from "lib/utils/pairs"
 
 type RouteSolverOrString = Type.RouteSolver | "rmst" | "straight" | "route1"
 
@@ -24,6 +27,8 @@ export interface TraceBuilder {
     path?: string[]
     from?: string
     to?: string
+    schematic_route_hints?: InputPoint[]
+    pcb_route_hints?: InputPoint[]
   }) => TraceBuilder
   setRouteSolver: (routeSolver: RouteSolverOrString) => TraceBuilder
   addConnections: (portSelectors: Array<string>) => TraceBuilder
@@ -37,9 +42,11 @@ export const createTraceBuilder = (
     project_builder,
     builder_type: "trace_builder",
   } as any
-  const internal: any = {
+  const internal = {
     portSelectors: [] as string[],
-    routeSolver: route1Solver,
+    routeSolver: route1Solver as Type.RouteSolver,
+    schematic_route_hints: [] as InputPoint[],
+    pcb_route_hints: [] as InputPoint[],
   }
 
   builder.addConnections = (portSelectors) => {
@@ -58,7 +65,7 @@ export const createTraceBuilder = (
           ? straightRouteSolver
           : route1Solver // TODO default to rmstOrRoute1Solver
     }
-    internal.routeSolver = routeSolver
+    internal.routeSolver = routeSolver as any
     return builder
   }
 
@@ -68,6 +75,12 @@ export const createTraceBuilder = (
     }
     if (props.from && props.to) {
       builder.addConnections([props.from, props.to])
+    }
+    if (props.schematic_route_hints) {
+      internal.schematic_route_hints = props.schematic_route_hints
+    }
+    if (props.pcb_route_hints) {
+      internal.pcb_route_hints = props.pcb_route_hints
     }
     return builder
   }
@@ -136,14 +149,51 @@ export const createTraceBuilder = (
       }
     })
 
-    const edges = await internal.routeSolver({
-      terminals: schematicTerminals,
-      obstacles: getSchematicObstaclesFromElements(parentElements, {
-        excluded_schematic_port_ids: schematicTerminals.map(
-          (t) => t.schematic_port_id
-        ),
-      }),
+    const obstacles = getSchematicObstaclesFromElements(parentElements, {
+      excluded_schematic_port_ids: schematicTerminals.map(
+        (t) => t.schematic_port_id
+      ),
     })
+
+    // TODO search for <routehint /> in soup, then construct a routehints array
+
+    const schematic_route_hints = internal.schematic_route_hints ?? []
+
+    let ordered_terminals = schematicTerminals
+
+    if (schematicTerminals.length !== 2 && schematic_route_hints.length > 0) {
+      throw new Error(
+        "Route hints currently aren't supported for traces with more than 2 terminals"
+      )
+    }
+
+    if (schematic_route_hints.length > 0) {
+      ordered_terminals = [
+        schematicTerminals[0],
+        ...(schematic_route_hints as any),
+        schematicTerminals[1],
+      ]
+    }
+
+    let edges: Type.RouteEdge[]
+
+    if (schematic_route_hints.length === 0) {
+      edges = await internal.routeSolver({
+        terminals: schematicTerminals,
+        obstacles,
+      })
+    } else {
+      edges = (
+        await Promise.all(
+          pairs(ordered_terminals).map(([a, b]) =>
+            internal.routeSolver({
+              terminals: [a, b],
+              obstacles,
+            })
+          )
+        )
+      ).reduce((all_edges, edges_arr) => all_edges.concat(edges_arr), [])
+    }
 
     const schematic_trace: Type.SchematicTrace = {
       type: "schematic_trace",
