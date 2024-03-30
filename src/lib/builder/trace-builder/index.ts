@@ -32,7 +32,10 @@ export interface TraceBuilder {
   }) => TraceBuilder
   setRouteSolver: (routeSolver: RouteSolverOrString) => TraceBuilder
   addConnections: (portSelectors: Array<string>) => TraceBuilder
-  build(elements: Type.AnyElement[]): Promise<Type.AnyElement[]>
+  build(
+    elements: Type.AnyElement[],
+    bc: Type.BuildContext
+  ): Promise<Type.AnyElement[]>
 }
 
 export interface PCBRouteHint extends InputPoint {
@@ -90,7 +93,10 @@ export const createTraceBuilder = (
     return builder
   }
 
-  builder.build = async (parentElements: Type.AnyElement[] = []) => {
+  builder.build = async (
+    parentElements: Type.AnyElement[] = [],
+    bc: Type.BuildContext
+  ) => {
     const sourcePortsInRoute: Type.SourcePort[] = []
     for (const portSelector of internal.portSelectors) {
       const selectedElms = applySelector(parentElements, portSelector)
@@ -165,7 +171,9 @@ export const createTraceBuilder = (
 
     // TODO search for <routehint /> in soup, then construct a routehints array
 
-    const schematic_route_hints = internal.schematic_route_hints ?? []
+    const schematic_route_hints = (internal.schematic_route_hints ?? []).map(
+      (p) => bc.convert(p as any)
+    )
 
     let ordered_terminals = schematicTerminals
 
@@ -309,7 +317,7 @@ export const createTraceBuilder = (
       // TODO add support for more than 2 terminals w/ hints
       const ordered_pcb_terminals_and_hints = [
         pcb_terminals[0],
-        ...(internal.pcb_route_hints as any),
+        ...(internal.pcb_route_hints as any).map((p) => bc.convert(p)),
         pcb_terminals[1],
       ]
       for (const [a, b] of pairs(ordered_pcb_terminals_and_hints)) {

@@ -186,7 +186,9 @@ export class GroupBuilderClass implements GroupBuilder {
       ..._.flatten(await Promise.all(this.components.map((c) => c.build(bc))))
     )
     elements.push(
-      ..._.flatten(await Promise.all(this.traces.map((c) => c.build(elements))))
+      ..._.flatten(
+        await Promise.all(this.traces.map((c) => c.build(elements, bc)))
+      )
     )
     return elements
   }

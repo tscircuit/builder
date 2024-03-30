@@ -27,7 +27,7 @@ test("trace with pcb routing hints", async (t) => {
       tb.addConnections([".R1 > port.right", ".R2 > port.left"]).setProps({
         pcb_route_hints: [
           {
-            x: 3,
+            x: "3mm",
             y: -4,
           },
           {
