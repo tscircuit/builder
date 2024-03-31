@@ -29,6 +29,7 @@ export interface TraceBuilder {
     to?: string
     schematic_route_hints?: InputPoint[]
     pcb_route_hints?: InputPoint[]
+    thickness?: string | number
   }) => TraceBuilder
   setRouteSolver: (routeSolver: RouteSolverOrString) => TraceBuilder
   addConnections: (portSelectors: Array<string>) => TraceBuilder
@@ -55,6 +56,7 @@ export const createTraceBuilder = (
     routeSolver: route1Solver as Type.RouteSolver,
     schematic_route_hints: [] as InputPoint[],
     pcb_route_hints: [] as InputPoint[],
+    thickness: "inherit" as string | number,
   }
 
   builder.addConnections = (portSelectors) => {
@@ -89,6 +91,9 @@ export const createTraceBuilder = (
     }
     if (props.pcb_route_hints) {
       internal.pcb_route_hints = props.pcb_route_hints
+    }
+    if (props.thickness) {
+      internal.thickness = props.thickness
     }
     return builder
   }
@@ -244,6 +249,11 @@ export const createTraceBuilder = (
       )
     }
 
+    const thickness_mm =
+      internal.thickness === "inherit"
+        ? 0.2 // TODO derive from net/context
+        : bc.convert(internal.thickness as any)
+    const omargin = thickness_mm
     const pcb_obstacles = [
       ...parentElements
         .filter((elm): elm is Type.PCBSMTPad => elm.type === "pcb_smtpad")
@@ -253,24 +263,37 @@ export const createTraceBuilder = (
           if (pad.shape === "rect") {
             return {
               center: { x: pad.x, y: pad.y },
-              width: pad.width,
-              height: pad.height,
+              width: pad.width + omargin * 2,
+              height: pad.height + omargin * 2,
             }
           } else if (pad.shape === "circle") {
             // TODO support better circle obstacles
             return {
               center: { x: pad.x, y: pad.y },
-              width: pad.radius * 2,
-              height: pad.radius * 2,
+              width: pad.radius * 2 + omargin * 2,
+              height: pad.radius * 2 + omargin * 2,
             }
           }
           throw new Error(
             `Invalid pad shape for pcb_smtpad "${(pad as any).shape}"`
           )
         }),
+      ...parentElements
+        .filter(
+          (elm): elm is Type.PCBPlatedHole => elm.type === "pcb_plated_hole"
+        )
+        // Exclude the holes that are connected to the trace
+        .filter((elm) => !pcb_terminal_port_ids.includes(elm.pcb_port_id!))
+        .map((hole) => {
+          return {
+            center: { x: hole.x, y: hole.y },
+            width: hole.outer_diameter + omargin * 2,
+            height: hole.outer_diameter + omargin * 2,
+          }
+        }),
     ]
     const pcb_solver_grid = {
-      marginSegments: 2,
+      marginSegments: 20,
       maxGranularSearchSegments: 50,
       segmentSize: 0.2, // mm
     }
@@ -290,7 +313,7 @@ export const createTraceBuilder = (
             pcb_route.push({
               route_type: "wire",
               layer: { name: "top" },
-              width: 0.5,
+              width: thickness_mm,
               x: point.x,
               y: point.y,
               // TODO add start_pcb_port_id & end_pcb_port_id
