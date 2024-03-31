@@ -130,7 +130,7 @@ export class PortsBuilderClass implements PortsBuilder {
           schematic_component_id: this.schematic_component_id,
         } as Type.SchematicPort,
         // add schematic port pin_number text if pin_number is set
-        ...(!pin_number
+        ...(!pin_number || !port.schematic_pin_number_visible
           ? []
           : [
               {

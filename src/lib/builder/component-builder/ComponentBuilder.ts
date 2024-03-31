@@ -392,8 +392,12 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
 
     matchPCBPortsWithFootprintAndMutate({
       footprint_elements,
-      pcb_ports: elements.filter((elm) => elm.type === "pcb_port"),
-      source_ports: elements.filter((elm) => elm.type === "source_port"),
+      pcb_ports: elements
+        .concat(built_ports)
+        .filter((elm) => elm.type === "pcb_port"),
+      source_ports: elements
+        .concat(built_ports)
+        .filter((elm) => elm.type === "source_port"),
     } as any)
 
     elements.push(pcb_element, ...footprint_elements)

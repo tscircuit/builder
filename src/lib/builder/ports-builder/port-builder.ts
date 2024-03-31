@@ -8,10 +8,12 @@ export interface PortBuilder {
   schematic_position: { x: Dimension; y: Dimension }
   schematic_direction: "up" | "down" | "left" | "right"
   pin_number?: number
+  schematic_pin_number_visible: boolean
   setName(name: string): PortBuilder
   setPinNumber(pin_number: number): PortBuilder
   setSchematicPosition(coords: { x: Dimension; y: Dimension }): PortBuilder
   setSchematicDirection(dir: "up" | "down" | "left" | "right"): PortBuilder
+  setSchematicPinNumberVisible(visible: boolean): PortBuilder
   build(): Type.AnyElement[]
 }
 
@@ -30,10 +32,12 @@ export class PortBuilderClass implements PortBuilder {
   schematic_position: Type.Point
   schematic_direction: "up" | "down" | "left" | "right"
   pin_number?: number
+  schematic_pin_number_visible: boolean
 
   constructor(project_builder: ProjectBuilder) {
     this.project_builder = project_builder
     this.schematic_position = { x: 0, y: 0 }
+    this.schematic_pin_number_visible = true
   }
 
   setProps(props) {
@@ -41,6 +45,8 @@ export class PortBuilderClass implements PortBuilder {
     if (props.y) this.schematic_position.y = props.y
     if (props.dir) this.schematic_direction = props.dir
     if (props.direction) this.schematic_direction = props.direction
+    if (props.schematic_pin_number_visible)
+      this.schematic_pin_number_visible = props.schematic_pin_number_visible
 
     for (const key of Object.keys(props).filter((k) =>
       settable_props.includes(k)
@@ -67,6 +73,11 @@ export class PortBuilderClass implements PortBuilder {
 
   setSchematicDirection(direction) {
     this.schematic_direction = direction
+    return this
+  }
+
+  setSchematicPinNumberVisible(visible: boolean) {
+    this.schematic_pin_number_visible = visible
     return this
   }
 

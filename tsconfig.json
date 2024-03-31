@@ -16,7 +16,7 @@
     "jsx": "react-jsx",
     "baseUrl": "./src",
     "paths": {
-      "vendor/lodash": ["./src/lib/utils/lodash/lodash.custom.js"]
+      "tests/*": ["../tests/*"],
     },
     "strictNullChecks": true
   },

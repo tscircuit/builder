@@ -10,10 +10,20 @@ export const { DiodeBuilderClass, createDiodeBuilder } = defineNewComponent({
   configurePorts(builder, ctx) {
     builder.ports
       .add("port", (pb) =>
-        pb.setName("left").setSchematicPosition({ x: -0.5, y: 0 })
+        pb
+          .setName("left")
+          .setSchematicPosition({ x: -0.5, y: 0 })
+          .setPinNumber(1)
+          .setSchematicPinNumberVisible(false)
+          .setSchematicDirection("left")
       )
       .add("port", (pb) =>
-        pb.setName("right").setSchematicPosition({ x: 0.5, y: 0 })
+        pb
+          .setName("right")
+          .setSchematicPosition({ x: 0.5, y: 0 })
+          .setPinNumber(2)
+          .setSchematicPinNumberVisible(false)
+          .setSchematicDirection("right")
       )
   },
   configureSchematicSymbols(builder, ctx) {
