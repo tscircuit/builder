@@ -323,6 +323,7 @@ export const createTraceBuilder = (
           }
           return route
         }
+        return []
       } catch (e) {
         pcb_errors.push({
           pcb_error_id: builder.project_builder.getId("pcb_error"),
