@@ -15,6 +15,7 @@ import { findRoute } from "@tscircuit/routing"
 import { Point } from "lib/soup"
 import { getSchematicObstaclesFromElements } from "./get-schematic-obstacles-from-elements"
 import { pairs } from "lib/utils/pairs"
+import { mergeRoutes } from "./merge-routes"
 
 type RouteSolverOrString = Type.RouteSolver | "rmst" | "straight" | "route1"
 
@@ -300,7 +301,7 @@ export const createTraceBuilder = (
 
     const pcb_route: Type.PCBTrace["route"] = []
 
-    function solveAndAddToRoute(terminals: Point[]) {
+    function solveForRoute(terminals: Point[]): Type.PCBTrace["route"] {
       try {
         const solved_route = findRoute({
           grid: pcb_solver_grid,
@@ -309,8 +310,9 @@ export const createTraceBuilder = (
         })
 
         if (solved_route.pathFound) {
+          const route: Type.PCBTrace["route"] = []
           for (const point of solved_route.points) {
-            pcb_route.push({
+            route.push({
               route_type: "wire",
               layer: { name: "top" },
               width: thickness_mm,
@@ -319,6 +321,7 @@ export const createTraceBuilder = (
               // TODO add start_pcb_port_id & end_pcb_port_id
             })
           }
+          return route
         }
       } catch (e) {
         pcb_errors.push({
@@ -331,11 +334,12 @@ export const createTraceBuilder = (
           pcb_component_ids: [], // TODO
           pcb_port_ids: pcb_terminal_port_ids,
         })
+        return []
       }
     }
 
     if (internal.pcb_route_hints.length === 0) {
-      solveAndAddToRoute(pcb_terminals)
+      pcb_route.push(...solveForRoute(pcb_terminals))
     } else {
       // TODO add support for more than 2 terminals w/ hints
       const ordered_pcb_terminals_and_hints = [
@@ -343,9 +347,11 @@ export const createTraceBuilder = (
         ...(internal.pcb_route_hints as any).map((p) => bc.convert(p)),
         pcb_terminals[1],
       ]
+      const routes: Type.PCBTrace["route"][] = []
       for (const [a, b] of pairs(ordered_pcb_terminals_and_hints)) {
-        solveAndAddToRoute([a, b])
+        routes.push(solveForRoute([a, b]))
       }
+      pcb_route.push(...mergeRoutes(routes))
     }
 
     const pcb_trace: Type.PCBTrace = {
