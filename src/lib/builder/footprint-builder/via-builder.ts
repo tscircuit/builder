@@ -36,11 +36,12 @@ export class ViaBuilderClass implements ViaBuilder {
         y: bc.convert(this.y),
         hole_diameter: bc.convert(this.hole_diameter),
         outer_diameter: bc.convert(this.outer_diameter),
+        from_layer: "top",
+        to_layer: "bottom",
       },
     ]
   }
 }
-
 export const createViaBuilder = (project_builder: ProjectBuilder) => {
   return new ViaBuilderClass(project_builder)
 }

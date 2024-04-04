@@ -12,6 +12,17 @@ export const layer_string = z.enum([
 ])
 
 export const layer_ref = layer_string
+  .or(
+    z.object({
+      name: layer_string,
+    })
+  )
+  .transform((layer) => {
+    if (typeof layer === "string") {
+      return layer
+    }
+    return layer.name
+  })
 
 export type LayerRefInput = z.input<typeof layer_ref>
 export type LayerRef = z.output<typeof layer_ref>

@@ -86,7 +86,7 @@ export class SMTPadBuilderClass implements SMTPadBuilder {
 
   setLayer(layer) {
     if (typeof layer === "string") {
-      this.layer = { name: layer }
+      this.layer = layer as any
     } else {
       this.layer = layer
     }
