@@ -1,3 +1,4 @@
+import { LayerRef } from "lib/soup/pcb/layer_ref"
 import { SourceComponent } from "./source-component"
 import { Dimension } from "./util"
 import * as Soup from "lib/soup"
@@ -44,81 +45,6 @@ type SchematicTrace = Soup.SchematicTrace
 
 type SchematicText = Soup.SchematicText
 
-export interface SchematicPort {
-  type: "schematic_port"
-  schematic_port_id: string
-  source_port_id: string
-  schematic_component_id?: string
-  center: Point
-  facing_direction?: "up" | "down" | "left" | "right"
-}
-
-export interface LayerRef {
-  name: string
-}
-
-export interface PCBTrace {
-  type: "pcb_trace"
-  source_trace_id: string
-  pcb_trace_id: string
-  route: Array<
-    | {
-        route_type: "wire"
-        x: number
-        y: number
-        width: number
-        // cap: "butt" | "round" | "square"
-        start_pcb_port_id?: string
-        end_pcb_port_id?: string
-        layer: LayerRef
-      }
-    | {
-        route_type: "via"
-        x: number
-        y: number
-        from_layer: LayerRef
-        to_layer: LayerRef
-      }
-  >
-}
-
-export interface PCBVia {
-  type: "pcb_via"
-  outer_diameter: number
-  hole_diameter: number
-  x: number
-  y: number
-}
-
-export interface PCBPlatedHole {
-  type: "pcb_plated_hole"
-  outer_diameter: number
-  hole_diameter: number
-  x: number
-  y: number
-  port_hints?: string[]
-  pcb_component_id?: string
-  pcb_port_id?: string
-}
-
-export interface PCBHole {
-  type: "pcb_hole"
-  hole_diameter: number
-  x: number
-  y: number
-}
-
-export interface PCBText {
-  type: "pcb_text"
-  text: string
-  x: number
-  y: number
-  align: "bottom-left"
-  width: number
-  height: number
-  lines: number
-}
-
 export interface PCBBoard {
   type: "pcb_board"
   width: number
@@ -146,31 +72,6 @@ export interface PCBImage {
   image_url: string
 }
 
-export type PCBSMTPad =
-  | {
-      type: "pcb_smtpad"
-      shape: "circle"
-      x: number
-      y: number
-      radius: number
-      layer: LayerRef
-      port_hints?: string[]
-      pcb_component_id?: string
-      pcb_port_id?: string
-    }
-  | {
-      type: "pcb_smtpad"
-      shape: "rect"
-      x: number
-      y: number
-      width: number
-      height: number
-      layer: LayerRef
-      port_hints?: string[]
-      pcb_component_id?: string
-      pcb_port_id?: string
-    }
-
 export type PCBDrill =
   | {
       type: "pcb_drill"
@@ -193,20 +94,6 @@ export type PCBDrill =
       through_all: false | undefined
     }
 
-export interface PCBComponent {
-  type: "pcb_component"
-  pcb_component_id: string
-  source_component_id: string
-}
-
-export interface PCBPort {
-  type: "pcb_port"
-  pcb_port_id: string
-  source_port_id: string
-  x: number
-  y: number
-}
-
 export interface PCBGroup {
   type: "pcb_group"
   source_group_id: string
@@ -217,18 +104,7 @@ export interface PCBConfig {
   dimension_unit: "mm"
 }
 
-export interface PCBTraceError {
-  pcb_error_id: string
-  type: "pcb_error"
-  error_type: "pcb_trace_error"
-  message: string
-  pcb_trace_id: string
-  source_trace_id: string
-  pcb_component_ids: string[]
-  pcb_port_ids: string[]
-}
-
-export type PCBError = PCBTraceError
+export type PCBError = Soup.PCBTraceError
 
 export interface SourceTrace {
   type: "source_trace"
@@ -263,12 +139,12 @@ export interface Project {
   schematic_groups: SchematicGroup[]
   schematic_traces: SchematicTrace[]
   schematic_texts: SchematicText[]
-  schematic_ports: SchematicPort[]
+  schematic_ports: Soup.SchematicPort[]
   pcb_config: PCBConfig
   pcb_groups: PCBGroup[]
-  pcb_components: PCBComponent[]
-  pcb_traces: PCBTrace[]
-  pcb_ports: PCBPort[]
+  pcb_components: Soup.PCBComponent[]
+  pcb_traces: Soup.PCBTrace[]
+  pcb_ports: Soup.PCBPort[]
   source_config: SourceConfig
   source_traces: SourceTrace[]
   source_groups: SourceGroup[]
@@ -283,23 +159,23 @@ export type AnyElement =
   | SourceGroup
   | SourceTrace
   | SourcePort
-  | PCBTrace
-  | PCBComponent
+  | Soup.PCBTrace
+  | Soup.PCBComponent
   | PCBGroup
   | PCBConfig
-  | PCBPort
-  | PCBTrace
-  | PCBSMTPad
+  | Soup.PCBPort
+  | Soup.PCBTrace
+  | Soup.PCBSMTPad
   | PCBDrill
-  | PCBHole
-  | PCBPlatedHole
-  | PCBVia
+  | Soup.PCBHole
+  | Soup.PCBPlatedHole
+  | Soup.PCBVia
   | PCBError
   | SchematicGroup
   | SchematicComponent
   | SchematicTrace
   | SchematicConfig
-  | SchematicPort
+  | Soup.SchematicPort
   | SchematicText
   | SchematicDrawing
   | SourceError
