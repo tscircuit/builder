@@ -16,7 +16,7 @@
     "jsx": "react-jsx",
     "baseUrl": "./src",
     "paths": {
-      "tests/*": ["../tests/*"],
+      "tests/*": ["../tests/*"]
     },
     "strictNullChecks": true
   },
