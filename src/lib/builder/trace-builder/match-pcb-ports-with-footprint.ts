@@ -13,7 +13,9 @@ interface Parameters {
   source_ports: SourcePort[]
 }
 
-const getCenterOfFootprintElement = (elm: PCBSMTPad | PCBPlatedHole): Point => {
+const getCenterOfFootprintElement = (
+  elm: PCBSMTPad | PCBPlatedHole | PCBHole
+): Point => {
   return elm
 }
 

@@ -112,7 +112,6 @@ export const { ViaBuilderClass, createViaBuilder } = defineNewComponent({
           x: 0,
           y: 0,
           hole_diameter: props.hole_diameter,
-          port_hints: [],
         })
       )
       .add("smtpad", (spb) =>
