@@ -152,6 +152,9 @@ export interface Project {
   source_ports: SourcePort[]
 }
 
+/**
+ * @deprecated
+ */
 export type AnyElement =
   | Project
   | SourceConfig
