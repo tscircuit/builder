@@ -47,9 +47,16 @@ export type OptsDef<
   configureSchematicSymbols?: (
     builder: Builder,
     ctx: {
-      source_properties: TSrcProps &
+      source_properties: TSrcProps & Partial<DefaultSrcProps>
+    }
+  ) => unknown
+  configureFootprint?: (
+    builder: Builder,
+    ctx: BuildContext & {
+      props: TSrcProps &
         z.infer<TZodSchProps> &
-        Partial<DefaultSrcProps>
+        z.infer<TZodPcbProps> &
+        Partial<DefaultPcbProps>
     }
   ) => unknown
 }
@@ -129,9 +136,29 @@ export const defineNewComponent = <
         ;(this as any).configureSchematicSymbols = (bc) =>
           opts.configureSchematicSymbols?.(this, bc)
       }
+      if (opts.configureFootprint) {
+        ;(this as any).configureFootprint = (bc) => {
+          return opts.configureFootprint?.(this, {
+            ...bc,
+            props: {
+              ...opts.source_properties.parse(bc.props),
+              ...opts.schematic_properties.parse(bc.props),
+              ...opts.pcb_properties.parse(bc.props),
+            },
+          })
+        }
+      }
       this.settable_source_properties = [
         ...this.settable_source_properties,
         ...Object.keys((opts.source_properties._def as any).shape()),
+      ]
+      this.settable_pcb_properties = [
+        ...this.settable_pcb_properties,
+        ...Object.keys((opts.pcb_properties._def as any).shape()),
+      ]
+      this.settable_schematic_properties = [
+        ...this.settable_schematic_properties,
+        ...Object.keys((opts.schematic_properties._def as any).shape()),
       ]
     }
   }

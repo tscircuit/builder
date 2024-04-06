@@ -2,6 +2,13 @@ import * as Type from "lib/types"
 import { ProjectBuilder } from "lib/project"
 import { Dimension } from "lib/types"
 
+type RectProps = Extract<Type.PCBSMTPad, { shape: "rect" }>
+type CircleProps = Extract<Type.PCBSMTPad, { shape: "circle" }>
+
+type InputProps =
+  | Omit<RectProps, "type" | "pcb_component_id" | "pcb_port_id">
+  | Omit<CircleProps, "type" | "pcb_component_id" | "pcb_port_id">
+
 export interface SMTPadBuilder {
   builder_type: "smtpad_builder"
   project_builder: ProjectBuilder
@@ -10,13 +17,11 @@ export interface SMTPadBuilder {
   setRadius(radius: number): SMTPadBuilder
   setLayer(layer: Type.PCBSMTPad["layer"] | string): SMTPadBuilder
   setPosition(x: number, y: number): SMTPadBuilder
+  setProps(props: InputProps): SMTPadBuilder
   addPortHints(port_hints: string[]): SMTPadBuilder
   setPortHints(port_hints: string[]): SMTPadBuilder
   build(bc: Type.BuildContext): Promise<Type.PCBSMTPad[]>
 }
-
-type RectProps = Extract<Type.PCBSMTPad, { shape: "rect" }>
-type CircleProps = Extract<Type.PCBSMTPad, { shape: "circle" }>
 
 export class SMTPadBuilderClass implements SMTPadBuilder {
   project_builder: ProjectBuilder
@@ -37,7 +42,7 @@ export class SMTPadBuilderClass implements SMTPadBuilder {
     this.port_hints = []
   }
 
-  setProps(props: Type.PCBSMTPad) {
+  setProps(props: InputProps) {
     for (const k in props) {
       this[k] = props[k]
     }

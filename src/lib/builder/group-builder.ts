@@ -9,7 +9,7 @@ import {
   TraceBuilderCallback,
 } from "./trace-builder"
 import { createConstraintBuilder } from "./constrained-layout-builder"
-import { createViaBuilder } from "./footprint-builder/via-builder"
+import { createViaBuilder } from "./component-builder/ViaBuilder"
 
 export const getGroupAddables = () =>
   ({

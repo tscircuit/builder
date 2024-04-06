@@ -4,10 +4,11 @@ import type {
   PCBSMTPad,
   PCBPlatedHole,
   Point,
+  PCBHole,
 } from "../../types"
 
 interface Parameters {
-  footprint_elements: Array<PCBSMTPad | PCBPlatedHole>
+  footprint_elements: Array<PCBSMTPad | PCBPlatedHole | PCBHole>
   pcb_ports: Omit<PCBPort, "x" | "y">[]
   source_ports: SourcePort[]
 }
@@ -37,6 +38,7 @@ export const matchPCBPortsWithFootprintAndMutate = ({
 
   for (let i = 0; i < footprint_elements.length; i++) {
     const footprint_element = footprint_elements[i]
+    if (footprint_element.type === "pcb_hole") continue
     if (!("port_hints" in footprint_element)) {
       // TODO error
       console.warn(
@@ -46,7 +48,7 @@ export const matchPCBPortsWithFootprintAndMutate = ({
           "  "
         )}`
       )
-      footprint_elements[i].port_hints = []
+      ;(footprint_elements[i] as any).port_hints = []
     }
     if ("port_hints" in footprint_element && footprint_element.port_hints) {
       for (const port_hint of footprint_element.port_hints) {

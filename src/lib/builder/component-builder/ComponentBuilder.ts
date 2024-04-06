@@ -87,6 +87,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
   builder_type = "generic_component_builder" as any
   tags: string[] = []
   source_properties: any = {}
+  pcb_properties: any = {}
   schematic_properties: any = {}
   schematic_rotation: number = 0
   schematic_position: Type.Point = { x: 0, y: 0 }
@@ -229,7 +230,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
       } else if (this.settable_schematic_properties.includes(prop_key)) {
         this.setSchematicProperties({ [prop_key]: prop_val })
       } else if (this.settable_pcb_properties.includes(prop_key)) {
-        console.warn("Settable PCB properties not implemented!")
+        this.setPcbProperties({ [prop_key]: prop_val })
       } else if (prop_key === "children") {
         // SPECIAL CASE: Bug in upstream code causes "children" to sometimes be
         // passed, we want to totally ignore this and not add it to unused props
@@ -283,6 +284,14 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
     return this
   }
 
+  setPcbProperties(props) {
+    this.pcb_properties = {
+      ...this.pcb_properties,
+      ...props,
+    }
+    return this
+  }
+
   setFootprint(fp: FootprintBuilder | SparkfunComponentId) {
     if (typeof fp === "string") {
       this.footprint.loadStandardFootprint(fp)
@@ -319,6 +328,10 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
   }
 
   configureSchematicSymbols(bc) {
+    return this
+  }
+
+  configureFootprint(bc) {
     return this
   }
 
@@ -379,6 +392,15 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
       source_component_id,
       pcb_component_id,
     }
+
+    this.configureFootprint({
+      ...bc,
+      props: {
+        ...this.source_properties,
+        ...this.schematic_properties,
+        ...this.pcb_properties,
+      },
+    })
 
     const footprint_elements = await this.footprint.build(bc)
 

@@ -1,4 +1,4 @@
-import { convertUnits } from "convert-units"
+import convertUnits from "convert-units"
 
 const si_prefix_multiplier = {
   tera: 10e12,
@@ -82,7 +82,9 @@ export const parseAndConvertSiUnit = <
   if (measure) {
     return {
       unit,
-      value: convertUnits(parseFloat(value)).from(unit).to(measure),
+      value: convertUnits(parseFloat(value))
+        .from(unit)
+        .to(target_conversion[measure]),
     }
   } else {
     return {

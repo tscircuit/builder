@@ -105,6 +105,37 @@ export const { ViaBuilderClass, createViaBuilder } = defineNewComponent({
       })
     )
   },
+  configureFootprint(builder, { props }) {
+    builder.footprint
+      .add("hole", (hb) =>
+        hb.setProps({
+          x: 0,
+          y: 0,
+          hole_diameter: props.hole_diameter,
+          port_hints: [],
+        })
+      )
+      .add("smtpad", (spb) =>
+        spb.setProps({
+          x: 0,
+          layer: props.from_layer as any,
+          y: 0,
+          shape: "circle",
+          radius: props.outer_diameter / 2,
+          port_hints: ["top"],
+        })
+      )
+      .add("smtpad", (spb) =>
+        spb.setProps({
+          layer: props.to_layer as any,
+          shape: "circle",
+          x: 0,
+          y: 0,
+          radius: props.outer_diameter / 2,
+          port_hints: ["bottom"],
+        })
+      )
+  },
 })
 
 export type ViaBuilder = ReturnType<typeof createViaBuilder>

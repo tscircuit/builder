@@ -8,6 +8,7 @@ import { InductorBuilder } from "./InductorBuilder"
 import { NetAliasBuilder } from "./NetAliasBuilder"
 import { PowerSourceBuilder } from "./PowerSourceBuilder"
 import { ResistorBuilder } from "./ResistorBuilder"
+import { ViaBuilder } from "./ViaBuilder"
 
 export * from "./ComponentBuilder"
 export * from "./ResistorBuilder"
@@ -18,6 +19,7 @@ export * from "./NewDiodeBuilder"
 export * from "./PowerSourceBuilder"
 export * from "./GroundBuilder"
 export * from "./NetAliasBuilder"
+export * from "./ViaBuilder"
 
 export type ComponentBuilder =
   | GenericComponentBuilder
@@ -30,3 +32,4 @@ export type ComponentBuilder =
   | GroundBuilder
   | TraceBuilder
   | NetAliasBuilder
+  | ViaBuilder
