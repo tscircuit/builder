@@ -138,14 +138,22 @@ export const defineNewComponent = <
       }
       if (opts.configureFootprint) {
         ;(this as any).configureFootprint = (bc) => {
-          return opts.configureFootprint?.(this, {
-            ...bc,
-            props: {
-              ...opts.source_properties.parse(bc.props),
-              ...opts.schematic_properties.parse(bc.props),
-              ...opts.pcb_properties.parse(bc.props),
-            },
-          })
+          try {
+            return opts.configureFootprint?.(this, {
+              ...bc,
+              props: {
+                ...opts.source_properties.parse(bc.props),
+                ...opts.schematic_properties.parse(bc.props),
+                ...opts.pcb_properties.parse(bc.props),
+              },
+            })
+          } catch (e) {
+            throw new Error(
+              `Couldn't configureFootprint for "${
+                opts.pascal_name
+              }", some invalid properties passed:\n\n${e.toString()}`
+            )
+          }
         }
       }
       this.settable_source_properties = [
