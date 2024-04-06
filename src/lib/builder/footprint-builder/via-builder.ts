@@ -1,47 +1,113 @@
-import * as Type from "lib/types"
-import { ProjectBuilder } from "lib/project"
+import { layer_ref } from "lib/soup"
+import { defineNewComponent } from "../define-new-component"
+import { z } from "zod"
+import { length } from "lib/soup/units"
 
-export interface ViaBuilder {
-  builder_type: "via_builder"
-  project_builder: ProjectBuilder
-  setProps(props: Partial<Type.PCBVia>): ViaBuilder
-  build(bc: Type.BuildContext): Promise<Type.PCBVia[]>
-}
+export const { ViaBuilderClass, createViaBuilder } = defineNewComponent({
+  pascal_name: "Via",
+  underscore_name: "via",
+  source_properties: z.object({
+    from_layer: layer_ref,
+    to_layer: layer_ref,
+  }),
+  pcb_properties: z.object({
+    outer_diameter: length,
+    hole_diameter: length,
+  }),
+  schematic_properties: z.object({}),
+  configurePorts(builder, ctx) {
+    builder.ports
+      .add("port", (pb) =>
+        pb
+          .setName("top")
+          .setSchematicPosition({ x: 0, y: 0.5 })
+          .setPinNumber(1)
+          .setSchematicPinNumberVisible(false)
+          .setSchematicDirection("up")
+      )
+      .add("port", (pb) =>
+        pb
+          .setName("bottom")
+          .setSchematicPosition({ x: 0, y: -0.5 })
+          .setPinNumber(2)
+          .setSchematicPinNumberVisible(false)
+          .setSchematicDirection("down")
+      )
+  },
+  configureSchematicSymbols(builder, ctx) {
+    builder.schematic_symbol.add("schematic_line", (sb) =>
+      sb.setProps({
+        x1: 0,
+        y1: 0.5,
+        x2: 0,
+        y2: -0.5,
+      })
+    )
 
-export class ViaBuilderClass implements ViaBuilder {
-  project_builder: ProjectBuilder
-  builder_type = "via_builder" as const
+    // The via symbol looks like this, where the pipe is the central schematic
+    // line defined above: "]|["
+    // We add a path for each square bracket composed of 4 points
+    builder.schematic_symbol.add("schematic_path", (spb) =>
+      spb.setProps({
+        is_filled: false,
+        points: [
+          {
+            x: -0.3,
+            y: 0.3,
+          },
+          {
+            x: -0.1,
+            y: 0.3,
+          },
+          {
+            x: -0.1,
+            y: -0.3,
+          },
+          {
+            x: -0.3,
+            y: -0.3,
+          },
+        ],
+      })
+    )
+    builder.schematic_symbol.add("schematic_path", (spb) =>
+      spb.setProps({
+        is_filled: false,
+        points: [
+          {
+            x: 0.3,
+            y: 0.3,
+          },
+          {
+            x: 0.1,
+            y: 0.3,
+          },
+          {
+            x: 0.1,
+            y: -0.3,
+          },
+          {
+            x: 0.3,
+            y: -0.3,
+          },
+        ],
+      })
+    )
 
-  outer_diameter: Type.Dimension
-  hole_diameter: Type.Dimension
-  x: Type.Dimension
-  y: Type.Dimension
+    builder.schematic_symbol.add("schematic_text", (stb) =>
+      stb.setProps({
+        text: ctx.source_properties.name,
+        anchor: "center",
+        position: {
+          x: "0.25mm",
+          y: 0,
+        },
+      })
+    )
+  },
+})
 
-  constructor(project_builder: ProjectBuilder) {
-    this.project_builder = project_builder
-  }
+export type ViaBuilder = ReturnType<typeof createViaBuilder>
 
-  setProps(props: Partial<Type.PCBVia>): ViaBuilder {
-    for (const k in props) {
-      this[k] = props[k]
-    }
-    return this
-  }
-
-  async build(bc): Promise<Type.PCBVia[]> {
-    return [
-      {
-        type: "pcb_via",
-        x: bc.convert(this.x),
-        y: bc.convert(this.y),
-        hole_diameter: bc.convert(this.hole_diameter),
-        outer_diameter: bc.convert(this.outer_diameter),
-        from_layer: "top",
-        to_layer: "bottom",
-      },
-    ]
-  }
-}
-export const createViaBuilder = (project_builder: ProjectBuilder) => {
-  return new ViaBuilderClass(project_builder)
-}
+// Added for legacy compat
+// export type ViaBuilderCallback = (rb: ViaBuilder) => unknown

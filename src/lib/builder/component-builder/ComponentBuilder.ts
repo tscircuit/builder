@@ -59,7 +59,9 @@ export interface BaseComponentBuilder<T> {
   setFootprintRotation(
     rotation: number | `${number}deg`
   ): BaseComponentBuilder<T>
-  setProps: (props: any) => BaseComponentBuilder<T>
+  setProps: (
+    props: T extends { props?: any } ? T["props"] : any
+  ) => BaseComponentBuilder<T>
   setFootprint(
     fp: FootprintBuilder | StandardFootprint
   ): BaseComponentBuilder<T>

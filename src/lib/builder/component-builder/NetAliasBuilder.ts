@@ -8,6 +8,8 @@ export const { NetAliasBuilderClass, createNetAliasBuilder } =
     source_properties: z.object({
       net: z.string(),
     }),
+    schematic_properties: z.object({}),
+    pcb_properties: z.object({}),
     configurePorts(builder, ctx) {
       builder.ports.add("port", (pb) =>
         pb.setName(ctx.source_properties.net).setSchematicPosition({

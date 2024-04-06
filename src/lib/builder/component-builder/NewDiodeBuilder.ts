@@ -7,6 +7,8 @@ export const { DiodeBuilderClass, createDiodeBuilder } = defineNewComponent({
   source_properties: z.object({
     ftype: z.literal("simple_diode").default("simple_diode"),
   }),
+  schematic_properties: z.object({}),
+  pcb_properties: z.object({}),
   configurePorts(builder, ctx) {
     builder.ports
       .add("port", (pb) =>
