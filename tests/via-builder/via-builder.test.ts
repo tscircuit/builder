@@ -19,16 +19,22 @@ test("[smoke] via builder", async (t) => {
       rb.setProps({
         x: -2,
         y: 0,
+        pcb_x: -2,
+        pcb_y: 0,
         resistance: "1k",
         name: "R1",
+        footprint: "0402",
       })
     )
     .add("resistor", (rb) =>
       rb.setProps({
         x: 2,
         y: 0,
+        pcb_x: 2,
+        pcb_y: 0,
         resistance: "10k",
         name: "R2",
+        footprint: "0402",
       })
     )
     .add("trace", (tb) =>
