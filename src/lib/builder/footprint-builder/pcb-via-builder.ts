@@ -15,8 +15,8 @@ export class PcbViaBuilderClass implements PcbViaBuilder {
 
   outer_diameter: Type.Dimension
   hole_diameter: Type.Dimension
-  x: Type.Dimension
-  y: Type.Dimension
+  pcb_x: Type.Dimension
+  pcb_y: Type.Dimension
   layers?: Type.LayerRef[]
   port_hints: string[]
 
@@ -25,9 +25,13 @@ export class PcbViaBuilderClass implements PcbViaBuilder {
     this.port_hints = []
   }
 
-  setProps(props: Partial<{}>): PcbViaBuilder {
+  setProps(props: Partial<Type.PCBViaInput>): PcbViaBuilder {
+    const remap = {
+      x: "pcb_x",
+      y: "pcb_y",
+    }
     for (const k in props) {
-      this[k] = props[k]
+      this[remap[k] ?? k] = props[k]
     }
     return this
   }
@@ -36,8 +40,8 @@ export class PcbViaBuilderClass implements PcbViaBuilder {
     return [
       {
         type: "pcb_via",
-        x: bc.convert(this.x),
-        y: bc.convert(this.y),
+        x: bc.convert(this.pcb_x),
+        y: bc.convert(this.pcb_y),
         hole_diameter: bc.convert(this.hole_diameter),
         outer_diameter: bc.convert(this.outer_diameter),
         layers: this.layers ?? bc.all_copper_layers,

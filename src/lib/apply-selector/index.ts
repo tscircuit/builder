@@ -21,6 +21,7 @@ export const applySelectorAST = (
   switch (selectorAST.type) {
     case "complex": {
       switch (selectorAST.combinator) {
+        case " ": // TODO technically should do a deep search
         case ">": {
           const { left, right } = selectorAST
           if (left.type === "class" || left.type === "type") {

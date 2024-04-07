@@ -5,16 +5,17 @@ import type {
   PCBPlatedHole,
   Point,
   PCBHole,
+  PCBVia,
 } from "../../types"
 
 interface Parameters {
-  footprint_elements: Array<PCBSMTPad | PCBPlatedHole | PCBHole>
+  footprint_elements: Array<PCBSMTPad | PCBPlatedHole | PCBHole | PCBVia>
   pcb_ports: Omit<PCBPort, "x" | "y" | "layers">[]
   source_ports: SourcePort[]
 }
 
 const getCenterOfFootprintElement = (
-  elm: PCBSMTPad | PCBPlatedHole | PCBHole
+  elm: PCBSMTPad | PCBPlatedHole | PCBHole | PCBVia
 ): Point => {
   return elm
 }
@@ -42,6 +43,11 @@ export const matchPCBPortsWithFootprintAndMutate = ({
     const footprint_element = footprint_elements[i]
     if (footprint_element.type === "pcb_hole") continue
     if (!("port_hints" in footprint_element)) {
+      if (footprint_element.type === "pcb_via") {
+        ;(footprint_elements[i] as any).port_hints = []
+        continue
+      }
+
       // TODO error
       console.warn(
         `Footprint element has an undefined port_hints array: ${JSON.stringify(

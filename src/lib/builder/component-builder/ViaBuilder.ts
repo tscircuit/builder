@@ -12,6 +12,8 @@ export const { ViaBuilderClass, createViaBuilder } = defineNewComponent({
     layers: z.array(layer_ref).optional(),
   }),
   pcb_properties: z.object({
+    pcb_x: length.default("0mm"),
+    pcb_y: length.default("0mm"),
     outer_diameter: length.default("0.6mm"),
     hole_diameter: length.default("0.25mm"),
   }),
@@ -108,13 +110,6 @@ export const { ViaBuilderClass, createViaBuilder } = defineNewComponent({
   },
   configureFootprint(builder, { props }) {
     builder.footprint
-      .add("hole", (hb) =>
-        hb.setProps({
-          x: 0,
-          y: 0,
-          hole_diameter: props.hole_diameter,
-        })
-      )
       .add("smtpad", (spb) =>
         spb.setProps({
           x: 0,
@@ -135,15 +130,15 @@ export const { ViaBuilderClass, createViaBuilder } = defineNewComponent({
           port_hints: ["bottom"],
         })
       )
-    // builder.footprint.add("pcb_via", (pvb) =>
-    //   pvb.setProps({
-    //     hole_diameter: props.hole_diameter,
-    //     outer_diameter: props.outer_diameter,
-    //     x: 0,
-    //     y: 0,
-    //     layers: props.layers! ?? [props.from_layer, props.to_layer],
-    //   })
-    // )
+      .add("pcb_via", (pvb) =>
+        pvb.setProps({
+          hole_diameter: props.hole_diameter,
+          outer_diameter: props.outer_diameter,
+          x: 0,
+          y: 0,
+          layers: props.layers! ?? [props.from_layer, props.to_layer],
+        })
+      )
   },
 })
 
