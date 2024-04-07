@@ -30,7 +30,7 @@ export interface TraceBuilder {
     from?: string
     to?: string
     schematic_route_hints?: InputPoint[]
-    pcb_route_hints?: InputPoint[]
+    pcb_route_hints?: Type.PcbRouteHint[]
     thickness?: string | number
   }) => TraceBuilder
   setRouteSolver: (routeSolver: RouteSolverOrString) => TraceBuilder
@@ -352,6 +352,7 @@ export const createTraceBuilder = (
         return []
       }
     }
+
     function solveForRoute(
       terminals: Array<Type.PCBPort | Type.PcbRouteHint>
     ): Type.PCBTrace["route"] {
@@ -451,6 +452,29 @@ export const createTraceBuilder = (
       pcb_route.push(...mergeRoutes(routes))
     }
 
+    // Iterate over the pcb_route and if there is a layer switch without an
+    // associated port, add a via. This is a bit of a hack, it maybe should
+    // be done by explicitly adding the via in the route / inside the
+    // solveForRoute function
+    const pcb_vias: Type.PCBVia[] = [
+      ...pairs(pcb_route).flatMap(([a, b]) => {
+        if ("layer" in a && "layer" in b && a.layer !== b.layer) {
+          return [
+            {
+              type: "pcb_via",
+              x: a.x,
+              y: a.y,
+              from_layer: a.layer,
+              to_layer: b.layer,
+              hole_diameter: 0.2,
+              outer_diameter: 0.4,
+            } as Type.PCBVia,
+          ]
+        }
+        return []
+      }),
+    ].filter((via: any): via is Type.PCBVia => via !== null)
+
     const pcb_trace: Type.PCBTrace = {
       type: "pcb_trace",
       pcb_trace_id,
@@ -462,6 +486,7 @@ export const createTraceBuilder = (
       source_trace,
       schematic_trace,
       pcb_trace,
+      ...pcb_vias,
       ...pcb_errors,
     ] as Type.AnyElement[]
   }

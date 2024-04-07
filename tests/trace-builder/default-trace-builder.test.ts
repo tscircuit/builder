@@ -23,7 +23,6 @@ test("default-trace-builder", async (t) => {
     )
 
   const projectBuilderOutput = await projectBuilder.build()
-
   await logLayout("default-trace-builder", projectBuilderOutput)
   t.pass()
 })
