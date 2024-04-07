@@ -9,8 +9,11 @@ export const pcb_via = z
     y: distance,
     outer_diameter: distance,
     hole_diameter: distance,
-    from_layer: layer_ref,
-    to_layer: layer_ref,
+    /** @deprecated */
+    from_layer: layer_ref.optional(),
+    /** @deprecated */
+    to_layer: layer_ref.optional(),
+    layers: z.array(layer_ref),
   })
   .describe("Defines a via on the PCB")
 

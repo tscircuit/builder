@@ -1,6 +1,7 @@
 import { type ProjectBuilder } from "lib/project"
 import { createPlatedHoleBuilder } from "./plated-hole-builder"
 import { createHoleBuilder } from "./hole-builder"
+import { createPcbViaBuilder } from "./pcb-via-builder"
 import * as Type from "lib/types"
 import { Builder } from "lib/types/builders"
 import { compose, rotate, translate } from "transformation-matrix"
@@ -29,6 +30,7 @@ const getFootprintBuilderAddables = () =>
     smtpad: createSMTPadBuilder,
     hole: createHoleBuilder,
     platedhole: createPlatedHoleBuilder,
+    pcb_via: createPcbViaBuilder,
   } as const)
 
 export type FootprintBuilderAddables = ReturnType<

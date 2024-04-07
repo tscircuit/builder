@@ -30,7 +30,7 @@ export interface TraceBuilder {
     from?: string
     to?: string
     schematic_route_hints?: InputPoint[]
-    pcb_route_hints?: Type.PcbRouteHint[]
+    pcb_route_hints?: Type.PcbRouteHintInput[]
     thickness?: string | number
   }) => TraceBuilder
   setRouteSolver: (routeSolver: RouteSolverOrString) => TraceBuilder
