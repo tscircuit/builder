@@ -328,7 +328,7 @@ export const createTraceBuilder = (
           for (const point of solved_route.points) {
             route.push({
               route_type: "wire",
-              layer: "top",
+              layer,
               width: thickness_mm,
               x: point.x,
               y: point.y,
