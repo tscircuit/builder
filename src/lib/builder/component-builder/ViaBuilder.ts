@@ -7,12 +7,13 @@ export const { ViaBuilderClass, createViaBuilder } = defineNewComponent({
   pascal_name: "Via",
   underscore_name: "via",
   source_properties: z.object({
-    from_layer: layer_ref,
-    to_layer: layer_ref,
+    from_layer: layer_ref.optional(),
+    to_layer: layer_ref.optional(),
+    layers: z.array(layer_ref).optional(),
   }),
   pcb_properties: z.object({
-    outer_diameter: length,
-    hole_diameter: length,
+    outer_diameter: length.default("0.6mm"),
+    hole_diameter: length.default("0.25mm"),
   }),
   schematic_properties: z.object({}),
   configurePorts(builder, ctx) {
@@ -134,6 +135,15 @@ export const { ViaBuilderClass, createViaBuilder } = defineNewComponent({
           port_hints: ["bottom"],
         })
       )
+    // builder.footprint.add("pcb_via", (pvb) =>
+    //   pvb.setProps({
+    //     hole_diameter: props.hole_diameter,
+    //     outer_diameter: props.outer_diameter,
+    //     x: 0,
+    //     y: 0,
+    //     layers: props.layers! ?? [props.from_layer, props.to_layer],
+    //   })
+    // )
   },
 })
 

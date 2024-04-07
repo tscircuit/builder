@@ -7,8 +7,8 @@ export const pcb_via = z
     type: z.literal("pcb_via"),
     x: distance,
     y: distance,
-    outer_diameter: distance,
-    hole_diameter: distance,
+    outer_diameter: distance.default("0.6mm"),
+    hole_diameter: distance.default("0.25mm"),
     /** @deprecated */
     from_layer: layer_ref.optional(),
     /** @deprecated */

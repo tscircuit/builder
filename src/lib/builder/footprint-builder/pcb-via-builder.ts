@@ -5,7 +5,7 @@ import { BuildContext } from "lib/types/build-context"
 export interface PcbViaBuilder {
   builder_type: "pcb_via_builder"
   project_builder: ProjectBuilder
-  setProps(props: Type.PCBViaInput): PcbViaBuilder
+  setProps(props: Omit<Type.PCBViaInput, "type">): PcbViaBuilder
   build(bc: BuildContext): Promise<Type.PCBVia[]>
 }
 
@@ -41,6 +41,9 @@ export class PcbViaBuilderClass implements PcbViaBuilder {
         hole_diameter: bc.convert(this.hole_diameter),
         outer_diameter: bc.convert(this.outer_diameter),
         layers: this.layers ?? bc.all_copper_layers,
+        // legacy compat
+        from_layer: this.layers?.[0],
+        to_layer: this.layers?.[1],
       },
     ]
   }
