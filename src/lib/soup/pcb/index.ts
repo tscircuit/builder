@@ -1,3 +1,6 @@
+export * from "./properties/layer_ref"
+export * from "./properties/pcb_route_hints"
+
 export * from "./pcb_component"
 export * from "./pcb_hole"
 export * from "./pcb_plated_hole"
@@ -7,4 +10,3 @@ export * from "./pcb_text"
 export * from "./pcb_trace"
 export * from "./pcb_trace_error"
 export * from "./pcb_via"
-export * from "./layer_ref"

@@ -16,6 +16,7 @@ import { Point } from "lib/soup"
 import { getSchematicObstaclesFromElements } from "./get-schematic-obstacles-from-elements"
 import { pairs } from "lib/utils/pairs"
 import { mergeRoutes } from "./merge-routes"
+import { uniq } from "lib/utils/uniq"
 
 type RouteSolverOrString = Type.RouteSolver | "rmst" | "straight" | "route1"
 
@@ -255,7 +256,12 @@ export const createTraceBuilder = (
         ? 0.2 // TODO derive from net/context
         : bc.convert(internal.thickness as any)
     const omargin = thickness_mm
-    const pcb_obstacles = [
+    const pcb_obstacles: Array<{
+      center: { x: number; y: number }
+      width: number
+      height: number
+      layers: Type.LayerRef[]
+    }> = [
       ...parentElements
         .filter((elm): elm is Type.PCBSMTPad => elm.type === "pcb_smtpad")
         // Exclude the pads that are connected to the trace
@@ -266,6 +272,7 @@ export const createTraceBuilder = (
               center: { x: pad.x, y: pad.y },
               width: pad.width + omargin * 2,
               height: pad.height + omargin * 2,
+              layers: [pad.layer],
             }
           } else if (pad.shape === "circle") {
             // TODO support better circle obstacles
@@ -273,6 +280,7 @@ export const createTraceBuilder = (
               center: { x: pad.x, y: pad.y },
               width: pad.radius * 2 + omargin * 2,
               height: pad.radius * 2 + omargin * 2,
+              layers: [pad.layer],
             }
           }
           throw new Error(
@@ -290,6 +298,7 @@ export const createTraceBuilder = (
             center: { x: hole.x, y: hole.y },
             width: hole.outer_diameter + omargin * 2,
             height: hole.outer_diameter + omargin * 2,
+            layers: hole.layers,
           }
         }),
     ]
@@ -301,11 +310,16 @@ export const createTraceBuilder = (
 
     const pcb_route: Type.PCBTrace["route"] = []
 
-    function solveForRoute(terminals: Point[]): Type.PCBTrace["route"] {
+    function solveForSingleLayerRoute(
+      terminals: Point[],
+      layer: Type.LayerRef
+    ) {
       try {
         const solved_route = findRoute({
           grid: pcb_solver_grid,
-          obstacles: pcb_obstacles,
+          obstacles: pcb_obstacles.filter((obstacle) =>
+            obstacle.layers.includes(layer)
+          ),
           pointsToConnect: terminals,
         })
 
@@ -338,6 +352,86 @@ export const createTraceBuilder = (
         return []
       }
     }
+    function solveForRoute(
+      terminals: Array<Type.PCBPort | Type.PcbRouteHint>
+    ): Type.PCBTrace["route"] {
+      // 1. if all terminals are on the same layer, solve
+      // 2. if some terminals have layer unspecified but at least one does, and
+      //    there are no disagreeing layers, solve
+      // 3. if this is a terminal pair and it's across two layers, check if one
+      //    terminal is "traversable" to the other terminal's layer (i.e. a
+      //    plated hole or via / compatible via "layers")
+      // 4. otherwise throw (for now)
+
+      const candidate_layers: Type.LayerRef[] = uniq(
+        terminals.flatMap((t) => {
+          if ("layers" in t) return t.layers
+          if ("via_to_layer" in t && t["via_to_layer"]) return [t.via_to_layer]
+          return []
+        })
+      )
+
+      const common_layers = candidate_layers.filter((layer) =>
+        terminals.every((t) => {
+          if ("layers" in t) return t.layers.includes(layer)
+          return true
+        })
+      )
+
+      if (candidate_layers.length === 0) {
+        pcb_errors.push({
+          pcb_error_id: builder.project_builder.getId("pcb_error"),
+          type: "pcb_error",
+          error_type: "pcb_trace_error",
+          message: `No layers specified for terminals`,
+          pcb_trace_id,
+          source_trace_id,
+          pcb_component_ids: [], // TODO
+          pcb_port_ids: pcb_terminal_port_ids,
+        })
+      }
+
+      if (common_layers.length === 1) {
+        return solveForSingleLayerRoute(
+          terminals.map((t) => ({
+            x: t.x,
+            y: t.y,
+          })),
+          common_layers[0]
+        )
+      }
+
+      if (common_layers.length === 0) {
+        pcb_errors.push({
+          pcb_error_id: builder.project_builder.getId("pcb_error"),
+          type: "pcb_error",
+          error_type: "pcb_trace_error",
+          message: `Terminals are on different layers and no common layer could be resolved`,
+          pcb_trace_id,
+          source_trace_id,
+          pcb_component_ids: [], // TODO
+          pcb_port_ids: pcb_terminal_port_ids,
+        })
+      }
+
+      // common_layers.length > 1
+
+      const LAYER_SELECTION_PREFERENCE = ["top", "bottom", "inner1", "inner2"]
+
+      for (const layer of common_layers) {
+        if (LAYER_SELECTION_PREFERENCE.includes(layer)) {
+          return solveForSingleLayerRoute(
+            terminals.map((t) => ({
+              x: t.x,
+              y: t.y,
+            })),
+            layer
+          )
+        }
+      }
+
+      return solveForSingleLayerRoute(terminals, [...common_layers].sort()[0])
+    }
 
     if (internal.pcb_route_hints.length === 0) {
       pcb_route.push(...solveForRoute(pcb_terminals))
@@ -362,7 +456,12 @@ export const createTraceBuilder = (
       route: pcb_route,
     }
 
-    return [source_trace, schematic_trace, pcb_trace, ...pcb_errors]
+    return [
+      source_trace,
+      schematic_trace,
+      pcb_trace,
+      ...pcb_errors,
+    ] as Type.AnyElement[]
   }
 
   return builder
