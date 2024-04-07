@@ -1,4 +1,4 @@
-import { LayerRef } from "lib/soup/pcb/layer_ref"
+import { LayerRef } from "lib/soup/pcb/properties/layer_ref"
 import { SourceComponent } from "./source-component"
 import { Dimension } from "./util"
 import * as Soup from "lib/soup"
