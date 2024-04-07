@@ -1,5 +1,6 @@
 import { z } from "zod"
 import { distance } from "../units"
+import { layer_ref } from "./layer_ref"
 
 export const pcb_plated_hole = z
   .object({
@@ -8,6 +9,7 @@ export const pcb_plated_hole = z
     hole_diameter: z.number(),
     x: distance,
     y: distance,
+    layers: z.array(layer_ref),
     port_hints: z.array(z.string()).optional(),
     pcb_component_id: z.string().optional(),
     pcb_port_id: z.string().optional(),

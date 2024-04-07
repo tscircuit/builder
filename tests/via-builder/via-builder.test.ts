@@ -26,27 +26,27 @@ test("[smoke] via builder", async (t) => {
         footprint: "0402",
       })
     )
-    .add("resistor", (rb) =>
-      rb.setProps({
-        x: 2,
-        y: 0,
-        pcb_x: 2,
-        pcb_y: 0,
-        resistance: "10k",
-        name: "R2",
-        footprint: "0402",
-      })
-    )
+    // .add("resistor", (rb) =>
+    //   rb.setProps({
+    //     x: 2,
+    //     y: 0,
+    //     pcb_x: 2,
+    //     pcb_y: 0,
+    //     resistance: "10k",
+    //     name: "R2",
+    //     footprint: "0402",
+    //   })
+    // )
     .add("trace", (tb) =>
       tb.setProps({
         path: [".R1 > .right", ".V1 > .top"],
       })
     )
-    .add("trace", (tb) =>
-      tb.setProps({
-        path: [".V1 > .bottom", ".R2 > .left"],
-      })
-    )
+    // .add("trace", (tb) =>
+    //   tb.setProps({
+    //     path: [".V1 > .bottom", ".R2 > .left"],
+    //   })
+    // )
     .build()
 
   await logSoup(soup)

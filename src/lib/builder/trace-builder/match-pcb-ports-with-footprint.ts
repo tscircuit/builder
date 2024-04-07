@@ -9,7 +9,7 @@ import type {
 
 interface Parameters {
   footprint_elements: Array<PCBSMTPad | PCBPlatedHole | PCBHole>
-  pcb_ports: Omit<PCBPort, "x" | "y">[]
+  pcb_ports: Omit<PCBPort, "x" | "y" | "layers">[]
   source_ports: SourcePort[]
 }
 
@@ -78,6 +78,11 @@ export const matchPCBPortsWithFootprintAndMutate = ({
           const { x, y } = getCenterOfFootprintElement(footprint_element)
           ;(pcb_port as any).x = x
           ;(pcb_port as any).y = y
+          if ("layers" in footprint_element) {
+            ;(pcb_port as any).layers = footprint_element.layers
+          } else if ("layer" in footprint_element) {
+            ;(pcb_port as any).layers = [footprint_element.layer]
+          }
           break
         }
       }

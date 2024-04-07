@@ -33,6 +33,7 @@ export const createProjectBuilder = (): ProjectBuilder => {
   builder.build_group = builder.build
   builder.createBuildContext = (): Type.BuildContext => ({
     distance_unit: "mm",
+    all_copper_layers: ["top", "bottom"],
     convert(v) {
       if (typeof v === "undefined") return undefined
       if (typeof v === "number") return v

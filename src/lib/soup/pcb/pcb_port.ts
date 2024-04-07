@@ -1,5 +1,6 @@
 import { z } from "zod"
 import { distance } from "../units"
+import { layer_ref } from "./layer_ref"
 
 export const pcb_port = z
   .object({
@@ -8,6 +9,7 @@ export const pcb_port = z
     source_port_id: z.string(),
     x: distance,
     y: distance,
+    layers: z.array(layer_ref),
   })
   .describe("Defines a port on the PCB")
 

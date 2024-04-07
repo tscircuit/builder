@@ -1,3 +1,4 @@
+import { LayerRef } from "../soup/pcb/layer_ref"
 import { Dimension, NumberWithAnyUnit } from "./util"
 
 export type BuildContext = {
@@ -12,6 +13,7 @@ export type BuildContext = {
   schematic_component_id?: string
   source_component_id?: string
   pcb_component_id?: string
+  all_copper_layers: LayerRef[]
 
   parent?: BuildContext
   fork: (mutation: Partial<BuildContext>) => BuildContext

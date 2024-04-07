@@ -49,6 +49,7 @@ export class PlatedHoleBuilderClass implements PlatedHoleBuilder {
         type: "pcb_plated_hole",
         x: bc.convert(this.x),
         y: bc.convert(this.y),
+        layers: bc.all_copper_layers,
         hole_diameter: bc.convert(this.hole_diameter),
         outer_diameter: bc.convert(this.outer_diameter),
         port_hints: this.port_hints,
