@@ -219,6 +219,8 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
         (prop_val as any)?.builder_type === "footprint_builder"
       ) {
         this.setFootprint(prop_val as any)
+      } else if (prop_key === "pcb_layer" || prop_key === "layer") {
+        this.footprint.setLayer(prop_val as any)
       } else if (prop_key === "schematic_rotation" || prop_key === "rotation") {
         this.setSchematicRotation(prop_val)
       } else if (prop_key === "pcb_rotation") {

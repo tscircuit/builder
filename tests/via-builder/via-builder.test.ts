@@ -35,6 +35,7 @@ test("[smoke] via builder", async (t) => {
         resistance: "10k",
         name: "R2",
         footprint: "0402",
+        pcb_layer: "bottom",
       })
     )
     .add("trace", (tb) =>

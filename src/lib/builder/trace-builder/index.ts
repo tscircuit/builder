@@ -389,6 +389,7 @@ export const createTraceBuilder = (
           pcb_component_ids: [], // TODO
           pcb_port_ids: pcb_terminal_port_ids,
         })
+        return []
       }
 
       if (common_layers.length === 1) {
@@ -412,6 +413,7 @@ export const createTraceBuilder = (
           pcb_component_ids: [], // TODO
           pcb_port_ids: pcb_terminal_port_ids,
         })
+        return []
       }
 
       // common_layers.length > 1

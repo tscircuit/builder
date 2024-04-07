@@ -51,6 +51,7 @@ export interface FootprintBuilder {
   setStandardFootprint(footprint_name: SparkfunComponentId): FootprintBuilder
   loadStandardFootprint(footprint_name: SparkfunComponentId): FootprintBuilder
   setRotation: (rotation: number | `${number}deg`) => FootprintBuilder
+  setLayer: (layer: Type.LayerRef) => FootprintBuilder
   build(bc: Type.BuildContext): Promise<Type.AnyElement[]>
 }
 
@@ -60,6 +61,7 @@ export class FootprintBuilderClass implements FootprintBuilder {
   addables: FootprintBuilderAddables
   position: Type.Point
   rotation: number = 0
+  layer: Type.LayerRef = "top"
 
   children: SMTPadBuilder[] = []
 
@@ -106,6 +108,18 @@ export class FootprintBuilderClass implements FootprintBuilder {
     return this
   }
 
+  setLayer(layer: Type.LayerRef) {
+    this.layer = layer
+
+    for (const child of this.children) {
+      if (child.builder_type === "smtpad_builder") {
+        child.setLayer(layer)
+      }
+    }
+
+    return this
+  }
+
   loadStandardFootprint(footprint_name: StandardFootprint) {
     if (footprint_name === "0805") footprint_name = "sparkfun:0805"
     if (footprint_name === "0603") footprint_name = "sparkfun:0603"
@@ -115,7 +129,7 @@ export class FootprintBuilderClass implements FootprintBuilder {
         smtpad.setShape("rect")
         smtpad.setSize(0.6, 0.6)
         smtpad.setPosition(-0.5, 0)
-        smtpad.setLayer("top")
+        smtpad.setLayer(this.layer)
         smtpad.addPortHints(["left", "1"])
         // smtpad.setSize("0.5mm", "0.5mm")
         // smtpad.setPosition("-0.5mm", "0mm")
@@ -124,7 +138,7 @@ export class FootprintBuilderClass implements FootprintBuilder {
         smtpad.setShape("rect")
         smtpad.setSize(0.6, 0.6)
         smtpad.setPosition(0.5, 0)
-        smtpad.setLayer("top")
+        smtpad.setLayer(this.layer)
         smtpad.addPortHints(["right", "2"])
       })
     } else if (footprint_name in SparkfunPackages) {
@@ -134,7 +148,7 @@ export class FootprintBuilderClass implements FootprintBuilder {
           smtpad.setShape("rect")
           smtpad.setSize(smd.dx, smd.dy)
           smtpad.setPosition(smd.x, smd.y)
-          smtpad.setLayer(smd.layer === 1 ? "top" : "silkscreen")
+          smtpad.setLayer(smd.layer === 1 ? this.layer : "silkscreen")
 
           const position_hints = []
 
