@@ -32,6 +32,7 @@ export const logLayout = async (
   layout_group_name: string,
   objects: Array<AnyElement>
 ) => {
+  if (globalThis?.process?.env?.CI) return
   if (layout_server_healthy === false) return
 
   if (layout_server_healthy === null) {
