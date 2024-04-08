@@ -3,6 +3,7 @@ import { AnyGerberCommand } from "../any_gerber_command"
 import { GerberJobJson } from "./gerber-job-json"
 import { gerberBuilder } from "../gerber-builder"
 import packageJson from "../../../../package.json"
+import { pairs } from "lib/utils/pairs"
 
 type LayerToGerberCommandsMap = {
   F_Cu: AnyGerberCommand[]
@@ -82,6 +83,37 @@ export const convertSoupToGerberCommands = (
     B_Mask: [],
     B_Paste: [],
     Edge_Cuts: [],
+  }
+
+  // TODO define aperatures for each trace width
+
+  for (const layer of ["top", "bottom"]) {
+    for (const element of soup) {
+      if (element.type === "pcb_trace") {
+        const { route } = element
+        for (const [a, b] of pairs(route)) {
+          // TODO b kind of matters here, this doesn't handle a bunch of cases
+          // but the definition of a route is also kind of broken, a "wire" is
+          // a relationship between two points and can't really be a type of
+          // point
+          if (a.route_type === "wire") {
+            if (a.layer === layer) {
+              glayers.F_Cu.push(
+                ...gerberBuilder()
+                  .add("move_operation", { x: a.x, y: a.y })
+                  .add("plot_operation", { x: b.x, y: b.y })
+                  .build()
+              )
+            }
+          }
+        }
+      } else if (element.type === "pcb_smtpad") {
+      }
+    }
+  }
+
+  for (const key of Object.keys(glayers)) {
+    glayers[key].push(...gerberBuilder().add("end_of_file", {}).build())
   }
 
   return glayers
