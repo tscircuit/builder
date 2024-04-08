@@ -1,0 +1,56 @@
+import { AnySoupElement } from "lib/soup"
+import { AnyGerberCommand } from "../any_gerber_command"
+import { GerberJobJson } from "./gerber-job-json"
+
+type LayerToGerberCommandsMap = {
+  F_Cu: AnyGerberCommand[]
+  F_SilkScreen: AnyGerberCommand[]
+  F_Mask: AnyGerberCommand[]
+  F_Paste: AnyGerberCommand[]
+  B_Cu: AnyGerberCommand[]
+  B_SilkScreen: AnyGerberCommand[]
+  B_Mask: AnyGerberCommand[]
+  B_Paste: AnyGerberCommand[]
+  Edge_Cuts: AnyGerberCommand[]
+  job?: GerberJobJson
+}
+
+/**
+ * Returns headers for a Gerber file. Here's a typical header:
+ *
+ * %TF.GenerationSoftware,KiCad,Pcbnew,8.0.1*%
+ * %TF.CreationDate,2024-04-08T11:14:22-07:00*%
+ * %TF.ProjectId,,58585858-5858-4585-9858-585858585858,rev?*%
+ * %TF.SameCoordinates,Original*%
+ * %TF.FileFunction,Copper,L1,Top*%
+ * %TF.FilePolarity,Positive*%
+ * %FSLAX46Y46*%
+ * G04 Gerber Fmt 4.6, Leading zero omitted, Abs format (unit mm)*
+ * G04 Created by KiCad (PCBNEW 8.0.1) date 2024-04-08 11:14:22*
+ * %MOMM*%
+ * %LPD*%
+ */
+export const getCommandHeaders = (): AnyGerberCommand[] => {
+  return []
+}
+
+/**
+ * Converts tscircuit soup to arrays of Gerber commands for each layer
+ */
+export const convertSoupToGerberCommands = (
+  soup: AnySoupElement[]
+): LayerToGerberCommandsMap => {
+  const glayers: LayerToGerberCommandsMap = {
+    F_Cu: getCommandHeaders(),
+    F_SilkScreen: [],
+    F_Mask: [],
+    F_Paste: [],
+    B_Cu: [],
+    B_SilkScreen: [],
+    B_Mask: [],
+    B_Paste: [],
+    Edge_Cuts: [],
+  }
+
+  return glayers
+}
