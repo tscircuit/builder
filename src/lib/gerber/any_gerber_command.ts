@@ -1,3 +1,4 @@
+import type { GerberCommandDef } from "./define-gerber-command"
 import { z } from "zod"
 
 import { add_attribute_on_aperture } from "./commands/add_attribute_on_aperture"
@@ -26,34 +27,42 @@ import { set_movement_mode_to_linear } from "./commands/set_movement_mode_to_lin
 import { set_unit } from "./commands/set_unit"
 import { start_region_statement } from "./commands/start_region_statement"
 import { step_and_repeat } from "./commands/step_and_repeat"
+import { format_specification } from "./commands/format_specification"
+import { set_layer_polarity } from "./commands/set_layer_polarity"
+import { define_aperature_template } from "./commands/define_aperature_template"
 
-export const any_gerber_command = z.union([
+export const gerber_command_map = {
   add_attribute_on_aperture,
   add_attribute_on_file,
   add_attribute_on_object,
   aperture_block,
-  comment.schema,
+  comment,
   create_arc,
   define_aperture,
   define_macro_aperture_template,
   delete_attribute,
   end_of_file,
-  end_region_statement,
-  flash_operation,
-  load_mirroring,
-  load_polarity,
-  load_rotation,
-  load_scaling,
   move_operation,
+  // end_region_statement,
+  // flash_operation,
+  format_specification,
+  // load_mirroring,
+  // load_polarity,
+  // load_rotation,
+  // load_scaling,
   plot_operation,
-  set_coordinate_format,
-  set_current_aperture_d_code,
+  // set_coordinate_format,
+  // set_current_aperture_d_code,
+  define_aperature_template,
   set_movement_mode_to_clockwise_circular,
   set_movement_mode_to_counterclockwise_circular,
   set_movement_mode_to_linear,
   set_unit,
-  start_region_statement,
-  step_and_repeat,
-])
+  set_layer_polarity,
+  // start_region_statement,
+  // step_and_repeat,
+} as const satisfies Record<string, GerberCommandDef<any, any>>
 
-export type AnyGerberCommand = z.infer<typeof any_gerber_command>
+export type AnyGerberCommand = z.infer<
+  (typeof gerber_command_map)[keyof typeof gerber_command_map]["schema"]
+>

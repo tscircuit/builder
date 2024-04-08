@@ -1,5 +1,5 @@
 import test from "ava"
-import { convertSoupToGerberCommands } from "lib/gerber/convert-soup-to-gerber"
+import { convertSoupToGerberCommands } from "lib/gerber/convert-soup-to-gerber-commands"
 
 test("Generate simple gerber with a single trace", async (t) => {
   const gerber = convertSoupToGerberCommands([

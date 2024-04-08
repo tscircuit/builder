@@ -1,6 +1,8 @@
 import { AnySoupElement } from "lib/soup"
 import { AnyGerberCommand } from "../any_gerber_command"
 import { GerberJobJson } from "./gerber-job-json"
+import { gerberBuilder } from "../gerber-builder"
+import packageJson from "../../../../package.json"
 
 type LayerToGerberCommandsMap = {
   F_Cu: AnyGerberCommand[]
@@ -31,7 +33,37 @@ type LayerToGerberCommandsMap = {
  * %LPD*%
  */
 export const getCommandHeaders = (): AnyGerberCommand[] => {
-  return []
+  return (
+    gerberBuilder()
+      .add("add_attribute_on_file", {
+        attribute_name: "GenerationSoftware",
+        attribute_value: `tscircuit,builder,${packageJson.version}`,
+      })
+      .add("add_attribute_on_file", {
+        attribute_name: "CreationDate",
+        attribute_value: new Date().toISOString(),
+      })
+      // .add("add_attribute_on_file", {
+      //   attribute_name: "ProjectId",
+      //   attribute_value: "",
+      // })
+      .add("add_attribute_on_file", {
+        attribute_name: "SameCoordinates",
+        attribute_value: "Original",
+      })
+      .add("add_attribute_on_file", {
+        attribute_name: "FileFunction",
+        attribute_value: "Copper,L1,Top",
+      })
+      .add("format_specification", {})
+      .add("comment", {
+        comment: `Gerber Fmt 4.6, Leading zero omitted, Abs format (unit mm)`,
+      })
+      .add("comment", {
+        comment: `Created by tscircuit (builder) date ${new Date().toISOString()}`,
+      })
+      .build()
+  )
 }
 
 /**
