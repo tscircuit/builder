@@ -44,6 +44,7 @@ export const gerber_command_map = {
   delete_attribute,
   end_of_file,
   move_operation,
+  flash_operation,
   // end_region_statement,
   // flash_operation,
   format_specification,

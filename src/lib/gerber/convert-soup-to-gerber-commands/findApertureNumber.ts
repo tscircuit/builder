@@ -1,4 +1,7 @@
-import { DefineAperatureTemplateCommand } from "../commands/define_aperture_template"
+import {
+  ApertureTemplateConfig,
+  DefineAperatureTemplateCommand,
+} from "../commands/define_aperture_template"
 import { AnyGerberCommand } from "../any_gerber_command"
 
 export const findApertureNumber = (
@@ -7,25 +10,24 @@ export const findApertureNumber = (
     | {
         trace_width?: number
       }
-    | {
-        pad_width?: number
-        pad_height?: number
-      }
+    | ApertureTemplateConfig
 ): number => {
   let aperture
   if ("trace_width" in search_params) {
     const trace_width = search_params.trace_width
     aperture = glayer.find(
       (command): command is DefineAperatureTemplateCommand =>
-        command.command_code === "ADD" && command.hole_diameter === trace_width
+        command.command_code === "ADD" &&
+        command.standard_template_code === "C" &&
+        command.diameter === trace_width
     )
-  } else if ("pad_width" in search_params && "pad_height" in search_params) {
+  } else if ("standard_template_code" in search_params) {
     aperture = glayer.find(
       (command): command is DefineAperatureTemplateCommand =>
         command.command_code === "ADD" &&
-        command.standard_template_code === "O" &&
-        command.x_size === search_params.pad_width &&
-        command.y_size === search_params.pad_height
+        Object.keys(search_params).every(
+          (param_name) => command[param_name] === search_params[param_name]
+        )
     )
   }
 

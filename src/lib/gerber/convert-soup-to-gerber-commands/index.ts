@@ -7,7 +7,10 @@ import { getAllTraceWidths } from "./getAllTraceWidths"
 import { getGerberLayerName } from "./getGerberLayerName"
 import { getCommandHeaders } from "./getCommandHeaders"
 import { findApertureNumber } from "./findApertureNumber"
-import { defineAperturesForLayer } from "./defineAperturesForLayer"
+import {
+  defineAperturesForLayer,
+  getApertureConfigFromPcbSmtpad,
+} from "./defineAperturesForLayer"
 
 /**
  * Converts tscircuit soup to arrays of Gerber commands for each layer
@@ -65,7 +68,18 @@ export const convertSoupToGerberCommands = (
       } else if (element.type === "pcb_smtpad") {
         if (element.layer === layer) {
           const glayer = glayers[getGerberLayerName(layer, "copper")]
-          // TODO
+
+          glayer.push(
+            ...gerberBuilder()
+              .add("select_aperture", {
+                aperture_number: findApertureNumber(
+                  glayer,
+                  getApertureConfigFromPcbSmtpad(element)
+                ),
+              })
+              .add("flash_operation", { x: element.x, y: element.y })
+              .build()
+          )
         }
       }
     }

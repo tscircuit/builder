@@ -1,4 +1,4 @@
-import type { AnySoupElement, LayerRef } from "lib/soup"
+import type { AnySoupElement, LayerRef, PCBSMTPad } from "lib/soup"
 import { gerberBuilder } from "../gerber-builder"
 import { GerberLayerName } from "./GerberLayerName"
 import { AnyGerberCommand } from "../any_gerber_command"
@@ -73,6 +73,25 @@ export function defineAperturesForLayer({
   )
 }
 
+export const getApertureConfigFromPcbSmtpad = (
+  elm: PCBSMTPad
+): ApertureTemplateConfig => {
+  if (elm.shape === "rect") {
+    return {
+      standard_template_code: "R",
+      x_size: elm.width,
+      y_size: elm.height,
+    }
+  } else if (elm.shape === "circle") {
+    return {
+      standard_template_code: "C",
+      diameter: elm.radius * 2,
+    }
+  } else {
+    throw new Error(`Unsupported shape ${(elm as any).shape}`)
+  }
+}
+
 function getAllSmtPadApertureTemplateConfigsForLayer(
   soup: AnySoupElement[],
   layer: "top" | "bottom"
@@ -91,18 +110,7 @@ function getAllSmtPadApertureTemplateConfigsForLayer(
   for (const elm of soup) {
     if (elm.type === "pcb_smtpad") {
       if (elm.layer === layer) {
-        if (elm.shape === "rect") {
-          addConfigIfNew({
-            standard_template_code: "R",
-            x_size: elm.width,
-            y_size: elm.height,
-          })
-        } else if (elm.shape === "circle") {
-          addConfigIfNew({
-            standard_template_code: "C",
-            diameter: elm.radius * 2,
-          })
-        }
+        addConfigIfNew(getApertureConfigFromPcbSmtpad(elm))
       }
     }
   }
