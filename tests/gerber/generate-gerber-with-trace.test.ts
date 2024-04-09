@@ -1,8 +1,9 @@
 import test from "ava"
 import { convertSoupToGerberCommands } from "lib/gerber/convert-soup-to-gerber-commands"
+import { stringifyGerberCommands } from "lib/gerber/stringify-gerber"
 
 test("Generate simple gerber with a single trace", async (t) => {
-  const gerber = convertSoupToGerberCommands([
+  const gerber_cmds = convertSoupToGerberCommands([
     {
       type: "pcb_trace",
       source_trace_id: "source_trace_1",
@@ -27,6 +28,6 @@ test("Generate simple gerber with a single trace", async (t) => {
   ])
   console.log("Gerber")
   console.log("----------------------------------------------")
-  console.log(gerber)
+  console.log(stringifyGerberCommands(gerber_cmds.F_Cu))
   t.pass()
 })

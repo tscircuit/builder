@@ -6,11 +6,12 @@ export const define_macro_aperture_template = defineGerberCommand({
   schema: z
     .object({
       command_code: z.literal("AM").default("AM"),
+      macro_name: z.string(),
       template_code: z.string(),
     })
     .describe("Aperture macro: Defines a macro aperture template. 4.5"),
-  stringify() {
-    return ""
+  stringify({ macro_name, template_code }) {
+    return `%AM${macro_name}*\n${template_code}%`
   },
 })
 

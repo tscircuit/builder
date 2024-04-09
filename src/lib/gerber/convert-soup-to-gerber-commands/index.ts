@@ -11,6 +11,7 @@ import {
   defineAperturesForLayer,
   getApertureConfigFromPcbSmtpad,
 } from "./defineAperturesForLayer"
+import { defineCommonMacros } from "./define-common-macros"
 
 /**
  * Converts tscircuit soup to arrays of Gerber commands for each layer
@@ -32,6 +33,7 @@ export const convertSoupToGerberCommands = (
 
   for (const glayer_name of ["F_Cu", "B_Cu"] as const) {
     const glayer = glayers[glayer_name]
+    defineCommonMacros(glayer)
     defineAperturesForLayer({
       soup,
       glayer,
