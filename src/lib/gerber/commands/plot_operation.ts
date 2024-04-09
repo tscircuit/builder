@@ -5,7 +5,7 @@ export const plot_operation = defineGerberCommand({
   command_code: "D01",
   schema: z
     .object({
-      command_code: z.literal("D01"),
+      command_code: z.literal("D01").default("D01"),
       x: z.number(),
       y: z.number(),
     })

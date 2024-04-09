@@ -13,10 +13,7 @@ class GerberBuilder {
 
   add<T extends keyof typeof gerber_command_map>(
     cmd: T,
-    props: Omit<
-      z.input<(typeof gerber_command_map)[T]["schema"]>,
-      "command_code"
-    >
+    props: z.input<(typeof gerber_command_map)[T]["schema"]>
   ): GerberBuilder {
     this.commands.push({
       ...({ command_code: gerber_command_map[cmd].command_code } as any),

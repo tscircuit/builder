@@ -1,39 +1,46 @@
 import { z } from "zod"
 import { defineGerberCommand } from "../define-gerber-command"
 
+const circle_template = z.object({
+  standard_template_code: z.literal("C").describe("circle"),
+  diameter: z.number(),
+  hole_diameter: z.number().optional(),
+})
+
+const rectangle_template = z.object({
+  standard_template_code: z.literal("R").describe("rectangle"),
+  x_size: z.number(),
+  y_size: z.number(),
+  hole_diameter: z.number().optional(),
+})
+
+const obround_template = z.object({
+  standard_template_code: z.literal("O").describe("obround"),
+  x_size: z.number(),
+  y_size: z.number(),
+  hole_diameter: z.number().optional(),
+})
+
+const polygon_template = z.object({
+  standard_template_code: z.literal("P").describe("polygon"),
+  outer_diameter: z.number(),
+  number_of_vertices: z.number().int(),
+  rotation: z.number().optional(),
+  hole_diameter: z.number().optional(),
+})
+
+const aperture_template_config = z.discriminatedUnion(
+  "standard_template_code",
+  [circle_template, rectangle_template, obround_template, polygon_template]
+)
+
 export const define_aperture_template = defineGerberCommand({
   command_code: "ADD",
-  schema: z.intersection(
+  schema: aperture_template_config.and(
     z.object({
       command_code: z.literal("ADD").default("ADD"),
       aperture_number: z.number().int(),
-    }),
-    z.union([
-      z.object({
-        standard_template_code: z.literal("C").describe("circle"),
-        diameter: z.number(),
-        hole_diameter: z.number().optional(),
-      }),
-      z.object({
-        standard_template_code: z.literal("R").describe("rectangle"),
-        x_size: z.number(),
-        y_size: z.number(),
-        hole_diameter: z.number().optional(),
-      }),
-      z.object({
-        standard_template_code: z.literal("O").describe("Obround"),
-        x_size: z.number(),
-        y_size: z.number(),
-        hole_diameter: z.number().optional(),
-      }),
-      z.object({
-        standard_template_code: z.literal("P").describe("polygon"),
-        outer_diameter: z.number(),
-        number_of_vertices: z.number().int(),
-        rotation: z.number().optional(),
-        hole_diameter: z.number().optional(),
-      }),
-    ])
+    })
   ),
   stringify(props) {
     const { aperture_number, standard_template_code } = props
@@ -59,3 +66,9 @@ export const define_aperture_template = defineGerberCommand({
     return commandString
   },
 })
+
+export type DefineAperatureTemplateCommand = z.infer<
+  typeof define_aperture_template.schema
+>
+
+export type ApertureTemplateConfig = z.infer<typeof aperture_template_config>
