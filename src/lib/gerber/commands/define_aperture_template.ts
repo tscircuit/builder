@@ -1,11 +1,12 @@
 import { z } from "zod"
 import { defineGerberCommand } from "../define-gerber-command"
 
-export const define_aperature_template = defineGerberCommand({
+export const define_aperture_template = defineGerberCommand({
   command_code: "ADD",
   schema: z.intersection(
     z.object({
       command_code: z.literal("ADD").default("ADD"),
+      aperture_number: z.number().int(),
     }),
     z.union([
       z.object({
@@ -34,36 +35,25 @@ export const define_aperature_template = defineGerberCommand({
       }),
     ])
   ),
-  stringify() {
-    const {
-      command_code,
-      standard_template_code,
-      diameter,
-      x_size,
-      y_size,
-      outer_diameter,
-      number_of_vertices,
-      rotation,
-      hole_diameter,
-    } = this
-
-    let commandString = `%${command_code}${standard_template_code}`
+  stringify(props) {
+    const { aperture_number, standard_template_code } = props
+    let commandString = `%ADD${aperture_number}${standard_template_code},`
 
     if (standard_template_code === "C") {
-      commandString += `${diameter}`
+      commandString += `${props.diameter}`
     } else if (
       standard_template_code === "R" ||
       standard_template_code === "O"
     ) {
-      commandString += `${x_size}X${y_size}`
+      commandString += `${props.x_size}X${props.y_size}`
     } else if (standard_template_code === "P") {
-      commandString += `${outer_diameter}${number_of_vertices}${
-        rotation ? `R${rotation}` : ""
+      commandString += `${props.outer_diameter}${props.number_of_vertices}${
+        props.rotation ? `R${props.rotation}` : ""
       }`
     }
 
-    if (hole_diameter) {
-      commandString += `X${hole_diameter}`
+    if (props.hole_diameter) {
+      commandString += `X${props.hole_diameter}`
     }
 
     return commandString

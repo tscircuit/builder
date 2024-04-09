@@ -1,6 +1,7 @@
 import { AnySoupElement } from "lib/soup"
 import { AnyGerberCommand } from "../any_gerber_command"
 import { GerberJobJson } from "./gerber-job-json"
+import type { LayerRef, PCBTrace } from "lib/soup"
 import { gerberBuilder } from "../gerber-builder"
 import packageJson from "../../../../package.json"
 import { pairs } from "lib/utils/pairs"
@@ -17,6 +18,8 @@ type LayerToGerberCommandsMap = {
   Edge_Cuts: AnyGerberCommand[]
   job?: GerberJobJson
 }
+
+type GerberLayerName = keyof LayerToGerberCommandsMap
 
 /**
  * Returns headers for a Gerber file. Here's a typical header:
@@ -67,6 +70,30 @@ export const getCommandHeaders = (): AnyGerberCommand[] => {
   )
 }
 
+const layerRefToGerberPrefix = {
+  top: "F_",
+  bottom: "B_",
+} as const
+
+const layerTypeToGerberSuffix = {
+  copper: "Cu",
+  silkscreen: "SilkScreen",
+  mask: "Mask",
+  paste: "Paste",
+} as const
+
+const getGerberLayerName = (
+  layer_ref: LayerRef,
+  layer_type: "copper" | "silkscreen" | "mask" | "paste"
+): GerberLayerName => {
+  return `${layerRefToGerberPrefix[layer_ref]}_${layerTypeToGerberSuffix[layer_type]}` as any
+}
+
+// if ({
+//   top: "F_Cu",
+//   bottom: "B_Cu",
+// }
+
 /**
  * Converts tscircuit soup to arrays of Gerber commands for each layer
  */
@@ -78,14 +105,44 @@ export const convertSoupToGerberCommands = (
     F_SilkScreen: [],
     F_Mask: [],
     F_Paste: [],
-    B_Cu: [],
+    B_Cu: getCommandHeaders(),
     B_SilkScreen: [],
     B_Mask: [],
     B_Paste: [],
     Edge_Cuts: [],
   }
 
-  // TODO define aperatures for each trace width
+  const traceWidths: Record<LayerRef, number[]> = getAllTraceWidths(soup)
+
+  for (const glayer_name of ["F_Cu", "B_Cu"]) {
+    const glayer = glayers[glayer_name]
+    glayer.push(
+      ...gerberBuilder()
+        .add("comment", { comment: "aperture START LIST" })
+        .build()
+    )
+    for (const width of traceWidths[
+      glayer_name === "F_Cu" ? "top" : "bottom"
+    ]) {
+      glayer.push(
+        ...gerberBuilder()
+          .add("define_aperture_template", {
+            aperture_number: 10,
+            standard_template_code: "C",
+            hole_diameter: width,
+          })
+          .build()
+      )
+    }
+    glayer.push(
+      ...gerberBuilder()
+        .add("delete_attribute", {})
+        .add("comment", { comment: "aperture END LIST" })
+        .build()
+    )
+  }
+
+  // TODO define apertures for each trace width
 
   for (const layer of ["top", "bottom"]) {
     for (const element of soup) {
@@ -100,6 +157,7 @@ export const convertSoupToGerberCommands = (
             if (a.layer === layer) {
               glayers.F_Cu.push(
                 ...gerberBuilder()
+                  .add("select_aperture", { aperture_number: 10 })
                   .add("move_operation", { x: a.x, y: a.y })
                   .add("plot_operation", { x: b.x, y: b.y })
                   .build()
@@ -117,4 +175,26 @@ export const convertSoupToGerberCommands = (
   }
 
   return glayers
+}
+
+function getAllTraceWidths(soup: AnySoupElement[]): Record<LayerRef, number[]> {
+  const pcb_traces = soup.filter(
+    (elm): elm is PCBTrace => elm.type === "pcb_trace"
+  )
+
+  const widths: Record<LayerRef, Set<number>> = {} as any
+
+  for (const trace of pcb_traces) {
+    for (const segment of trace.route) {
+      if (segment.route_type === "wire") {
+        widths[segment.layer] = widths[segment.layer] || new Set<number>()
+        widths[segment.layer].add(segment.width)
+      }
+    }
+  }
+
+  return {
+    top: Array.from(widths.top || []),
+    bottom: Array.from(widths.bottom || []),
+  } as any
 }

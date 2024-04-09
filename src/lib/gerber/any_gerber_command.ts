@@ -29,7 +29,8 @@ import { start_region_statement } from "./commands/start_region_statement"
 import { step_and_repeat } from "./commands/step_and_repeat"
 import { format_specification } from "./commands/format_specification"
 import { set_layer_polarity } from "./commands/set_layer_polarity"
-import { define_aperature_template } from "./commands/define_aperature_template"
+import { define_aperture_template } from "./commands/define_aperture_template"
+import { select_aperture } from "./commands/select_aperture"
 
 export const gerber_command_map = {
   add_attribute_on_aperture,
@@ -53,10 +54,11 @@ export const gerber_command_map = {
   plot_operation,
   // set_coordinate_format,
   // set_current_aperture_d_code,
-  define_aperature_template,
+  define_aperture_template,
   set_movement_mode_to_clockwise_circular,
   set_movement_mode_to_counterclockwise_circular,
   set_movement_mode_to_linear,
+  select_aperture,
   set_unit,
   set_layer_polarity,
   // start_region_statement,
