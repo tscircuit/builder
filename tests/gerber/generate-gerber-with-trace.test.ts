@@ -33,7 +33,9 @@ test("Generate simple gerber with a single trace", async (t) => {
   console.log("Gerber")
   console.log("----------------------------------------------")
   const fu_cp = stringifyGerberCommands(gerber_cmds.F_Cu)
-  console.log(fu_cp)
+
+  // TODO parse gerber to check for correctness
+
   await maybeOutputGerber(stringifyGerberCommandLayers(gerber_cmds))
   t.pass()
 })
