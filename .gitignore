@@ -11,3 +11,6 @@ yarn-error.log
 .yalc
 yalc.lock
 docs
+*.artifact.*
+gerber-output
+gerber-output.zip

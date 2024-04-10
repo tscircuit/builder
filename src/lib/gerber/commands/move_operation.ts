@@ -1,3 +1,4 @@
+import { getGerberCoordinateWithPadding } from "./../stringify-gerber/get-gerber-coordinate-with-padding"
 import { z } from "zod"
 import { defineGerberCommand } from "../define-gerber-command"
 
@@ -13,6 +14,9 @@ export const move_operation = defineGerberCommand({
       "Move operation: D02 moves the current point to the coordinate in the command. It does not create an object."
     ),
   stringify({ x, y }) {
-    return `X${x}Y${y}D02*`
+    const [gx, gy] = [x, y].map((coord) =>
+      getGerberCoordinateWithPadding(coord)
+    )
+    return `X${gx}Y${gy}D02*`
   },
 })

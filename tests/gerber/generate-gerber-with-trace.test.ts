@@ -1,6 +1,10 @@
 import test from "ava"
 import { convertSoupToGerberCommands } from "lib/gerber/convert-soup-to-gerber-commands"
-import { stringifyGerberCommands } from "lib/gerber/stringify-gerber"
+import {
+  stringifyGerberCommandLayers,
+  stringifyGerberCommands,
+} from "lib/gerber/stringify-gerber"
+import { maybeOutputGerber } from "tests/fixtures/maybe-output-gerber"
 
 test("Generate simple gerber with a single trace", async (t) => {
   const gerber_cmds = convertSoupToGerberCommands([
@@ -28,6 +32,8 @@ test("Generate simple gerber with a single trace", async (t) => {
   ])
   console.log("Gerber")
   console.log("----------------------------------------------")
-  console.log(stringifyGerberCommands(gerber_cmds.F_Cu))
+  const fu_cp = stringifyGerberCommands(gerber_cmds.F_Cu)
+  console.log(fu_cp)
+  await maybeOutputGerber(stringifyGerberCommandLayers(gerber_cmds))
   t.pass()
 })

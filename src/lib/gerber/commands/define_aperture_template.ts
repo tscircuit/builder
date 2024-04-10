@@ -63,6 +63,8 @@ export const define_aperture_template = defineGerberCommand({
       commandString += `X${props.hole_diameter}`
     }
 
+    commandString += "*%"
+
     return commandString
   },
 })

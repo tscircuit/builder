@@ -33,7 +33,7 @@ export const convertSoupToGerberCommands = (
 
   for (const glayer_name of ["F_Cu", "B_Cu"] as const) {
     const glayer = glayers[glayer_name]
-    defineCommonMacros(glayer)
+    // defineCommonMacros(glayer)
     defineAperturesForLayer({
       soup,
       glayer,

@@ -1,5 +1,6 @@
 import { z } from "zod"
 import { defineGerberCommand } from "../define-gerber-command"
+import { getGerberCoordinateWithPadding } from "../stringify-gerber/get-gerber-coordinate-with-padding"
 
 export const flash_operation = defineGerberCommand({
   command_code: "D03",
@@ -13,7 +14,10 @@ export const flash_operation = defineGerberCommand({
       "Flash operation: Creates a flash object with the current aperture. The current point is moved to the flash point."
     ),
   stringify({ x, y }) {
-    return `X${x}Y${y}D03*`
+    const [gx, gy] = [x, y].map((coord) =>
+      getGerberCoordinateWithPadding(coord)
+    )
+    return `X${gx}Y${gy}D03*`
   },
 })
 

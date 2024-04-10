@@ -21,7 +21,7 @@ export const format_specification = defineGerberCommand({
     y_decimal_digits: z.number().int().default(6),
   }),
   stringify: () => {
-    return "%FSLAX46Y46%"
+    return "%FSLAX46Y46*%"
   },
 })
 
