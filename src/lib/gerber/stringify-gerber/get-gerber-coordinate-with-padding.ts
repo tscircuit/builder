@@ -19,7 +19,11 @@ export const getGerberCoordinateWithPadding = (
   let coordinate_str = coordinate_um.toFixed(0) // Convert to string without decimal places
   // add left padding
   while (coordinate_str.length < 9) {
-    coordinate_str = "0" + coordinate_str
+    if (coordinate_um < 0) {
+      coordinate_str = "-0" + coordinate_str.slice(1)
+    } else {
+      coordinate_str = "0" + coordinate_str
+    }
   }
   return coordinate_str
 }

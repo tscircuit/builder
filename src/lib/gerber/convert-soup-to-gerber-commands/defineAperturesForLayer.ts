@@ -1,4 +1,9 @@
-import type { AnySoupElement, LayerRef, PCBSMTPad } from "lib/soup"
+import type {
+  AnySoupElement,
+  LayerRef,
+  PCBPlatedHole,
+  PCBSMTPad,
+} from "lib/soup"
 import { gerberBuilder } from "../gerber-builder"
 import { GerberLayerName } from "./GerberLayerName"
 import { AnyGerberCommand } from "../any_gerber_command"
@@ -48,18 +53,18 @@ export function defineAperturesForLayer({
     )
   }
 
-  // Add all pcb smtpad aperatures
-  const smtpadConfigs = getAllSmtPadApertureTemplateConfigsForLayer(
+  // Add all pcb smtpad, plated hole etc. aperatures
+  const apertureConfigs = getAllApertureTemplateConfigsForLayer(
     soup,
     glayer_name.startsWith("F_") ? "top" : "bottom"
   )
 
-  for (const smtconfig of smtpadConfigs) {
+  for (const apertureConfig of apertureConfigs) {
     glayer.push(
       ...gerberBuilder()
         .add("define_aperture_template", {
           aperture_number: getNextApertureNumber(),
-          ...smtconfig,
+          ...apertureConfig,
         })
         .build()
     )
@@ -91,8 +96,17 @@ export const getApertureConfigFromPcbSmtpad = (
     throw new Error(`Unsupported shape ${(elm as any).shape}`)
   }
 }
+export const getApertureConfigFromPcbPlatedHole = (
+  elm: PCBPlatedHole
+): ApertureTemplateConfig => {
+  return {
+    standard_template_code: "C",
+    diameter: elm.outer_diameter,
+    hole_diameter: elm.hole_diameter,
+  }
+}
 
-function getAllSmtPadApertureTemplateConfigsForLayer(
+function getAllApertureTemplateConfigsForLayer(
   soup: AnySoupElement[],
   layer: "top" | "bottom"
 ): ApertureTemplateConfig[] {
@@ -111,6 +125,10 @@ function getAllSmtPadApertureTemplateConfigsForLayer(
     if (elm.type === "pcb_smtpad") {
       if (elm.layer === layer) {
         addConfigIfNew(getApertureConfigFromPcbSmtpad(elm))
+      }
+    } else if (elm.type === "pcb_plated_hole") {
+      if (elm.layers.includes(layer)) {
+        addConfigIfNew(getApertureConfigFromPcbPlatedHole(elm))
       }
     }
   }

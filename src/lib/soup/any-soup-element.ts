@@ -8,6 +8,7 @@ export const any_soup_element = z.union([
   src.source_simple_resistor,
   pcb.pcb_component,
   pcb.pcb_hole,
+  pcb.pcb_plated_hole,
   pcb.pcb_port,
   pcb.pcb_text,
   pcb.pcb_trace,

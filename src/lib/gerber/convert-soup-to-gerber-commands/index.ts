@@ -9,6 +9,7 @@ import { getCommandHeaders } from "./getCommandHeaders"
 import { findApertureNumber } from "./findApertureNumber"
 import {
   defineAperturesForLayer,
+  getApertureConfigFromPcbPlatedHole,
   getApertureConfigFromPcbSmtpad,
 } from "./defineAperturesForLayer"
 import { defineCommonMacros } from "./define-common-macros"
@@ -77,6 +78,22 @@ export const convertSoupToGerberCommands = (
                 aperture_number: findApertureNumber(
                   glayer,
                   getApertureConfigFromPcbSmtpad(element)
+                ),
+              })
+              .add("flash_operation", { x: element.x, y: element.y })
+              .build()
+          )
+        }
+      } else if (element.type === "pcb_plated_hole") {
+        if (element.layers.includes(layer)) {
+          const glayer = glayers[getGerberLayerName(layer, "copper")]
+
+          glayer.push(
+            ...gerberBuilder()
+              .add("select_aperture", {
+                aperture_number: findApertureNumber(
+                  glayer,
+                  getApertureConfigFromPcbPlatedHole(element)
                 ),
               })
               .add("flash_operation", { x: element.x, y: element.y })

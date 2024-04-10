@@ -8,6 +8,6 @@ export const select_aperture = defineGerberCommand({
     aperture_number: z.number().int(),
   }),
   stringify({ aperture_number }) {
-    return `D${aperture_number}`
+    return `D${aperture_number}*`
   },
 })

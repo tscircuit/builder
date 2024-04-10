@@ -1,5 +1,6 @@
 import { z } from "zod"
 import { defineGerberCommand } from "../define-gerber-command"
+import { getGerberCoordinateWithPadding } from "../stringify-gerber/get-gerber-coordinate-with-padding"
 
 const circle_template = z.object({
   standard_template_code: z.literal("C").describe("circle"),
@@ -47,20 +48,20 @@ export const define_aperture_template = defineGerberCommand({
     let commandString = `%ADD${aperture_number}${standard_template_code},`
 
     if (standard_template_code === "C") {
-      commandString += `${props.diameter}`
+      commandString += `${props.diameter.toFixed(6)}`
     } else if (
       standard_template_code === "R" ||
       standard_template_code === "O"
     ) {
-      commandString += `${props.x_size}X${props.y_size}`
+      commandString += `${props.x_size.toFixed(6)}X${props.y_size.toFixed(6)}`
     } else if (standard_template_code === "P") {
-      commandString += `${props.outer_diameter}${props.number_of_vertices}${
-        props.rotation ? `R${props.rotation}` : ""
+      commandString += `${props.outer_diameter}X${props.number_of_vertices}X${
+        props.rotation ? `X${props.rotation}` : ""
       }`
     }
 
     if (props.hole_diameter) {
-      commandString += `X${props.hole_diameter}`
+      commandString += `X${props.hole_diameter.toFixed(6)}`
     }
 
     commandString += "*%"

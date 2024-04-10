@@ -6,6 +6,11 @@ import {
 } from "lib/gerber/stringify-gerber"
 import { maybeOutputGerber } from "tests/fixtures/maybe-output-gerber"
 
+// If you're trying to test this, I would recommend opening up Kicad's Gerber
+// Viewer and loading in the files from the generated directory "gerber-output"
+// that's produced if OUTPUT_GERBER=1 when you do `npx ava ./tests/gerber/generate-gerber-with-trace.test.ts`
+// You can generate the files then hit reload in the Gerber Viewer to see that
+// everything looks approximately correct
 test("Generate simple gerber with a single trace", async (t) => {
   const gerber_cmds = convertSoupToGerberCommands([
     {
@@ -29,10 +34,37 @@ test("Generate simple gerber with a single trace", async (t) => {
         },
       ],
     },
+    {
+      type: "pcb_smtpad",
+      shape: "rect",
+      height: 1,
+      width: 1,
+      x: 1,
+      y: 1,
+      layer: "top",
+    },
+    {
+      type: "pcb_smtpad",
+      shape: "rect",
+      height: 1,
+      width: 1,
+      x: 2,
+      y: -1,
+      layer: "bottom",
+    },
+    {
+      type: "pcb_plated_hole",
+      x: 4,
+      y: 1,
+      hole_diameter: 0.8,
+      layers: ["top", "bottom"],
+      outer_diameter: 2,
+    },
   ])
   console.log("Gerber")
   console.log("----------------------------------------------")
   const fu_cp = stringifyGerberCommands(gerber_cmds.F_Cu)
+  console.log(fu_cp)
 
   // TODO parse gerber to check for correctness
 
