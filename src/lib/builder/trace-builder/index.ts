@@ -394,6 +394,9 @@ export const createTraceBuilder = (
       }
 
       if (common_layers.length === 1) {
+        console.log("common layers = 1, solving for single layer", {
+          terminals,
+        })
         return solveForSingleLayerRoute(
           terminals.map((t) => ({
             x: t.x,
@@ -445,8 +448,9 @@ export const createTraceBuilder = (
         ...(internal.pcb_route_hints as any).map((p) => bc.convert(p)),
         pcb_terminals[1],
       ]
+
       const routes: Type.PCBTrace["route"][] = []
-      for (const [a, b] of pairs(ordered_pcb_terminals_and_hints)) {
+      for (let [a, b] of pairs(ordered_pcb_terminals_and_hints)) {
         routes.push(solveForRoute([a, b]))
       }
       pcb_route.push(...mergeRoutes(routes))

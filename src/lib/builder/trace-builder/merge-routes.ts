@@ -11,6 +11,10 @@ function pdist(a, b) {
  * reverse the next route and append it to the previous route.
  */
 export const mergeRoutes = (routes: Type.PCBTrace["route"][]) => {
+  // routes = routes.filter((route) => route.length > 0)
+  if (routes.some((r) => r.length === 0)) {
+    throw new Error(`Cannot merge routes with zero length`)
+  }
   // for (const route of routes) {
   //   console.table(route)
   // }

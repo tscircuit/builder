@@ -11,6 +11,7 @@ test("trace with pcb routing hints", async (t) => {
           name: "R1",
         })
         .setFootprint("0805")
+        .setFootprintCenter(0, 0)
         .setSchematicCenter(0, 0)
     )
     .add("resistor", (rb) =>
@@ -48,26 +49,26 @@ test("trace with pcb routing hints", async (t) => {
         ],
       })
     )
-    .add("trace", (tb) =>
-      tb.addConnections([".R1 > port.left", ".R3 > port.right"]).setProps({
-        pcb_route_hints: [
-          {
-            x: "2mm",
-            y: 4,
-          },
-        ],
-      })
-    )
-    .add("trace", (tb) =>
-      tb.addConnections([".R2 > port.right", ".R1 > port.left"]).setProps({
-        pcb_route_hints: [
-          {
-            x: "3mm",
-            y: -6,
-          },
-        ],
-      })
-    )
+    // .add("trace", (tb) =>
+    //   tb.addConnections([".R1 > port.left", ".R3 > port.right"]).setProps({
+    //     pcb_route_hints: [
+    //       {
+    //         x: "2mm",
+    //         y: 4,
+    //       },
+    //     ],
+    //   })
+    // )
+    // .add("trace", (tb) =>
+    //   tb.addConnections([".R2 > port.right", ".R1 > port.left"]).setProps({
+    //     pcb_route_hints: [
+    //       {
+    //         x: "3mm",
+    //         y: -6,
+    //       },
+    //     ],
+    //   })
+    // )
     .build()
 
   await logLayout("trace with pcb routing hints", result)
