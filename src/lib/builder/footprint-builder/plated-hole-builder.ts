@@ -9,10 +9,10 @@ export interface PlatedHoleBuilder {
     props: Partial<
       Omit<
         Type.PCBPlatedHole,
-        "x" | "y" | "outer_diameter" | "inner_diameter"
+        "x" | "y" | "outer_diameter" | "hole_diameter"
       > & {
         outer_diameter: Type.Dimension
-        inner_diameter: Type.Dimension
+        hole_diameter: Type.Dimension
         x: Type.Dimension
         y: Type.Dimension
       }
