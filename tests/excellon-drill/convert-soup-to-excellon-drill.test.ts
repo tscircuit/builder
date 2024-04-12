@@ -1,8 +1,6 @@
 import test from "ava"
-import {
-  convertSoupToExcellonDrillCommands,
-  stringifyExcellonDrill,
-} from "lib/excellon-drill"
+import { convertSoupToExcellonDrillCommands } from "lib/excellon-drill/convert-soup-to-excellon-drill-commands"
+import { stringifyExcellonDrill } from "lib/excellon-drill/stringify-excellon-drill"
 import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
 test("generate excellon drill text from axial resistor", async (t) => {

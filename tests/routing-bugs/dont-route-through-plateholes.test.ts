@@ -9,7 +9,6 @@ const axial = (fb: FootprintBuilder) =>
         x: "-0.05in",
         y: 0,
         hole_diameter: 0.8,
-        inner_diameter: 1.0,
         outer_diameter: 1.2,
         port_hints: ["left"],
       })
@@ -19,7 +18,6 @@ const axial = (fb: FootprintBuilder) =>
         x: "0.05in",
         y: 0,
         hole_diameter: 0.8,
-        inner_diameter: 1.0,
         outer_diameter: 1.2,
         port_hints: ["right"],
       })

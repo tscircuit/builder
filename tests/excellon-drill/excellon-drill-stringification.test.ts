@@ -1,5 +1,6 @@
 import test from "ava"
-import { excellonDrill, stringifyExcellonDrill } from "lib/excellon-drill"
+import { stringifyExcellonDrill } from "lib/excellon-drill/stringify-excellon-drill"
+import { excellonDrill } from "lib/excellon-drill/excellon-drill-builder"
 
 test("test that we can recreate an example drill file", (t) => {
   const output_commands = excellonDrill()
