@@ -17,6 +17,7 @@ import { getSchematicObstaclesFromElements } from "./get-schematic-obstacles-fro
 import { pairs } from "lib/utils/pairs"
 import { mergeRoutes } from "./merge-routes"
 import { uniq } from "lib/utils/uniq"
+import { findPossibleTraceLayerCombinations } from "./find-possible-trace-layer-combinations"
 
 type RouteSolverOrString = Type.RouteSolver | "rmst" | "straight" | "route1"
 
@@ -394,9 +395,6 @@ export const createTraceBuilder = (
       }
 
       if (common_layers.length === 1) {
-        console.log("common layers = 1, solving for single layer", {
-          terminals,
-        })
         return solveForSingleLayerRoute(
           terminals.map((t) => ({
             x: t.x,
@@ -419,8 +417,6 @@ export const createTraceBuilder = (
         })
         return []
       }
-
-      // common_layers.length > 1
 
       const LAYER_SELECTION_PREFERENCE = ["top", "bottom", "inner1", "inner2"]
 
@@ -449,11 +445,38 @@ export const createTraceBuilder = (
         pcb_terminals[1],
       ]
 
-      const routes: Type.PCBTrace["route"][] = []
-      for (let [a, b] of pairs(ordered_pcb_terminals_and_hints)) {
-        routes.push(solveForRoute([a, b]))
+      const candidate_layer_combinations = findPossibleTraceLayerCombinations(
+        ordered_pcb_terminals_and_hints
+      )
+
+      if (candidate_layer_combinations.length === 0) {
+        pcb_errors.push({
+          pcb_error_id: builder.project_builder.getId("pcb_error"),
+          type: "pcb_error",
+          error_type: "pcb_trace_error",
+          message: `No common layers could be resolved for terminals`,
+          pcb_trace_id,
+          source_trace_id,
+          pcb_component_ids: [], // TODO
+          pcb_port_ids: pcb_terminal_port_ids,
+        })
+      } else {
+        const routes: Type.PCBTrace["route"][] = []
+
+        // TODO explore all candidate layer combinations
+        const layer_selection = candidate_layer_combinations[0].layer_path
+
+        const ordered_with_layer_hints = ordered_pcb_terminals_and_hints.map(
+          (t, idx) => {
+            return { ...t, layers: [layer_selection[idx]] }
+          }
+        )
+
+        for (let [a, b] of pairs(ordered_with_layer_hints)) {
+          routes.push(solveForRoute([a, b]))
+        }
+        pcb_route.push(...mergeRoutes(routes))
       }
-      pcb_route.push(...mergeRoutes(routes))
     }
 
     // Iterate over the pcb_route and if there is a layer switch without an
