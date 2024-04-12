@@ -30,6 +30,8 @@ const getFootprintBuilderAddables = () =>
     smtpad: createSMTPadBuilder,
     hole: createHoleBuilder,
     platedhole: createPlatedHoleBuilder,
+    pcbvia: createPcbViaBuilder,
+    /* @deprecated */
     pcb_via: createPcbViaBuilder,
   } as const)
 

@@ -8,7 +8,7 @@ test("footprint hole should be created", async (t) => {
     (gb) =>
       gb.footprint.add("platedhole", (ph) =>
         ph.setProps({
-          inner_diameter: "1mm",
+          hole_diameter: "1mm",
           outer_diameter: "1.5mm",
           x: 0,
           y: 0,

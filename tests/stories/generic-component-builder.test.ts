@@ -25,7 +25,7 @@ test("component build from scratch without .add function (only appendChild)", as
         x: `${i * 2.5}mm`,
         y: 0,
         outer_diameter: "2mm",
-        inner_diameter: "1mm",
+        hole_diameter: "1mm",
       })
       cb.appendChild(phb)
 
