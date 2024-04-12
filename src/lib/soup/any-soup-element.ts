@@ -15,6 +15,7 @@ export const any_soup_element = z.union([
   pcb.pcb_trace_error,
   pcb.pcb_via,
   pcb.pcb_smtpad,
+  pcb.pcb_board,
   sch.schematic_box,
   sch.schematic_text,
   sch.schematic_line,

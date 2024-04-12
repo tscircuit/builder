@@ -7,6 +7,7 @@ import {
 } from "./group-builder"
 import { createProjectFromElements } from "../project/create-project-from-elements"
 import convertUnits from "convert-units"
+import { createBoardBuilder } from "./board-builder"
 
 export type ProjectBuilder = Omit<GroupBuilder, "add"> & {
   build_context: Type.BuildContext
@@ -14,9 +15,17 @@ export type ProjectBuilder = Omit<GroupBuilder, "add"> & {
   addGroup: (groupBuilderCallback: GroupBuilderCallback) => ProjectBuilder
   buildProject: () => Promise<Type.Project>
   build(): Promise<Type.AnyElement[]>
-  add<T extends keyof GroupBuilderAddables>(
+  add<T extends keyof GroupBuilderAddables | "board">(
     builder_type: T,
-    callback: (builder: ReturnType<GroupBuilderAddables[T]>) => unknown
+    callback: (
+      builder: ReturnType<
+        T extends "board"
+          ? typeof createBoardBuilder
+          : T extends keyof GroupBuilderAddables
+          ? GroupBuilderAddables[T]
+          : never
+      >
+    ) => unknown
   ): ProjectBuilder
   createBuildContext: () => Type.BuildContext
 }
@@ -59,6 +68,17 @@ export const createProjectBuilder = (): ProjectBuilder => {
       return { ...this, ...mutation, parent: this }
     },
   })
+
+  const groupBuilderAdd = builder.add
+  builder.add = (builder_type, callback) => {
+    if (builder_type === "board") {
+      const board_builder = createBoardBuilder(builder)
+      callback(board_builder)
+      builder.appendChild(board_builder)
+      return builder
+    }
+    return groupBuilderAdd(builder_type, callback)
+  }
 
   builder.build = async () => {
     resetIdCount()

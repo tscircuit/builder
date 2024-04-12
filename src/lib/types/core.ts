@@ -182,6 +182,7 @@ export type AnyElement =
   | SchematicText
   | SchematicDrawing
   | SourceError
+  | Soup.PCBBoard
 
 export type ElementType = AnyElement["type"]
 export type ElementOfType<T extends ElementType> = Extract<

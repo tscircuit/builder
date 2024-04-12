@@ -33,7 +33,7 @@ export type GroupBuilderAddables = ReturnType<typeof getGroupAddables>
 export type GroupBuilderCallback = (gb: GroupBuilder) => unknown
 export interface GroupBuilder {
   project_builder: ProjectBuilder
-  builder_type: "group_builder"
+  builder_type: "group_builder" | "board_builder"
   addables: GroupBuilderAddables
   reset: () => GroupBuilder
   setName: (name: string) => GroupBuilder
@@ -70,7 +70,7 @@ export interface GroupBuilder {
 }
 
 export class GroupBuilderClass implements GroupBuilder {
-  builder_type: "group_builder" = "group_builder"
+  builder_type: "group_builder" | "board_builder" = "group_builder"
   groups: GroupBuilder[]
   components: CB.BaseComponentBuilder<any>[]
   traces: TraceBuilder[]
@@ -127,7 +127,10 @@ export class GroupBuilderClass implements GroupBuilder {
     }
 
     // TODO just make this children?
-    if (child.builder_type === "group_builder") {
+    if (
+      child.builder_type === "group_builder" ||
+      child.builder_type === "board_builder"
+    ) {
       this.groups.push(child as any)
     } else if (child.builder_type === "trace_builder") {
       this.traces.push(child as any)
