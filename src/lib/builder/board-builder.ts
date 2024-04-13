@@ -29,6 +29,7 @@ export type BoardBuilderAddables = ReturnType<typeof getBoardAddables>
 export interface BoardProps {
   width: number
   height: number
+  center?: Type.Point
   center_x: number
   center_y: number
 }
@@ -79,8 +80,12 @@ export class BoardBuilderClass
       ...(await super.build(bc)),
       {
         type: "pcb_board",
-        center_x: bc.convert(this.props.center_x!),
-        center_y: bc.convert(this.props.center_y!),
+        center: this.props.center
+          ? bc.convert(this.props.center)
+          : {
+              x: bc.convert(this.props.center_x!),
+              y: bc.convert(this.props.center_y!),
+            },
         width: bc.convert(this.props.width!),
         height: bc.convert(this.props.height!),
       },
