@@ -45,15 +45,6 @@ type SchematicTrace = Soup.SchematicTrace
 
 type SchematicText = Soup.SchematicText
 
-export interface PCBBoard {
-  type: "pcb_board"
-  width: number
-  height: number
-  x: number
-  y: number
-  align: "bottom-left"
-}
-
 export interface CopperPour {
   type: "pcb_copper_pour"
   layer: LayerRef
