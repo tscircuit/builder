@@ -84,6 +84,7 @@ export type GenericComponentBuilderCallback = (
 
 export class ComponentBuilderClass implements GenericComponentBuilder {
   name: string | null = null
+  part_numbers: string[]
   builder_type = "generic_component_builder" as any
   tags: string[] = []
   source_properties: any = {}
@@ -101,9 +102,10 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
     this.ports = createPortsBuilder(project_builder)
     this.footprint = createFootprintBuilder(project_builder)
     this.schematic_symbol = createSchematicSymbolBuilder(project_builder)
-    this.settable_source_properties = ["name"]
+    this.settable_source_properties = ["name", "part_numbers"]
     this.settable_schematic_properties = []
     this.settable_pcb_properties = []
+    this.part_numbers = []
   }
 
   appendChild(child) {
@@ -233,6 +235,8 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
         this.setSchematicProperties({ [prop_key]: prop_val })
       } else if (this.settable_pcb_properties.includes(prop_key)) {
         this.setPcbProperties({ [prop_key]: prop_val })
+      } else if (prop_key === "part_number") {
+        this.part_numbers = [prop_val as string]
       } else if (prop_key === "children") {
         // SPECIAL CASE: Bug in upstream code causes "children" to sometimes be
         // passed, we want to totally ignore this and not add it to unused props
@@ -367,6 +371,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
       source_component_id,
       name: this.name,
       ftype: this.source_properties.ftype,
+      part_numbers: this.part_numbers,
     })
 
     elements.push(source_component)
