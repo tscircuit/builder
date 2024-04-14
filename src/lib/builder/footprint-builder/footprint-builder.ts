@@ -45,6 +45,7 @@ export interface FootprintBuilder {
   addables: FootprintBuilderAddables
   position: Type.Point
   rotation: number
+  layer: Type.LayerRef
   setPosition: (x: number | string, y: number | string) => FootprintBuilder
   appendChild: (child: Builder) => FootprintBuilder
   addPad(cb: (smtpadbuilder: SMTPadBuilder) => unknown): FootprintBuilder
