@@ -26,21 +26,27 @@ export const convertSoupToGerberCommands = (
       layer_type: "copper",
     }),
     F_SilkScreen: [],
-    F_Mask: [],
+    F_Mask: getCommandHeaders({
+      layer: "top",
+      layer_type: "soldermask",
+    }),
     F_Paste: [],
     B_Cu: getCommandHeaders({
-      layer: "top",
+      layer: "bottom",
       layer_type: "copper",
     }),
     B_SilkScreen: [],
-    B_Mask: [],
+    B_Mask: getCommandHeaders({
+      layer: "bottom",
+      layer_type: "soldermask",
+    }),
     B_Paste: [],
     Edge_Cuts: getCommandHeaders({
       layer: "edgecut",
     }),
   }
 
-  for (const glayer_name of ["F_Cu", "B_Cu"] as const) {
+  for (const glayer_name of ["F_Cu", "B_Cu", "F_Mask", "B_Mask"] as const) {
     const glayer = glayers[glayer_name]
     // defineCommonMacros(glayer)
     defineAperturesForLayer({
@@ -89,35 +95,41 @@ export const convertSoupToGerberCommands = (
         }
       } else if (element.type === "pcb_smtpad") {
         if (element.layer === layer) {
-          const glayer = glayers[getGerberLayerName(layer, "copper")]
-
-          glayer.push(
-            ...gerberBuilder()
-              .add("select_aperture", {
-                aperture_number: findApertureNumber(
-                  glayer,
-                  getApertureConfigFromPcbSmtpad(element)
-                ),
-              })
-              .add("flash_operation", { x: element.x, y: element.y })
-              .build()
-          )
+          for (const glayer of [
+            glayers[getGerberLayerName(layer, "copper")],
+            glayers[getGerberLayerName(layer, "soldermask")],
+          ]) {
+            glayer.push(
+              ...gerberBuilder()
+                .add("select_aperture", {
+                  aperture_number: findApertureNumber(
+                    glayer,
+                    getApertureConfigFromPcbSmtpad(element)
+                  ),
+                })
+                .add("flash_operation", { x: element.x, y: element.y })
+                .build()
+            )
+          }
         }
       } else if (element.type === "pcb_plated_hole") {
         if (element.layers.includes(layer as any)) {
-          const glayer = glayers[getGerberLayerName(layer, "copper")]
-
-          glayer.push(
-            ...gerberBuilder()
-              .add("select_aperture", {
-                aperture_number: findApertureNumber(
-                  glayer,
-                  getApertureConfigFromPcbPlatedHole(element)
-                ),
-              })
-              .add("flash_operation", { x: element.x, y: element.y })
-              .build()
-          )
+          for (const glayer of [
+            glayers[getGerberLayerName(layer, "copper")],
+            glayers[getGerberLayerName(layer, "soldermask")],
+          ]) {
+            glayer.push(
+              ...gerberBuilder()
+                .add("select_aperture", {
+                  aperture_number: findApertureNumber(
+                    glayer,
+                    getApertureConfigFromPcbPlatedHole(element)
+                  ),
+                })
+                .add("flash_operation", { x: element.x, y: element.y })
+                .build()
+            )
+          }
         }
       } else if (element.type === "pcb_board" && layer === "edgecut") {
         const glayer = glayers.Edge_Cuts

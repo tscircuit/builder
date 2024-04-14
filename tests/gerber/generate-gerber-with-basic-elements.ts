@@ -11,8 +11,14 @@ import { maybeOutputGerber } from "tests/fixtures/maybe-output-gerber"
 // that's produced if OUTPUT_GERBER=1 when you do `npx ava ./tests/gerber/generate-gerber-with-trace.test.ts`
 // You can generate the files then hit reload in the Gerber Viewer to see that
 // everything looks approximately correct
-test("Generate simple gerber with a single trace", async (t) => {
+test("Generate simple gerber with basic elements", async (t) => {
   const gerber_cmds = convertSoupToGerberCommands([
+    {
+      type: "pcb_board",
+      width: 20,
+      height: 20,
+      center: { x: 0, y: 0 },
+    },
     {
       type: "pcb_trace",
       source_trace_id: "source_trace_1",
@@ -65,6 +71,7 @@ test("Generate simple gerber with a single trace", async (t) => {
   // console.log("Gerber")
   // console.log("----------------------------------------------")
   // console.log(fu_cp)
+  console.log(stringifyGerberCommands(gerber_cmds.B_Mask))
 
   // TODO parse gerber to check for correctness
 

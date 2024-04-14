@@ -41,7 +41,9 @@ export function defineAperturesForLayer({
 
   // Add all trace width apertures
   const traceWidths: Record<LayerRef, number[]> = getAllTraceWidths(soup)
-  for (const width of traceWidths[glayer_name === "F_Cu" ? "top" : "bottom"]) {
+  for (const width of traceWidths[
+    glayer_name.startsWith("F_") ? "top" : "bottom"
+  ]) {
     glayer.push(
       ...gerberBuilder()
         .add("define_aperture_template", {
