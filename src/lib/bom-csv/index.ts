@@ -8,7 +8,11 @@ interface BomRow {
   part_number: string
 }
 
-type ManufacturerPartNumberColumn = "NPN"
+type ManufacturerPartNumberColumn = "JLCPCB Part#"
+
+// HEADERS FROM DIFFERENT bom.csv FILES
+// Comment Designator Footprint "JLCPCB Part#(optional)"
+// Designator Value Footprint Populate MPN Manufacturer MPN Manufacturer MPN Manufacturer MPN Manufacturer MPN Manufacturer
 
 export const convertSoupToBomRows = async ({
   soup,
@@ -23,6 +27,11 @@ export const convertSoupToBomRows = async ({
       ManufacturerPartNumberColumn,
       string
     >
+    manufacturer_mpn_pairs?: Array<{
+      manufacturer: string
+      mpn: string
+    }>
+    extra_columns?: Record<string, string>
   } | null>
 }): Promise<BomRow[]> => {
   const bom: BomRow[] = []
