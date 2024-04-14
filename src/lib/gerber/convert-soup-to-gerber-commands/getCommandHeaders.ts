@@ -2,6 +2,19 @@ import { AnyGerberCommand } from "../any_gerber_command"
 import { gerberBuilder } from "../gerber-builder"
 import packageJson from "../../../../package.json"
 
+const layerAndTypeToFileFunction = {
+  "top-copper": "Copper,L1,Top",
+  "bottom-copper": "Copper,L2,Bot",
+  "top-soldermask": "Soldermask,Top",
+  "bottom-soldermask": "Soldermask,Bot",
+  "top-silkscreen": "Legend,Top",
+  "bottom-silkscreen": "Legend,Bot",
+  "top-paste": "Paste,Top",
+  "bottom-paste": "Paste,Bot",
+  edgecut: "Profile,NP",
+  // TODO inner layers
+}
+
 /**
  * Returns headers for a Gerber file. Here's a typical header:
  *
@@ -17,8 +30,21 @@ import packageJson from "../../../../package.json"
  * %MOMM*%
  * %LPD*%
  */
-
-export const getCommandHeaders = (): AnyGerberCommand[] => {
+export const getCommandHeaders = (opts: {
+  layer:
+    | "edgecut"
+    | "top"
+    | "bottom"
+    | "inner1"
+    | "inner2"
+    | "inner3"
+    | "inner4"
+  layer_type?: "copper" | "soldermask" | "silkscreen" | "paste"
+}): AnyGerberCommand[] => {
+  const file_function =
+    layerAndTypeToFileFunction[
+      opts.layer_type ? `${opts.layer}-${opts.layer_type}` : opts.layer
+    ]
   return (
     gerberBuilder()
       .add("add_attribute_on_file", {
@@ -39,15 +65,26 @@ export const getCommandHeaders = (): AnyGerberCommand[] => {
       })
       .add("add_attribute_on_file", {
         attribute_name: "FileFunction",
-        attribute_value: "Copper,L1,Top",
+        attribute_value: file_function,
       })
+      .$if(opts.layer !== "edgecut", (gb) =>
+        gb.add("add_attribute_on_file", {
+          attribute_name: "FilePolarity",
+          attribute_value:
+            opts.layer_type === "soldermask" ? "Negative" : "Positive",
+        })
+      )
       .add("format_specification", {})
+      .add("set_unit", {
+        unit: "mm",
+      })
       .add("comment", {
         comment: `Gerber Fmt 4.6, Leading zero omitted, Abs format (unit mm)`,
       })
       .add("comment", {
         comment: `Created by tscircuit (builder) date ${new Date().toISOString()}`,
       })
+      .add("set_movement_mode_to_linear", {})
       .build()
   )
 }

@@ -21,15 +21,23 @@ export const convertSoupToGerberCommands = (
   soup: AnySoupElement[]
 ): LayerToGerberCommandsMap => {
   const glayers: LayerToGerberCommandsMap = {
-    F_Cu: getCommandHeaders(),
+    F_Cu: getCommandHeaders({
+      layer: "top",
+      layer_type: "copper",
+    }),
     F_SilkScreen: [],
     F_Mask: [],
     F_Paste: [],
-    B_Cu: getCommandHeaders(),
+    B_Cu: getCommandHeaders({
+      layer: "top",
+      layer_type: "copper",
+    }),
     B_SilkScreen: [],
     B_Mask: [],
     B_Paste: [],
-    Edge_Cuts: [],
+    Edge_Cuts: getCommandHeaders({
+      layer: "edgecut",
+    }),
   }
 
   for (const glayer_name of ["F_Cu", "B_Cu"] as const) {
@@ -42,7 +50,18 @@ export const convertSoupToGerberCommands = (
     })
   }
 
-  for (const layer of ["top", "bottom"] as const) {
+  // Edgecuts has a single aperature
+  glayers["Edge_Cuts"].push(
+    ...gerberBuilder()
+      .add("define_aperture_template", {
+        aperture_number: 10,
+        standard_template_code: "C",
+        diameter: 0.05, //mm
+      })
+      .build()
+  )
+
+  for (const layer of ["top", "bottom", "edgecut"] as const) {
     for (const element of soup) {
       if (element.type === "pcb_trace") {
         const { route } = element
@@ -85,7 +104,7 @@ export const convertSoupToGerberCommands = (
           )
         }
       } else if (element.type === "pcb_plated_hole") {
-        if (element.layers.includes(layer)) {
+        if (element.layers.includes(layer as any)) {
           const glayer = glayers[getGerberLayerName(layer, "copper")]
 
           glayer.push(
@@ -100,6 +119,48 @@ export const convertSoupToGerberCommands = (
               .build()
           )
         }
+      } else if (element.type === "pcb_board" && layer === "edgecut") {
+        const glayer = glayers.Edge_Cuts
+        const { width, height, center } = element
+        glayer.push(
+          ...gerberBuilder()
+            .add("select_aperture", {
+              aperture_number: 10,
+            })
+            .add("move_operation", {
+              x: center.x - width / 2,
+              y: center.y - height / 2,
+            })
+            .add("plot_operation", {
+              x: center.x + width / 2,
+              y: center.y - height / 2,
+            })
+            // .add("move_operation", {
+            //   x: center.x + width / 2,
+            //   y: center.y - height / 2,
+            // })
+            .add("plot_operation", {
+              x: center.x + width / 2,
+              y: center.y + height / 2,
+            })
+            // .add("move_operation", {
+            //   x: center.x + width / 2,
+            //   y: center.y + height / 2,
+            // })
+            .add("plot_operation", {
+              x: center.x - width / 2,
+              y: center.y + height / 2,
+            })
+            // .add("move_operation", {
+            //   x: center.x - width / 2,
+            //   y: center.y + height / 2,
+            // })
+            .add("plot_operation", {
+              x: center.x - width / 2,
+              y: center.y - height / 2,
+            })
+            .build()
+        )
       }
     }
   }

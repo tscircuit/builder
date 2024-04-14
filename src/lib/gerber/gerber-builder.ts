@@ -11,6 +11,16 @@ class GerberBuilder {
     this.commands = []
   }
 
+  $if(
+    condition: boolean,
+    fn: (gb: GerberBuilder) => GerberBuilder
+  ): GerberBuilder {
+    if (condition) {
+      return fn(this)
+    }
+    return this
+  }
+
   add<T extends keyof typeof gerber_command_map>(
     cmd: T,
     props: z.input<(typeof gerber_command_map)[T]["schema"]>

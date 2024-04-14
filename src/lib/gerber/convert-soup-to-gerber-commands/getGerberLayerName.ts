@@ -13,8 +13,9 @@ const layerTypeToGerberSuffix = {
 } as const
 
 export const getGerberLayerName = (
-  layer_ref: LayerRef,
+  layer_ref: LayerRef | "edgecut",
   layer_type: "copper" | "silkscreen" | "mask" | "paste"
 ): GerberLayerName => {
+  if (layer_ref === "edgecut") return "Edge_Cuts"
   return `${layerRefToGerberPrefix[layer_ref]}${layerTypeToGerberSuffix[layer_type]}` as any
 }

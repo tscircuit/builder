@@ -61,10 +61,10 @@ test("Generate simple gerber with a single trace", async (t) => {
       outer_diameter: 2,
     },
   ])
-  console.log("Gerber")
-  console.log("----------------------------------------------")
   const fu_cp = stringifyGerberCommands(gerber_cmds.F_Cu)
-  console.log(fu_cp)
+  // console.log("Gerber")
+  // console.log("----------------------------------------------")
+  // console.log(fu_cp)
 
   // TODO parse gerber to check for correctness
 
