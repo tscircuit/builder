@@ -69,7 +69,7 @@ export const createProjectBuilder = (): ProjectBuilder => {
     },
   })
 
-  const groupBuilderAdd = builder.add
+  const groupBuilderAdd = builder.add.bind(builder)
   builder.add = (builder_type, callback) => {
     if (builder_type === "board") {
       const board_builder = createBoardBuilder(builder)
