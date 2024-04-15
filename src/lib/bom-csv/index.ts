@@ -1,24 +1,31 @@
 import { AnySoupElement, PCBComponent } from "lib/soup"
 import { SourceComponent } from "lib/types"
+import { formatSI } from "format-si-prefix"
+import { SupplierName } from "lib/soup/pcb/properties/supplier_name"
+import Papa from "papaparse"
+
+type SupplierPartNumberColumn = "JLCPCB Part#"
 
 interface BomRow {
   designator: string
   comment: string
   value: string
   footprint: string
-  part_number: string
+  supplier_part_number_columns?: Partial<
+    Record<SupplierPartNumberColumn, string>
+  >
+  manufacturer_mpn_pairs?: Array<{
+    manufacturer: string
+    mpn: string
+  }>
+  extra_columns?: Record<string, string>
 }
-
-type ManufacturerPartNumberColumn = "JLCPCB Part#"
 
 interface ResolvedPart {
   part_number?: string
   footprint?: string
   comment?: string
-  manufacturer_part_number_columns?: Record<
-    ManufacturerPartNumberColumn,
-    string
-  >
+  supplier_part_number_columns?: Record<SupplierPartNumberColumn, string>
   manufacturer_mpn_pairs?: Array<{
     manufacturer: string
     mpn: string
@@ -50,30 +57,69 @@ export const convertSoupToBomRows = async ({
         e.source_component_id === elm.source_component_id
     ) as any as SourceComponent
 
-    const partInfo: Partial<ResolvedPart> =
+    const part_info: Partial<ResolvedPart> =
       (await resolvePart?.({ pcb_component: elm, source_component })) ?? {}
 
-    const {
-      part_number = elm,
-      footprint,
-      comment,
-      manufacturer_part_number_columns,
-      manufacturer_mpn_pairs,
-      extra_columns,
-    } = partInfo
-
-    bom.push({
-      designator: elm.pcb_component_id,
-      comment: comment || "",
-      value: elm.value,
-      footprint: footprint || "",
-      part_number: part_number || "",
-    })
-
-    // bom.push({
-
-    // })
+    if (source_component.ftype === "simple_resistor") {
+      bom.push({
+        designator: elm.pcb_component_id,
+        comment: si(source_component.resistance),
+        value: si(source_component.resistance),
+        footprint: part_info.footprint || "",
+        supplier_part_number_columns:
+          part_info.supplier_part_number_columns ??
+          source_component.supplier_part_numbers
+            ? convertSupplierPartNumbersIntoColumns(
+                source_component.supplier_part_numbers
+              )
+            : undefined,
+      })
+    } else {
+    }
   }
 
   return bom
+}
+
+function convertSupplierPartNumbersIntoColumns(
+  supplier_part_numbers: Partial<Record<SupplierName, string[]>> | undefined
+): BomRow["supplier_part_number_columns"] {
+  const supplier_part_number_columns: Partial<
+    BomRow["supplier_part_number_columns"]
+  > = {}
+
+  if (supplier_part_numbers?.jlcpcb) {
+    supplier_part_number_columns["JLCPCB Part#"] =
+      supplier_part_numbers.jlcpcb[0]
+  }
+
+  return supplier_part_number_columns
+}
+
+function si(v: string | number | undefined | null) {
+  if (v === null || v === undefined) return ""
+  if (typeof v === "string") return v
+  return formatSI(v)
+}
+
+export const convertBomRowsToCsv = (bom_rows: BomRow[]): string => {
+  const csv_data = bom_rows.map((row) => {
+    const supplier_part_number_columns = row.supplier_part_number_columns
+    const supplier_part_numbers = Object.values(
+      supplier_part_number_columns || {}
+    ).join(", ")
+    const extraColumns = Object.entries(row.extra_columns || {})
+      .map(([key, value]) => `${key}: ${value}`)
+      .join(", ")
+
+    return {
+      Designator: row.designator,
+      Comment: row.comment,
+      Value: row.value,
+      Footprint: row.footprint,
+      ...supplier_part_number_columns,
+    }
+  })
+
+  return Papa.unparse(csv_data)
 }

@@ -59,6 +59,7 @@ export class ResistorBuilderClass
       type: "source_component",
       source_component_id,
       name: this.name,
+      supplier_part_numbers: this.supplier_part_numbers,
       ...this.source_properties,
     }
     elements.push(source_component)

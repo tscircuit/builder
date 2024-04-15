@@ -1,12 +1,13 @@
 import { NumberWithUnit } from "./util"
+import { SourceComponentBase } from "lib/soup/source/base/source_component_base"
 
-export interface SourceComponentBase {
-  type: "source_component"
-  /** The functional type of this component, e.g. resistor, capacitor etc. */
-  ftype?: string
-  source_component_id: string
-  name: string
-}
+// export interface SourceComponentBase {
+//   type: "source_component"
+//   /** The functional type of this component, e.g. resistor, capacitor etc. */
+//   ftype?: string
+//   source_component_id: string
+//   name: string
+// }
 
 export interface SimpleResistor extends SourceComponentBase {
   ftype: "simple_resistor"

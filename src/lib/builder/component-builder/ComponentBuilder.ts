@@ -27,6 +27,7 @@ import { maybeConvertToPoint } from "lib/utils/maybe-convert-to-point"
 import { isTruthy } from "lib/utils/is-truthy"
 import { removeNulls } from "lib/utils/remove-nulls"
 import { SparkfunComponentId } from "@tscircuit/sparkfun-packages"
+import { SupplierName } from "lib/soup/pcb/properties/supplier_name"
 
 export interface BaseComponentBuilder<T> {
   project_builder: ProjectBuilder
@@ -84,7 +85,8 @@ export type GenericComponentBuilderCallback = (
 
 export class ComponentBuilderClass implements GenericComponentBuilder {
   name: string | null = null
-  part_numbers: string[]
+  // manufacturer_part_numbers: string[]
+  supplier_part_numbers: Partial<Record<SupplierName, string[]>>
   builder_type = "generic_component_builder" as any
   tags: string[] = []
   source_properties: any = {}
@@ -105,7 +107,8 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
     this.settable_source_properties = ["name", "part_numbers"]
     this.settable_schematic_properties = []
     this.settable_pcb_properties = []
-    this.part_numbers = []
+    // this.part_numbers = []
+    this.supplier_part_numbers = {}
   }
 
   appendChild(child) {
@@ -235,8 +238,8 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
         this.setSchematicProperties({ [prop_key]: prop_val })
       } else if (this.settable_pcb_properties.includes(prop_key)) {
         this.setPcbProperties({ [prop_key]: prop_val })
-      } else if (prop_key === "part_number") {
-        this.part_numbers = [prop_val as string]
+      } else if (prop_key === "supplier_part_numbers") {
+        this.supplier_part_numbers = prop_val as any
       } else if (prop_key === "children") {
         // SPECIAL CASE: Bug in upstream code causes "children" to sometimes be
         // passed, we want to totally ignore this and not add it to unused props
@@ -371,7 +374,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
       source_component_id,
       name: this.name,
       ftype: this.source_properties.ftype,
-      part_numbers: this.part_numbers,
+      supplier_part_numbers: this.supplier_part_numbers,
     })
 
     elements.push(source_component)

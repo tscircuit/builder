@@ -42,6 +42,7 @@
     "@tscircuit/sparkfun-packages": "^1.2.0",
     "convert-units": "^2.3.4",
     "fast-json-stable-stringify": "^2.1.0",
+    "format-si-prefix": "^0.3.2",
     "papaparse": "^5.4.1",
     "rectilinear-router": "^1.0.1",
     "svg-path-bounds": "^1.0.2",
