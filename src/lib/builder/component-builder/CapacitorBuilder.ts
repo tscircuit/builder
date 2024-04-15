@@ -126,6 +126,9 @@ export class CapacitorBuilderClass
       type: "pcb_component",
       source_component_id,
       pcb_component_id,
+      layer: this.footprint.layer,
+      center: bc.convert(this.footprint.position),
+      rotation: this.footprint.rotation,
     })
     const footprint_elements = await this.footprint.build(bc)
 
