@@ -1,5 +1,6 @@
 export * from "./properties/layer_ref"
 export * from "./properties/pcb_route_hints"
+export * from "./properties/supplier_name"
 
 export * from "./pcb_component"
 export * from "./pcb_hole"
