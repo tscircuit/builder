@@ -42,7 +42,7 @@ export const convertSoupToBomRows = async ({
   resolvePart,
 }: {
   soup: AnySoupElement[]
-  resolvePart: (part_info: {
+  resolvePart?: (part_info: {
     source_component: SourceComponent
     pcb_component: PCBComponent
   }) => Promise<ResolvedPart | null>
