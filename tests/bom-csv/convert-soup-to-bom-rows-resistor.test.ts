@@ -3,7 +3,7 @@ import { SourceComponent, SourceComponentBase } from "lib/types"
 import { convertBomRowsToCsv, convertSoupToBomRows } from "lib/bom-csv"
 import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
-test("convert soup to bom rows", async (t) => {
+test("convert soup to bom rows (resistor)", async (t) => {
   const { pb } = await getTestFixture(t)
 
   const soup = await pb

@@ -57,6 +57,7 @@ export class CapacitorBuilderClass
       type: "source_component",
       source_component_id,
       name: this.name,
+      supplier_part_numbers: this.supplier_part_numbers,
       ...this.source_properties,
     }
     bc = bc.fork({

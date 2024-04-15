@@ -60,22 +60,26 @@ export const convertSoupToBomRows = async ({
     const part_info: Partial<ResolvedPart> =
       (await resolvePart?.({ pcb_component: elm, source_component })) ?? {}
 
-    if (source_component.ftype === "simple_resistor") {
-      bom.push({
-        designator: elm.pcb_component_id,
-        comment: si(source_component.resistance),
-        value: si(source_component.resistance),
-        footprint: part_info.footprint || "",
-        supplier_part_number_columns:
-          part_info.supplier_part_number_columns ??
-          source_component.supplier_part_numbers
-            ? convertSupplierPartNumbersIntoColumns(
-                source_component.supplier_part_numbers
-              )
-            : undefined,
-      })
-    } else {
-    }
+    let comment: string = ""
+
+    if (source_component.ftype === "simple_resistor")
+      comment = si(source_component.resistance)
+    if (source_component.ftype === "simple_capacitor")
+      comment = si(source_component.capacitance)
+
+    bom.push({
+      designator: elm.pcb_component_id,
+      comment,
+      value: comment,
+      footprint: part_info.footprint || "",
+      supplier_part_number_columns:
+        part_info.supplier_part_number_columns ??
+        source_component.supplier_part_numbers
+          ? convertSupplierPartNumbersIntoColumns(
+              source_component.supplier_part_numbers
+            )
+          : undefined,
+    })
   }
 
   return bom
