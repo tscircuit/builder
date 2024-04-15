@@ -13,7 +13,7 @@ test("convert soup to bom rows (resistor)", async (t) => {
         footprint: "0805",
         resistance: "10k",
         supplier_part_numbers: {
-          jlcpcb: ["C22775"],
+          jlcpcb: "C22775",
         },
       })
     )

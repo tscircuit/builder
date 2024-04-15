@@ -239,7 +239,20 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
       } else if (this.settable_pcb_properties.includes(prop_key)) {
         this.setPcbProperties({ [prop_key]: prop_val })
       } else if (prop_key === "supplier_part_numbers") {
-        this.supplier_part_numbers = prop_val as any
+        if (typeof prop_val === "object") {
+          const spns: typeof this.supplier_part_numbers = {}
+          for (const supplier_name in prop_val) {
+            const suppler_val = prop_val[supplier_name]
+            if (typeof suppler_val === "string") {
+              spns[supplier_name as SupplierName] = [prop_val[supplier_name]]
+            } else {
+              spns[supplier_name as SupplierName] = prop_val[supplier_name]
+            }
+          }
+          this.supplier_part_numbers = spns
+        } else {
+          throw new Error("supplier_part_numbers must be an object")
+        }
       } else if (prop_key === "children") {
         // SPECIAL CASE: Bug in upstream code causes "children" to sometimes be
         // passed, we want to totally ignore this and not add it to unused props

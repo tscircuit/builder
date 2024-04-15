@@ -52,7 +52,6 @@ test("convert soup to bom rows (variety)", async (t) => {
   const bom_rows = await convertSoupToBomRows({ soup })
   const csv_string = convertBomRowsToCsv(bom_rows)
 
-  console.log(csv_string)
   t.truthy(csv_string.includes("C22775"), "has resistor part number")
   t.truthy(csv_string.includes("C22776"), "has capacitor part number")
   t.truthy(csv_string.includes("C596355"), "has bug part number")
