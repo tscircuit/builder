@@ -461,7 +461,10 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
     // user-specified "center" and computed "center"
 
     const transformed_schematic_elements = transformSchematicElements(
-      [...built_ports, ...schematic_elements],
+      [
+        ...built_ports.filter((bp) => bp.type === "schematic_port"),
+        ...schematic_elements,
+      ],
       compose(
         translate(schematic_component.center.x, schematic_component.center.y),
         rotate(schematic_component.rotation)
