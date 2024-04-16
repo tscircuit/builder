@@ -471,7 +471,10 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
       )
     )
 
-    elements.push(...transformed_schematic_elements)
+    elements.push(
+      ...transformed_schematic_elements,
+      ...built_ports.filter((bp) => bp.type !== "schematic_port")
+    )
 
     // Compute the spatial bounds of the schematic elements
     const schematic_spatial_bounds = getSpatialBoundsFromSpatialElements(
