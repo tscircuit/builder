@@ -29,6 +29,7 @@ test("applySelector use css selector to select circuit elements", async (t) => {
       type: "source_port",
       name: "right",
       pin_number: undefined,
+      port_hints: undefined,
       source_port_id: "source_port_1",
       source_component_id: "simple_resistor_0",
     },
