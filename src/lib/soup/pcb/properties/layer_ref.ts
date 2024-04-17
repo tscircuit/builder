@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-export const layer_string = z.enum([
+export const all_layers = [
   "top",
   "bottom",
   "inner-1",
@@ -9,7 +9,9 @@ export const layer_string = z.enum([
   "inner-4",
   "inner-5",
   "inner-6",
-])
+] as const
+
+export const layer_string = z.enum(all_layers)
 
 export const layer_ref = layer_string
   .or(

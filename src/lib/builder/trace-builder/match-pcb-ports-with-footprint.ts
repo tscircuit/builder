@@ -65,7 +65,7 @@ export const matchPCBPortsWithFootprintAndMutate = ({
     }
   }
 
-  for (let i = 0; i < pcb_ports.length, i < source_ports.length; i++) {
+  for (let i = 0; i < pcb_ports.length; i++) {
     const pcb_port = pcb_ports[i]
     const source_port = source_ports.find(
       (sp) => sp.source_port_id == pcb_port.source_port_id
@@ -88,10 +88,28 @@ export const matchPCBPortsWithFootprintAndMutate = ({
             ;(pcb_port as any).layers = footprint_element.layers
           } else if ("layer" in footprint_element) {
             ;(pcb_port as any).layers = [footprint_element.layer]
+          } else {
+            throw new Error(
+              `Footprint element has no layers, cannot match port without layers on footprint element.\n\nfootprint_element: ${JSON.stringify(
+                footprint_element,
+                null,
+                "  "
+              )}`
+            )
           }
           break
         }
       }
+    }
+
+    if (!(pcb_port as any).layers) {
+      throw new Error(
+        `pcb_port did not get matched with a footprint element\n\npcb_port: ${JSON.stringify(
+          pcb_port,
+          null,
+          "  "
+        )}`
+      )
     }
   }
 }

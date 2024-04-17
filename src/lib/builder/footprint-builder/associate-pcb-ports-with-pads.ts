@@ -1,4 +1,5 @@
 import * as Type from "lib/types"
+import { all_layers } from "lib/soup/pcb/properties/layer_ref"
 import { matchPcbPortWithPad } from "./match-pcb-port-with-pad"
 
 export const associatePcbPortsWithPads = (elms: Type.AnyElement[]) => {
@@ -29,6 +30,10 @@ export const associatePcbPortsWithPads = (elms: Type.AnyElement[]) => {
       matched_pad.pcb_port_id = pcb_port.pcb_port_id
       pcb_port.x = matched_pad.x
       pcb_port.y = matched_pad.y
+      pcb_port.layers =
+        matched_pad.type === "pcb_plated_hole"
+          ? [...all_layers]
+          : [matched_pad.layer]
     }
   }
 }

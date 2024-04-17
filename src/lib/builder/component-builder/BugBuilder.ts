@@ -184,6 +184,17 @@ export class BugBuilderClass
 
     associatePcbPortsWithPads(elements)
 
+    // TODO use this standard method:
+    // matchPCBPortsWithFootprintAndMutate({
+    //   footprint_elements,
+    //   pcb_ports: elements
+    //     .concat(built_ports)
+    //     .filter((elm) => elm.type === "pcb_port"),
+    //   source_ports: elements
+    //     .concat(built_ports)
+    //     .filter((elm) => elm.type === "source_port"),
+    // } as any)
+
     return elements
   }
 }
