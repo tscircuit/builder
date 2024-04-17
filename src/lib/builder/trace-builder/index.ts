@@ -256,7 +256,7 @@ export const createTraceBuilder = (
       internal.thickness === "inherit"
         ? 0.2 // TODO derive from net/context
         : bc.convert(internal.thickness as any)
-    const omargin = thickness_mm
+    const omargin = thickness_mm * 4
     const pcb_obstacles: Array<{
       center: { x: number; y: number }
       width: number
