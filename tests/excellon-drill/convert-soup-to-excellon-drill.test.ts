@@ -26,6 +26,14 @@ test("generate excellon drill text from axial resistor", async (t) => {
               y: 0,
             })
           )
+          .add("pcb_via", (pv) =>
+            pv.setProps({
+              hole_diameter: "0.05in",
+              x: "0.6in",
+              y: 0,
+              layers: ["top", "bottom"],
+            })
+          )
       )
     )
     .build()
@@ -41,4 +49,5 @@ test("generate excellon drill text from axial resistor", async (t) => {
     stringifyExcellonDrill(excellon_drill_cmds)
 
   t.truthy(excellon_drill_file_content.includes("X0.3000Y0.0000"))
+  t.truthy(excellon_drill_file_content.includes("T11C0.050000"))
 })

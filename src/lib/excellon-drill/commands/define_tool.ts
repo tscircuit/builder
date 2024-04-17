@@ -8,5 +8,5 @@ export const define_tool = defineExcellonDrillCommand({
     tool_number: z.number(),
     diameter: z.number(),
   }),
-  stringify: (c) => `T${c.tool_number}C${c.diameter}`,
+  stringify: (c) => `T${c.tool_number}C${c.diameter.toFixed(6)}`,
 })

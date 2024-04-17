@@ -7,7 +7,7 @@ export const excellon_drill_command_map = {
   M95: EDCMD.M95,
   FMAT: EDCMD.FMAT,
   unit_format: EDCMD.unit_format,
-  T: EDCMD.T,
+  T: EDCMD.define_tool,
   define_tool: EDCMD.define_tool,
   use_tool: EDCMD.use_tool,
   G90: EDCMD.G90,

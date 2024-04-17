@@ -48,7 +48,11 @@ export const convertSoupToExcellonDrillCommands = ({
 
   // Define tools
   for (const element of soup) {
-    if (element.type === "pcb_plated_hole" || element.type === "pcb_hole") {
+    if (
+      element.type === "pcb_plated_hole" ||
+      element.type === "pcb_hole" ||
+      element.type === "pcb_via"
+    ) {
       if (!diameterToToolNumber[element.hole_diameter]) {
         builder.add("define_tool", {
           tool_number: tool_counter,
@@ -64,9 +68,17 @@ export const convertSoupToExcellonDrillCommands = ({
   for (let i = 10; i < tool_counter; i++) {
     builder.add("use_tool", { tool_number: i })
     for (const element of soup) {
-      if (element.type === "pcb_plated_hole" || element.type === "pcb_hole") {
+      if (
+        element.type === "pcb_plated_hole" ||
+        element.type === "pcb_hole" ||
+        element.type === "pcb_via"
+      ) {
         if (is_plated && element.type === "pcb_hole") continue
-        if (!is_plated && element.type === "pcb_plated_hole") continue
+        if (
+          !is_plated &&
+          (element.type === "pcb_plated_hole" || element.type === "pcb_via")
+        )
+          continue
         if (diameterToToolNumber[element.hole_diameter] === i) {
           builder.add("drill_at", {
             x: mmToInch(element.x),
