@@ -1,7 +1,7 @@
 import test from "ava"
 import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
-test("multi-layer route 1", async (t) => {
+test("multi-layer route 2", async (t) => {
   const { pb, logSoup } = await getTestFixture(t)
 
   const soup = await pb
@@ -35,7 +35,12 @@ test("multi-layer route 1", async (t) => {
         pcb_route_hints: [
           {
             x: 0,
-            y: 0,
+            y: -2,
+            via: true,
+          },
+          {
+            x: 0,
+            y: 2,
             via: true,
           },
         ],

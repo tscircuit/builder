@@ -256,7 +256,7 @@ export const createTraceBuilder = (
       internal.thickness === "inherit"
         ? 0.2 // TODO derive from net/context
         : bc.convert(internal.thickness as any)
-    const omargin = thickness_mm * 4
+    const omargin = thickness_mm * 2
     const pcb_obstacles: Array<{
       center: { x: number; y: number }
       width: number
@@ -441,7 +441,11 @@ export const createTraceBuilder = (
       // TODO add support for more than 2 terminals w/ hints
       const ordered_pcb_terminals_and_hints = [
         pcb_terminals[0],
-        ...(internal.pcb_route_hints as any).map((p) => bc.convert(p)),
+        ...(internal.pcb_route_hints as any).map((p) => ({
+          ...p,
+          x: bc.convert(p.x),
+          y: bc.convert(p.y),
+        })),
         pcb_terminals[1],
       ]
 
@@ -468,14 +472,34 @@ export const createTraceBuilder = (
 
         const ordered_with_layer_hints = ordered_pcb_terminals_and_hints.map(
           (t, idx) => {
-            return { ...t, layers: [layer_selection[idx]] }
+            if (t.via) {
+              return {
+                ...t,
+                via_to_layer: layer_selection[idx],
+              }
+            } else {
+              return { ...t, layers: [layer_selection[idx]] }
+            }
           }
         )
 
         for (let [a, b] of pairs(ordered_with_layer_hints)) {
           routes.push(solveForRoute([a, b]))
         }
-        pcb_route.push(...mergeRoutes(routes))
+        if (routes.some((route) => route.length === 0)) {
+          pcb_errors.push({
+            pcb_error_id: builder.project_builder.getId("pcb_error"),
+            type: "pcb_error",
+            error_type: "pcb_trace_error",
+            message: `No route could be found for terminals`,
+            pcb_trace_id,
+            source_trace_id,
+            pcb_component_ids: [], // TODO
+            pcb_port_ids: pcb_terminal_port_ids,
+          })
+        } else {
+          pcb_route.push(...mergeRoutes(routes))
+        }
       }
     }
 
