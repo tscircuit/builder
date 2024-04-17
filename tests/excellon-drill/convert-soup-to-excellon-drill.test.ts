@@ -50,4 +50,6 @@ test("generate excellon drill text from axial resistor", async (t) => {
 
   t.truthy(excellon_drill_file_content.includes("X0.3000Y0.0000"))
   t.truthy(excellon_drill_file_content.includes("T11C0.050000"))
+  t.truthy(excellon_drill_file_content.includes("G90"))
+  t.truthy(excellon_drill_file_content.includes("G05"))
 })

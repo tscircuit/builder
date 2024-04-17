@@ -54,6 +54,9 @@ export const convertSoupToExcellonDrillCommands = ({
       element.type === "pcb_via"
     ) {
       if (!diameterToToolNumber[element.hole_diameter]) {
+        builder.add("aper_function_header", {
+          is_plated: true,
+        })
         builder.add("define_tool", {
           tool_number: tool_counter,
           diameter: mmToInch(element.hole_diameter),
@@ -63,6 +66,10 @@ export const convertSoupToExcellonDrillCommands = ({
       }
     }
   }
+
+  builder.add("percent_sign", {})
+  builder.add("G90", {})
+  builder.add("G05", {})
 
   // Execute drills for tool N
   for (let i = 10; i < tool_counter; i++) {
