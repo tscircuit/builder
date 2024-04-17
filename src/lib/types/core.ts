@@ -110,14 +110,6 @@ export interface SourceGroup {
   children_source_component_ids: string[]
 }
 
-export interface SourcePort {
-  type: "source_port"
-  pin_number?: number
-  name: string
-  source_port_id: string
-  source_component_id: string
-}
-
 export interface SourceError {
   type: "source_error"
   message: string
@@ -140,7 +132,7 @@ export interface Project {
   source_traces: SourceTrace[]
   source_groups: SourceGroup[]
   source_components: SourceComponent[]
-  source_ports: SourcePort[]
+  source_ports: Soup.SourcePort[]
 }
 
 /**
@@ -152,7 +144,7 @@ export type AnyElement =
   | SourceComponent
   | SourceGroup
   | SourceTrace
-  | SourcePort
+  | Soup.SourcePort
   | Soup.PCBTrace
   | Soup.PCBComponent
   | PCBGroup

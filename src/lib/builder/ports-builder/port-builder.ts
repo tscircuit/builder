@@ -8,12 +8,14 @@ export interface PortBuilder {
   schematic_position: { x: Dimension; y: Dimension }
   schematic_direction: "up" | "down" | "left" | "right"
   pin_number?: number
+  port_hints?: string[]
   schematic_pin_number_visible: boolean
   setName(name: string): PortBuilder
   setPinNumber(pin_number: number): PortBuilder
   setSchematicPosition(coords: { x: Dimension; y: Dimension }): PortBuilder
   setSchematicDirection(dir: "up" | "down" | "left" | "right"): PortBuilder
   setSchematicPinNumberVisible(visible: boolean): PortBuilder
+  setPortHints(port_hints: string[]): PortBuilder
   build(): Type.AnyElement[]
 }
 
@@ -22,6 +24,7 @@ const settable_props = [
   "schematic_position",
   "schematic_direction",
   "pin_number",
+  "port_hints",
 ]
 
 export class PortBuilderClass implements PortBuilder {
@@ -33,6 +36,7 @@ export class PortBuilderClass implements PortBuilder {
   schematic_direction: "up" | "down" | "left" | "right"
   pin_number?: number
   schematic_pin_number_visible: boolean
+  port_hints?: string[]
 
   constructor(project_builder: ProjectBuilder) {
     this.project_builder = project_builder
@@ -63,6 +67,11 @@ export class PortBuilderClass implements PortBuilder {
 
   setPinNumber(pin_number: number) {
     this.pin_number = pin_number
+    return this
+  }
+
+  setPortHints(port_hints: string[]): PortBuilder {
+    this.port_hints = port_hints
     return this
   }
 

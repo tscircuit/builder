@@ -6,6 +6,7 @@ test("match pcb ports with footprint", async (t) => {
     footprint_elements: [
       {
         type: "pcb_smtpad" as const,
+        pcb_smtpad_id: "pcb_smtpad_0",
         shape: "rect" as const,
         x: -0.5,
         y: 0,
@@ -17,6 +18,7 @@ test("match pcb ports with footprint", async (t) => {
       },
       {
         type: "pcb_smtpad" as const,
+        pcb_smtpad_id: "pcb_smtpad_1",
         shape: "rect" as const,
         x: 0.5,
         y: 0,

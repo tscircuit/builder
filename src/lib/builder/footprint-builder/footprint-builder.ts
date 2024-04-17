@@ -203,6 +203,7 @@ export class FootprintBuilderClass implements FootprintBuilder {
   }
 
   async build(bc: Type.BuildContext): Promise<Type.AnyElement[]> {
+    this.setLayer(this.layer) // make sure layer propagates properly to children
     const built_elements: Type.AnyElement[] = []
     for (const child of this.children) {
       const built = await child.build(bc)

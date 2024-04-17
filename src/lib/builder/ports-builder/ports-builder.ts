@@ -24,6 +24,7 @@ export interface PortsBuilder {
     ((params: {
       name: string
       pin_number?: number
+      port_hints?: string[]
       center: { x: number; y: number }
       facing_direction: "up" | "down" | "left" | "right"
     }) => PortsBuilder)
@@ -68,6 +69,7 @@ export class PortsBuilderClass implements PortsBuilder {
           .setSchematicPosition(params[0].center)
           .setName(params[0].name)
           .setPinNumber(params[0].pin_number)
+          .setPortHints(params[0].port_hints)
           .setSchematicDirection(params[0].facing_direction)
       )
     } else {
@@ -120,6 +122,7 @@ export class PortsBuilderClass implements PortsBuilder {
           source_port_id,
           source_component_id: this.source_component_id,
           pin_number,
+          port_hints: port.port_hints,
         } as Type.SourcePort,
         {
           type: "schematic_port",

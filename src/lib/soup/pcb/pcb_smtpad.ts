@@ -5,6 +5,7 @@ import { layer_ref } from "./properties/layer_ref"
 export const pcb_smtpad = z
   .union([
     z.object({
+      pcb_smtpad_id: z.string(),
       type: z.literal("pcb_smtpad"),
       shape: z.literal("circle"),
       x: distance,
@@ -16,6 +17,7 @@ export const pcb_smtpad = z
       pcb_port_id: z.string().optional(),
     }),
     z.object({
+      pcb_smtpad_id: z.string(),
       type: z.literal("pcb_smtpad"),
       shape: z.literal("rect"),
       x: distance,

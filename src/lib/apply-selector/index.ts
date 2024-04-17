@@ -14,6 +14,10 @@ export const applySelector = (
   return applySelectorAST(elements, selectorAST!)
 }
 
+const doesElmMatchClassName = (elm: Type.AnyElement, className: string) =>
+  ("name" in elm && elm.name === className) ||
+  ("port_hints" in elm && elm.port_hints?.includes(className))
+
 export const applySelectorAST = (
   elements: Type.AnyElement[],
   selectorAST: parsel.AST
