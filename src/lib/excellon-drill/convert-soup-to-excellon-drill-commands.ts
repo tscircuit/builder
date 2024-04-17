@@ -9,9 +9,11 @@ export const mmToInch = (mm: number) => {
 export const convertSoupToExcellonDrillCommands = ({
   soup,
   is_plated,
+  flip_y_axis = true,
 }: {
   soup: Array<AnySoupElement>
   is_plated: boolean
+  flip_y_axis?: boolean
 }): Array<AnyExcellonDrillCommand> => {
   const builder = excellonDrill()
 
@@ -89,7 +91,7 @@ export const convertSoupToExcellonDrillCommands = ({
         if (diameterToToolNumber[element.hole_diameter] === i) {
           builder.add("drill_at", {
             x: mmToInch(element.x),
-            y: mmToInch(element.y),
+            y: mmToInch(element.y) * (flip_y_axis ? -1 : 1),
           })
         }
       }

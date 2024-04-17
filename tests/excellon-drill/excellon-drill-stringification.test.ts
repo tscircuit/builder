@@ -49,7 +49,7 @@ test("test that we can recreate an example drill file", (t) => {
   FMAT,2
   INCH
   ; #@! TA.AperFunction,Plated,PTH,ComponentDrill
-  T1C0.0394
+  T1C0.039400
   %
   G90
   G05

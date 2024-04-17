@@ -18,8 +18,10 @@ import { defineCommonMacros } from "./define-common-macros"
  * Converts tscircuit soup to arrays of Gerber commands for each layer
  */
 export const convertSoupToGerberCommands = (
-  soup: AnySoupElement[]
+  soup: AnySoupElement[],
+  opts: { flip_y_axis?: boolean } = {}
 ): LayerToGerberCommandsMap => {
+  opts.flip_y_axis ??= true
   const glayers: LayerToGerberCommandsMap = {
     F_Cu: getCommandHeaders({
       layer: "top",
@@ -67,6 +69,11 @@ export const convertSoupToGerberCommands = (
       .build()
   )
 
+  /**
+   * "maybe flip y axis" to handle y axis negating
+   */
+  const mfy = (y: number) => (opts.flip_y_axis ? -y : y)
+
   for (const layer of ["top", "bottom", "edgecut"] as const) {
     for (const element of soup) {
       if (element.type === "pcb_trace") {
@@ -86,8 +93,8 @@ export const convertSoupToGerberCommands = (
                       trace_width: a.width,
                     }),
                   })
-                  .add("move_operation", { x: a.x, y: a.y })
-                  .add("plot_operation", { x: b.x, y: b.y })
+                  .add("move_operation", { x: a.x, y: mfy(a.y) })
+                  .add("plot_operation", { x: b.x, y: mfy(b.y) })
                   .build()
               )
             }
@@ -107,7 +114,7 @@ export const convertSoupToGerberCommands = (
                     getApertureConfigFromPcbSmtpad(element)
                   ),
                 })
-                .add("flash_operation", { x: element.x, y: element.y })
+                .add("flash_operation", { x: element.x, y: mfy(element.y) })
                 .build()
             )
           }
@@ -126,7 +133,7 @@ export const convertSoupToGerberCommands = (
                     getApertureConfigFromPcbPlatedHole(element)
                   ),
                 })
-                .add("flash_operation", { x: element.x, y: element.y })
+                .add("flash_operation", { x: element.x, y: mfy(element.y) })
                 .build()
             )
           }
@@ -141,11 +148,11 @@ export const convertSoupToGerberCommands = (
             })
             .add("move_operation", {
               x: center.x - width / 2,
-              y: center.y - height / 2,
+              y: mfy(center.y - height / 2),
             })
             .add("plot_operation", {
               x: center.x + width / 2,
-              y: center.y - height / 2,
+              y: mfy(center.y - height / 2),
             })
             // .add("move_operation", {
             //   x: center.x + width / 2,
@@ -153,7 +160,7 @@ export const convertSoupToGerberCommands = (
             // })
             .add("plot_operation", {
               x: center.x + width / 2,
-              y: center.y + height / 2,
+              y: mfy(center.y + height / 2),
             })
             // .add("move_operation", {
             //   x: center.x + width / 2,
@@ -161,7 +168,7 @@ export const convertSoupToGerberCommands = (
             // })
             .add("plot_operation", {
               x: center.x - width / 2,
-              y: center.y + height / 2,
+              y: mfy(center.y + height / 2),
             })
             // .add("move_operation", {
             //   x: center.x - width / 2,
@@ -169,7 +176,7 @@ export const convertSoupToGerberCommands = (
             // })
             .add("plot_operation", {
               x: center.x - width / 2,
-              y: center.y - height / 2,
+              y: mfy(center.y - height / 2),
             })
             .build()
         )

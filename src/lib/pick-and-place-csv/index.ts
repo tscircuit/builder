@@ -10,15 +10,18 @@ interface PickAndPlaceRow {
 }
 
 export const convertSoupToPickAndPlaceRows = (
-  soup: AnySoupElement[]
+  soup: AnySoupElement[],
+  opts: { flip_y_axis?: boolean } = {}
 ): PickAndPlaceRow[] => {
+  opts.flip_y_axis ??= true
+
   const rows: PickAndPlaceRow[] = []
   for (const element of soup) {
     if (element.type === "pcb_component") {
       rows.push({
         designator: element.pcb_component_id,
         mid_x: element.center.x,
-        mid_y: element.center.y,
+        mid_y: element.center.y * (opts.flip_y_axis ? -1 : 1),
         layer: element.layer,
         rotation: element.rotation,
       })
