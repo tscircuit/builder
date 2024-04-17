@@ -51,6 +51,8 @@ export class PortBuilderClass implements PortBuilder {
     if (props.direction) this.schematic_direction = props.direction
     if (props.schematic_pin_number_visible)
       this.schematic_pin_number_visible = props.schematic_pin_number_visible
+    if (props.port_hints)
+      this.port_hints = props.port_hints.map((ph) => ph.toString())
 
     for (const key of Object.keys(props).filter((k) =>
       settable_props.includes(k)
@@ -71,7 +73,7 @@ export class PortBuilderClass implements PortBuilder {
   }
 
   setPortHints(port_hints: string[]): PortBuilder {
-    this.port_hints = port_hints
+    this.port_hints = port_hints.map((ph) => ph.toString())
     return this
   }
 

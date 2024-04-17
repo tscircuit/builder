@@ -64,14 +64,15 @@ export class PortsBuilderClass implements PortsBuilder {
 
   addPort(...params) {
     if (params.length === 1) {
-      this.ports.push(
-        createPortBuilder(this.project_builder)
-          .setSchematicPosition(params[0].center)
-          .setName(params[0].name)
-          .setPinNumber(params[0].pin_number)
-          .setPortHints(params[0].port_hints)
-          .setSchematicDirection(params[0].facing_direction)
-      )
+      const pb = createPortBuilder(this.project_builder)
+        .setSchematicPosition(params[0].center)
+        .setName(params[0].name)
+        .setPinNumber(params[0].pin_number)
+        .setSchematicDirection(params[0].facing_direction)
+      if (params[0].port_hints) {
+        pb.setPortHints(params[0].port_hints)
+      }
+      this.ports.push(pb)
     } else {
       const [name, schematic_position] = params
       this.ports.push(

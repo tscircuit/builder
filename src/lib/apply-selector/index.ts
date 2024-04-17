@@ -32,8 +32,8 @@ export const applySelectorAST = (
             // TODO should also check if content matches any element tags
             let matchElms
             if (left.type === "class") {
-              matchElms = elements.filter(
-                (elm) => "name" in elm && elm.name === left.name
+              matchElms = elements.filter((elm) =>
+                doesElmMatchClassName(elm, left.name)
               )
             } else if (left.type === "type") {
               const ftype = convertAbbrToFType(left.name)
@@ -66,7 +66,7 @@ export const applySelectorAST = (
       const conditionsToMatch = selectorAST.list.map((part) => {
         switch (part.type) {
           case "class": {
-            return (elm) => "name" in elm && elm.name === part.name
+            return (elm) => doesElmMatchClassName(elm, part.name)
           }
           case "type": {
             const name = convertAbbrToFType(part.name)
@@ -87,10 +87,8 @@ export const applySelectorAST = (
       )
     }
     case "class": {
-      return elements.filter(
-        (elm) =>
-          // TODO switch to tag sysmtem
-          "name" in elm && elm.name === selectorAST.name
+      return elements.filter((elm) =>
+        doesElmMatchClassName(elm, selectorAST.name)
       )
     }
     default: {

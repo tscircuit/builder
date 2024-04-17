@@ -103,13 +103,14 @@ export const matchPCBPortsWithFootprintAndMutate = ({
     }
 
     if (!(pcb_port as any).layers) {
-      throw new Error(
-        `pcb_port did not get matched with a footprint element\n\npcb_port: ${JSON.stringify(
-          pcb_port,
-          null,
-          "  "
-        )}`
-      )
+      // TODO create a pcb_error element
+      // throw new Error(
+      //   `pcb_port did not get matched with a footprint element\n\npcb_port: ${JSON.stringify(
+      //     pcb_port,
+      //     null,
+      //     "  "
+      //   )}`
+      // )
     }
   }
 }
