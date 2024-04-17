@@ -17,13 +17,13 @@ test("Generate simple gerber with a single trace", async (t) => {
       type: "pcb_board",
       width: 20,
       height: 20,
-      center: { x: 10, y: 10 },
+      center: { x: 10, y: -10 },
     },
   ])
   const edgecut_gerber = stringifyGerberCommands(gerber_cmds.Edge_Cuts)
-  console.log("Gerber")
-  console.log("----------------------------------------------")
-  console.log(edgecut_gerber)
+  // console.log("Gerber")
+  // console.log("----------------------------------------------")
+  // console.log(edgecut_gerber)
 
   // TODO parse gerber to check for correctness
 

@@ -73,7 +73,7 @@ test("Generate simple gerber with basic elements", async (t) => {
   // console.log("Gerber")
   // console.log("----------------------------------------------")
   // console.log(fu_cp)
-  console.log(stringifyGerberCommands(gerber_cmds.B_Mask))
+  // console.log(stringifyGerberCommands(gerber_cmds.B_Mask))
 
   // TODO parse gerber to check for correctness
 
