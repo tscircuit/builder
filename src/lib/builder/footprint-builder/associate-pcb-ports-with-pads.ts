@@ -30,10 +30,11 @@ export const associatePcbPortsWithPads = (elms: Type.AnyElement[]) => {
       matched_pad.pcb_port_id = pcb_port.pcb_port_id
       pcb_port.x = matched_pad.x
       pcb_port.y = matched_pad.y
-      pcb_port.layers =
-        matched_pad.type === "pcb_plated_hole"
-          ? [...all_layers]
-          : [matched_pad.layer]
+      if ("layers" in matched_pad) {
+        pcb_port.layers = matched_pad.layers
+      } else if ("layer" in matched_pad) {
+        ;(pcb_port as any).layers = [matched_pad.layer]
+      }
     }
   }
 }

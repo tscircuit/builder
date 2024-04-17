@@ -41,6 +41,7 @@ test("Generate simple gerber with basic elements", async (t) => {
       ],
     },
     {
+      pcb_smtpad_id: "smtpad_1",
       type: "pcb_smtpad",
       shape: "rect",
       height: 1,
@@ -50,6 +51,7 @@ test("Generate simple gerber with basic elements", async (t) => {
       layer: "top",
     },
     {
+      pcb_smtpad_id: "smtpad_2",
       type: "pcb_smtpad",
       shape: "rect",
       height: 1,

@@ -12,6 +12,7 @@ import getPortPosition, {
 } from "../../utils/get-port-position"
 import { convertSideToDirection } from "lib/utils/convert-side-to-direction"
 import { associatePcbPortsWithPads } from "../footprint-builder/associate-pcb-ports-with-pads"
+import { matchPCBPortsWithFootprintAndMutate } from "../trace-builder/match-pcb-ports-with-footprint"
 
 export type BugBuilderCallback = (rb: BugBuilder) => unknown
 export interface BugBuilder extends BaseComponentBuilder<BugBuilder> {
@@ -105,6 +106,7 @@ export class BugBuilderClass
       this.ports.addPort({
         name: port_labels[pn],
         pin_number: pn,
+        port_hints: [port_labels[pn], pn],
         center: { x: portPosition.x, y: portPosition.y },
         facing_direction: convertSideToDirection(portPosition.side),
       })
@@ -162,9 +164,11 @@ export class BugBuilderClass
       }
     }
 
+    const built_ports = this.ports.build(bc)
+
     elements.push(
       ...transformSchematicElements(
-        [...this.ports.build(bc), ...textElements],
+        [...built_ports, ...textElements],
         compose(
           translate(schematic_component.center.x, schematic_component.center.y),
           rotate(schematic_component.rotation)
@@ -180,19 +184,20 @@ export class BugBuilderClass
       center: bc.convert(this.footprint.position),
       rotation: this.footprint.rotation,
     })
-    elements.push(...(await this.footprint.build(bc)))
+
+    const footprint_elements = await this.footprint.build(bc)
+    for (const fe of footprint_elements) {
+      ;(fe as any).pcb_component_id = pcb_component_id
+    }
+    elements.push(...footprint_elements)
 
     associatePcbPortsWithPads(elements)
 
     // TODO use this standard method:
     // matchPCBPortsWithFootprintAndMutate({
     //   footprint_elements,
-    //   pcb_ports: elements
-    //     .concat(built_ports)
-    //     .filter((elm) => elm.type === "pcb_port"),
-    //   source_ports: elements
-    //     .concat(built_ports)
-    //     .filter((elm) => elm.type === "source_port"),
+    //   pcb_ports: elements.filter((elm) => elm.type === "pcb_port"),
+    //   source_ports: elements.filter((elm) => elm.type === "source_port"),
     // } as any)
 
     return elements

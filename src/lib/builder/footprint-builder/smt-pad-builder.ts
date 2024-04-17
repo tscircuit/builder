@@ -6,8 +6,14 @@ type RectProps = Extract<Type.PCBSMTPad, { shape: "rect" }>
 type CircleProps = Extract<Type.PCBSMTPad, { shape: "circle" }>
 
 type InputProps =
-  | Omit<RectProps, "type" | "pcb_component_id" | "pcb_port_id">
-  | Omit<CircleProps, "type" | "pcb_component_id" | "pcb_port_id">
+  | Omit<
+      RectProps,
+      "type" | "pcb_component_id" | "pcb_port_id" | "pcb_smtpad_id"
+    >
+  | Omit<
+      CircleProps,
+      "type" | "pcb_component_id" | "pcb_port_id" | "pcb_smtpad_id"
+    >
 
 export interface SMTPadBuilder {
   builder_type: "smtpad_builder"
@@ -109,10 +115,12 @@ export class SMTPadBuilderClass implements SMTPadBuilder {
   }
 
   async build(bc: Type.BuildContext): Promise<Type.PCBSMTPad[]> {
+    const pcb_smtpad_id = this.project_builder.getId("pcb_smtpad")
     if (this.shape === "rect") {
       return [
         {
           type: "pcb_smtpad",
+          pcb_smtpad_id,
           shape: this.shape,
           x: bc.convert(this.x),
           y: bc.convert(this.y),
@@ -127,6 +135,7 @@ export class SMTPadBuilderClass implements SMTPadBuilder {
       return [
         {
           type: "pcb_smtpad",
+          pcb_smtpad_id,
           shape: this.shape,
           x: bc.convert(this.x),
           y: bc.convert(this.y),
