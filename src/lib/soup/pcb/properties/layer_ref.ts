@@ -3,12 +3,12 @@ import { z } from "zod"
 export const all_layers = [
   "top",
   "bottom",
-  "inner-1",
-  "inner-2",
-  "inner-3",
-  "inner-4",
-  "inner-5",
-  "inner-6",
+  "inner1",
+  "inner2",
+  "inner3",
+  "inner4",
+  "inner5",
+  "inner6",
 ] as const
 
 export const layer_string = z.enum(all_layers)
