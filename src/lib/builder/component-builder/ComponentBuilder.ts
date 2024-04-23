@@ -67,6 +67,7 @@ export interface BaseComponentBuilder<T> {
     fp: FootprintBuilder | StandardFootprint
   ): BaseComponentBuilder<T>
   modifyFootprint(cb: (fb: FootprintBuilder) => any): BaseComponentBuilder<T>
+  modifyPorts(cb: (pb: PortsBuilder) => any): BaseComponentBuilder<T>
   modifySchematic(
     cb: (fb: SchematicSymbolBuilder) => any
   ): BaseComponentBuilder<T>
@@ -338,6 +339,11 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
     return this
   }
 
+  modifyPorts(fn) {
+    fn(this.ports)
+    return this
+  }
+
   modifySchematic(fn) {
     fn(this.schematic_symbol)
     return this
@@ -440,15 +446,37 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
     })
     const schematic_elements = await this.schematic_symbol.build(bc)
 
+    const pcb_ports = elements
+      .concat(built_ports)
+      .filter((elm) => elm.type === "pcb_port")
+    const source_ports = elements
+      .concat(built_ports)
+      .filter((elm) => elm.type === "source_port")
+
     matchPCBPortsWithFootprintAndMutate({
       footprint_elements,
-      pcb_ports: elements
-        .concat(built_ports)
-        .filter((elm) => elm.type === "pcb_port"),
-      source_ports: elements
-        .concat(built_ports)
-        .filter((elm) => elm.type === "source_port"),
+      pcb_ports,
+      source_ports,
     } as any)
+
+    // If any pcb_port isn't matched, emit an error
+    // TODO currently undefined x/y ports mean it's not matched
+    for (const pp of pcb_ports) {
+      if (pp.type === "pcb_port" && pp.x === undefined && pp.y === undefined) {
+        const source_port = source_ports.find(
+          (elm) =>
+            elm.type === "source_port" &&
+            elm.source_port_id === pp.source_port_id
+        )! as Type.SourcePort
+        elements.push({
+          pcb_error_id: pb.getId("pcb_error"),
+          type: "pcb_error",
+          message: `Could not find a matching footprint for pcb_port "${source_port?.name}" (inside "${source_component.name}")`,
+          error_type: "pcb_port_not_matched_error",
+          pcb_component_ids: [pcb_component_id],
+        })
+      }
+    }
 
     elements.push(pcb_element, ...footprint_elements)
 

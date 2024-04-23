@@ -156,6 +156,7 @@ export type AnyElement =
   | Soup.PCBHole
   | Soup.PCBPlatedHole
   | Soup.PCBVia
+  | Soup.PCBPortNotMatchedError
   | PCBError
   | SchematicGroup
   | SchematicComponent

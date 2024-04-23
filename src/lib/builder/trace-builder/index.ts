@@ -365,6 +365,39 @@ export const createTraceBuilder = (
       //    plated hole or via / compatible via "layers")
       // 4. otherwise throw (for now)
 
+      // This can be due to an undefined footprint or unmatched pcb_port, but
+      // there should be an error earlier than this
+      const invalid_terminal = terminals.find(
+        (t) => t.x === undefined || t.y === undefined
+      )
+      if (invalid_terminal) {
+        const source_port = parentElements.find(
+          (e) =>
+            e.type === "source_port" &&
+            e.source_port_id === (invalid_terminal as any).source_port_id
+        ) as Type.SourcePort
+        const source_component = parentElements.find(
+          (e) =>
+            e.type === "source_component" &&
+            e.source_component_id === source_port?.source_component_id
+        ) as Type.SourceComponent
+        pcb_errors.push({
+          pcb_error_id: builder.project_builder.getId("pcb_error"),
+          type: "pcb_error",
+          error_type: "pcb_trace_error",
+          message: `Terminal "${
+            source_port?.name
+              ? `.${source_component?.name} > .${source_port?.name}`
+              : JSON.stringify(invalid_terminal)
+          }" has no x/y coordinates, this may be due to a missing footprint or unmatched pcb port`,
+          pcb_trace_id,
+          source_trace_id,
+          pcb_component_ids: [], // TODO
+          pcb_port_ids: pcb_terminal_port_ids,
+        })
+        return []
+      }
+
       const candidate_layers: Type.LayerRef[] = uniq(
         terminals.flatMap((t) => {
           if ("layers" in t) return t.layers

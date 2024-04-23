@@ -16,6 +16,16 @@ export interface PortBuilder {
   setSchematicDirection(dir: "up" | "down" | "left" | "right"): PortBuilder
   setSchematicPinNumberVisible(visible: boolean): PortBuilder
   setPortHints(port_hints: string[]): PortBuilder
+  setProps: (
+    props: Partial<{
+      name: string
+      x: Dimension
+      y: Dimension
+      direction: "up" | "down" | "left" | "right"
+      pin_number: number
+      port_hints: string[]
+    }>
+  ) => PortBuilder
   build(): Type.AnyElement[]
 }
 
@@ -53,10 +63,12 @@ export class PortBuilderClass implements PortBuilder {
       this.schematic_pin_number_visible = props.schematic_pin_number_visible
     if (props.port_hints)
       this.port_hints = props.port_hints.map((ph) => ph.toString())
+    if (props.name) this.name = props.name
 
     for (const key of Object.keys(props).filter((k) =>
       settable_props.includes(k)
     )) {
+      if (key === "port_hints") continue // handled above
       this[key] = props[key]
     }
     return this
