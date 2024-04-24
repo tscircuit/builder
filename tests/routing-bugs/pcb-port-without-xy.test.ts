@@ -52,7 +52,7 @@ const axial = (fb: FootprintBuilder) =>
         y: 0,
         hole_diameter: 0.8,
         outer_diameter: 1.2,
-        port_hints: ["plus"],
+        port_hints: ["1"],
       })
     )
     .add("platedhole", (pb) =>
@@ -61,7 +61,7 @@ const axial = (fb: FootprintBuilder) =>
         y: 0,
         hole_diameter: 0.8,
         outer_diameter: 1.2,
-        port_hints: ["minus"],
+        port_hints: ["2"],
       })
     )
 

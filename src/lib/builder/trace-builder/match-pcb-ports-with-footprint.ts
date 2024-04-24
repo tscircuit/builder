@@ -79,7 +79,10 @@ export const matchPCBPortsWithFootprintAndMutate = ({
       const footprint_element = footprint_elements[fpei]
       const possible_labels_for_element = possible_labels_for_element_map[fpei]
       for (const possible_label of possible_labels_for_element) {
-        if (source_port.name === possible_label) {
+        if (
+          source_port.name === possible_label ||
+          source_port.pin_number?.toString() === possible_label
+        ) {
           ;(footprint_element as any).pcb_port_id = pcb_port.pcb_port_id
           const { x, y } = getCenterOfFootprintElement(footprint_element)
           ;(pcb_port as any).x = x
