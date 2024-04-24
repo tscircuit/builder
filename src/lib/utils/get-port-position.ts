@@ -10,10 +10,10 @@ export type HorizontalPortSideConfiguration = {
 }
 
 export type ExplicitPinMappingArrangement = {
-  left_side?: HorizontalPortSideConfiguration
-  right_side?: HorizontalPortSideConfiguration
-  top_side?: VerticalPortSideConfiguration
-  bottom_side?: VerticalPortSideConfiguration
+  left_side?: VerticalPortSideConfiguration
+  right_side?: VerticalPortSideConfiguration
+  top_side?: HorizontalPortSideConfiguration
+  bottom_side?: HorizontalPortSideConfiguration
 }
 export type SideSizes = {
   left_size?: number
@@ -45,34 +45,38 @@ export const hasExplicitPinMapping = (
   )
 }
 
-export const getExplicitToNormalPinMapping = (
+export const getNormalToExplicitPinMapping = (
   pa: ExplicitPinMappingArrangement
 ): number[] => {
   const normal_to_explicit: number[] = [0]
   const { left_side, right_side, top_side, bottom_side } = pa
-  for (const [side, flipOrderBcSide] of [
-    [left_side, false],
-    [bottom_side, false],
-    [right_side, true],
-    [top_side, true],
+  for (const [side, normalDirection] of [
+    [left_side, "top-to-bottom"],
+    [bottom_side, "left-to-right"],
+    [right_side, "bottom-to-top"],
+    [top_side, "right-to-left"],
   ] as const) {
     if (side) {
       const definedOrderNormal =
-        side.pin_definition_direction === "left-to-right" ||
-        side.pin_definition_direction === "top-to-bottom"
+        side.pin_definition_direction === undefined ||
+        side.pin_definition_direction === normalDirection
 
       const definedPins = [...side.pins]
-      if (flipOrderBcSide) {
-        definedPins.reverse()
-      }
       if (!definedOrderNormal) {
         definedPins.reverse()
       }
       for (let i = 0; i < definedPins.length; i++) {
-        normal_to_explicit.push(side.pins[i])
+        normal_to_explicit.push(definedPins[i])
       }
     }
   }
+  return normal_to_explicit
+}
+
+export const getExplicitToNormalPinMapping = (
+  pa: ExplicitPinMappingArrangement
+): number[] => {
+  const normal_to_explicit: number[] = getNormalToExplicitPinMapping(pa)
   const explicit_to_normal: number[] = []
   for (let i = 0; i < normal_to_explicit.length; i++) {
     explicit_to_normal[normal_to_explicit[i]] = i
@@ -225,11 +229,11 @@ export const getPortPosition = (
   if (side === "top") {
     const i_dist_center = index - (top_size - 1) / 2
     x = i_dist_center * PORT_SPACING
-    y = -height / 2
+    y = height / 2
   } else if (side === "bottom") {
     const i_dist_center = index - (bottom_size - 1) / 2
     x = i_dist_center * PORT_SPACING
-    y = height / 2
+    y = -height / 2
   } else if (side === "left") {
     const i_dist_center = -index + (left_size - 1) / 2
     y = i_dist_center * PORT_SPACING

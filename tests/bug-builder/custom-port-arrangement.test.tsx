@@ -16,7 +16,7 @@ test("custom-port-arrangement bug", async (t) => {
               pins: [3],
             },
             right_side: {
-              direction: "top-to-bottom",
+              pin_definition_direction: "top-to-bottom",
               pins: [2, 4],
             },
           },
