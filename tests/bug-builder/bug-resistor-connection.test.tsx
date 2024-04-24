@@ -13,7 +13,7 @@ test("bug that has a footprint and connects to a resistor", async (t) => {
             right_size: 3,
           },
         })
-        .setFootprint("sot236")
+        .setFootprint("sparkfun:sot236")
         .labelPort(1, "D0")
         .labelPort(2, "D1")
         .setFootprintRotation("90deg")

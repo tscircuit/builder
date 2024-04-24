@@ -62,7 +62,9 @@ export class PortBuilderClass implements PortBuilder {
     if (props.schematic_pin_number_visible)
       this.schematic_pin_number_visible = props.schematic_pin_number_visible
     if (props.port_hints)
-      this.port_hints = props.port_hints.map((ph) => ph.toString())
+      this.port_hints = props.port_hints
+        .filter(Boolean)
+        .map((ph) => ph.toString())
     if (props.name) this.name = props.name
 
     for (const key of Object.keys(props).filter((k) =>
@@ -85,7 +87,7 @@ export class PortBuilderClass implements PortBuilder {
   }
 
   setPortHints(port_hints: string[]): PortBuilder {
-    this.port_hints = port_hints.map((ph) => ph.toString())
+    this.port_hints = port_hints.filter(Boolean).map((ph) => ph.toString())
     return this
   }
 
