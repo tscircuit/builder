@@ -231,7 +231,7 @@ export const getPortPosition = (
     x = i_dist_center * PORT_SPACING
     y = height / 2
   } else if (side === "left") {
-    const i_dist_center = index - (left_size - 1) / 2
+    const i_dist_center = -index + (left_size - 1) / 2
     y = i_dist_center * PORT_SPACING
     x = -width / 2
   } else if (side === "right") {
