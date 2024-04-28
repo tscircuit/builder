@@ -97,12 +97,6 @@ export interface PCBConfig {
 
 export type PCBError = Soup.PCBTraceError
 
-export interface SourceTrace {
-  type: "source_trace"
-  source_trace_id: string
-  connected_source_port_ids: string[]
-}
-
 export interface SourceGroup {
   type: "source_group"
   source_group_id: string
@@ -129,7 +123,7 @@ export interface Project {
   pcb_traces: Soup.PCBTrace[]
   pcb_ports: Soup.PCBPort[]
   source_config: SourceConfig
-  source_traces: SourceTrace[]
+  source_traces: Soup.SourceTrace[]
   source_groups: SourceGroup[]
   source_components: SourceComponent[]
   source_ports: Soup.SourcePort[]
@@ -143,7 +137,7 @@ export type AnyElement =
   | SourceConfig
   | SourceComponent
   | SourceGroup
-  | SourceTrace
+  | Soup.SourceTrace
   | Soup.SourcePort
   | Soup.PCBTrace
   | Soup.PCBComponent
