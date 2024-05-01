@@ -1,6 +1,6 @@
 {
   "name": "@tscircuit/builder",
-  "version": "1.5.77",
+  "version": "1.5.78",
   "type": "module",
   "types": "./dist/index.d.cts",
   "main": "./dist/index.cjs",
