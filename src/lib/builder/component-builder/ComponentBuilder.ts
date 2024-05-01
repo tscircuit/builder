@@ -367,6 +367,44 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
     return this
   }
 
+  _createPcbComponent(
+    opts: {
+      source_component_id: string
+      pcb_component_id: string
+    },
+    bc: Type.BuildContext
+  ): Type.PCBComponent {
+    return {
+      type: "pcb_component",
+      source_component_id: opts.source_component_id,
+      pcb_component_id: opts.pcb_component_id,
+      layer: this.footprint.layer,
+      center: bc.convert(this.footprint.position),
+      rotation: this.footprint.rotation,
+      width: 0,
+      height: 0,
+    }
+  }
+
+  _computeSizeOfPcbElement(
+    pcb_element: Type.PCBComponent,
+    footprint_elements: Type.AnySoupElement[]
+  ) {
+    const pcb_size = getSpatialBoundsFromSpatialElements(
+      footprint_elements
+        .map((elm) => {
+          try {
+            return toCenteredSpatialObj(elm)
+          } catch (e) {
+            return null
+          }
+        })
+        .filter(isTruthy)
+    )
+    pcb_element.width = pcb_size.w
+    pcb_element.height = pcb_size.h
+  }
+
   async build(bc: Type.BuildContext) {
     const pb = this.project_builder
     const elements: Type.AnyElement[] = []
@@ -416,14 +454,13 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
     const built_ports = await this.ports.build(bc)
 
     // TODO schematic box of some kind
-    const pcb_element: Type.PCBComponent = {
-      type: "pcb_component",
-      source_component_id,
-      pcb_component_id,
-      layer: this.footprint.layer,
-      center: bc.convert(this.footprint.position),
-      rotation: this.footprint.rotation,
-    }
+    const pcb_element = this._createPcbComponent(
+      {
+        source_component_id,
+        pcb_component_id,
+      },
+      bc
+    )
 
     this.configureFootprint({
       ...bc,
@@ -478,6 +515,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
       }
     }
 
+    this._computeSizeOfPcbElement(pcb_element, footprint_elements as any)
     elements.push(pcb_element, ...footprint_elements)
 
     // SPATIAL ADJUSTMENTS

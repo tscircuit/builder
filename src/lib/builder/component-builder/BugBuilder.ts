@@ -176,20 +176,21 @@ export class BugBuilderClass
       )
     )
 
-    elements.push({
-      type: "pcb_component",
-      source_component_id,
-      pcb_component_id,
-      layer: this.footprint.layer,
-      center: bc.convert(this.footprint.position),
-      rotation: this.footprint.rotation,
-    })
+    const pcb_component = this._createPcbComponent(
+      {
+        source_component_id,
+        pcb_component_id,
+      },
+      bc
+    )
 
     const footprint_elements = await this.footprint.build(bc)
     for (const fe of footprint_elements) {
       ;(fe as any).pcb_component_id = pcb_component_id
     }
-    elements.push(...footprint_elements)
+
+    this._computeSizeOfPcbElement(pcb_component, footprint_elements as any)
+    elements.push(pcb_component, ...footprint_elements)
 
     associatePcbPortsWithPads(elements)
 

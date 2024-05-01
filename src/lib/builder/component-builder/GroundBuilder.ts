@@ -92,15 +92,18 @@ export class GroundBuilderClass
       )
     )
 
-    elements.push({
-      type: "pcb_component",
-      source_component_id,
-      pcb_component_id,
-      layer: this.footprint.layer,
-      center: bc.convert(this.footprint.position),
-      rotation: this.footprint.rotation,
-    })
-    elements.push(...(await this.footprint.build(bc)))
+    const pcb_component = this._createPcbComponent(
+      {
+        source_component_id,
+        pcb_component_id,
+      },
+      bc
+    )
+    const footprint_elements = await this.footprint.build(bc)
+
+    this._computeSizeOfPcbElement(pcb_component, footprint_elements as any)
+
+    elements.push(pcb_component, ...footprint_elements)
 
     return elements
   }
