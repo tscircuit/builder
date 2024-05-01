@@ -122,14 +122,13 @@ export class CapacitorBuilderClass
       )
     )
 
-    elements.push({
-      type: "pcb_component",
-      source_component_id,
-      pcb_component_id,
-      layer: this.footprint.layer,
-      center: bc.convert(this.footprint.position),
-      rotation: this.footprint.rotation,
-    })
+    const pcb_component = this._createPcbComponent(
+      {
+        source_component_id,
+        pcb_component_id,
+      },
+      bc
+    )
     const footprint_elements = await this.footprint.build(bc)
 
     matchPCBPortsWithFootprintAndMutate({
@@ -137,7 +136,9 @@ export class CapacitorBuilderClass
       pcb_ports: elements.filter((elm) => elm.type === "pcb_port"),
       source_ports: elements.filter((elm) => elm.type === "source_port"),
     } as any)
-    elements.push(...footprint_elements)
+
+    this._computeSizeOfPcbElement(pcb_component, footprint_elements as any)
+    elements.push(pcb_component, ...footprint_elements)
 
     return elements
   }

@@ -367,6 +367,25 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
     return this
   }
 
+  _createPcbComponent(
+    opts: {
+      source_component_id: string
+      pcb_component_id: string
+    },
+    bc: Type.BuildContext
+  ): Type.PCBComponent {
+    return {
+      type: "pcb_component",
+      source_component_id: opts.source_component_id,
+      pcb_component_id: opts.pcb_component_id,
+      layer: this.footprint.layer,
+      center: bc.convert(this.footprint.position),
+      rotation: this.footprint.rotation,
+      width: 0,
+      height: 0,
+    }
+  }
+
   _computeSizeOfPcbElement(
     pcb_element: Type.PCBComponent,
     footprint_elements: Type.AnySoupElement[]
@@ -435,16 +454,13 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
     const built_ports = await this.ports.build(bc)
 
     // TODO schematic box of some kind
-    const pcb_element: Type.PCBComponent = {
-      type: "pcb_component",
-      source_component_id,
-      pcb_component_id,
-      layer: this.footprint.layer,
-      center: bc.convert(this.footprint.position),
-      rotation: this.footprint.rotation,
-      width: 0,
-      height: 0,
-    }
+    const pcb_element = this._createPcbComponent(
+      {
+        source_component_id,
+        pcb_component_id,
+      },
+      bc
+    )
 
     this.configureFootprint({
       ...bc,
