@@ -11,9 +11,8 @@ export const transformSchematicElement = (
   matrix: Matrix
 ) => {
   if (elm.type === "schematic_component") {
-    // elm.center
-    // elm.rotation
-    // elm.size
+    // TODO handle rotation
+    elm.center = applyToPoint(matrix, elm.center)
   } else if (elm.type === "schematic_port") {
     elm.center = applyToPoint(matrix, elm.center)
 
