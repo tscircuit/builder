@@ -56,13 +56,14 @@ export const transformPCBElement = (elm: Type.AnyElement, matrix: Matrix) => {
     elm.type === "pcb_hole" ||
     elm.type === "pcb_drill" ||
     elm.type === "pcb_via" ||
-    elm.type === "pcb_smtpad"
+    elm.type === "pcb_smtpad" ||
+    elm.type === "pcb_port"
   ) {
     const { x, y } = applyToPoint(matrix, { x: elm.x, y: elm.y })
     elm.x = x
     elm.y = y
-  } else if (elm.type === "pcb_port") {
-    // TODO
+  } else if (elm.type === "pcb_component") {
+    elm.center = applyToPoint(matrix, elm.center)
   }
   return elm
 }
