@@ -9,8 +9,8 @@ export const getSpatialBoundsFromSpatialElements = (
   let { x: lx, y: ly, w, h } = elements[0]
   lx -= w / 2
   ly -= h / 2
-  let hx = lx + w / 2
-  let hy = ly + h / 2
+  let hx = lx + w
+  let hy = ly + h
   for (let i = 1; i < elements.length; i++) {
     const { x, y, w, h } = elements[i]
     lx = Math.min(lx, x - w / 2)
@@ -21,7 +21,7 @@ export const getSpatialBoundsFromSpatialElements = (
   return {
     x: (lx + hx) / 2,
     y: (ly + hy) / 2,
-    w: hx - lx,
+    w: hx - lx, //
     h: hy - ly,
   }
 }
@@ -29,8 +29,8 @@ export const getSpatialBoundsFromSpatialElements = (
 export const toCenteredSpatialObj = (obj: any): SpatialElement => {
   let x = obj.x ?? obj.center?.x
   let y = obj.y ?? obj.center?.y
-  let w = obj.w ?? obj.width ?? obj.size?.width ?? 0
-  let h = obj.h ?? obj.height ?? obj.size?.height ?? 0
+  let w = obj.w ?? obj.width ?? obj.size?.width ?? obj.outer_diameter ?? 0
+  let h = obj.h ?? obj.height ?? obj.size?.height ?? obj.outer_diameter ?? 0
   let align = obj.align ?? "center"
 
   if (
