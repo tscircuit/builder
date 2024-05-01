@@ -1,7 +1,7 @@
 import { z } from "zod"
 import { point } from "../common"
 import { layer_ref } from "./properties/layer_ref"
-import { rotation } from "../units"
+import { rotation, length } from "../units"
 
 export const pcb_component = z
   .object({
@@ -11,6 +11,8 @@ export const pcb_component = z
     center: point,
     layer: layer_ref,
     rotation: rotation,
+    width: length,
+    height: length,
   })
   .describe("Defines a component on the PCB")
 

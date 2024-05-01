@@ -135,14 +135,18 @@ export class ResistorBuilderClass
       )
     )
 
-    elements.push({
+    const pcb_element: Type.PCBComponent = {
       type: "pcb_component",
       source_component_id,
       pcb_component_id,
       layer: this.footprint.layer,
       center: bc.convert(this.footprint.position),
       rotation: this.footprint.rotation,
-    })
+      width: 0,
+      height: 0,
+    }
+
+    elements.push(pcb_element)
 
     const footprint_elements = await this.footprint.build(bc)
 
@@ -152,6 +156,7 @@ export class ResistorBuilderClass
       source_ports: elements.filter((elm) => elm.type === "source_port"),
     } as any)
 
+    this._computeSizeOfPcbElement(pcb_element, footprint_elements as any)
     elements.push(...footprint_elements)
 
     return elements

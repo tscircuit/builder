@@ -367,6 +367,25 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
     return this
   }
 
+  _computeSizeOfPcbElement(
+    pcb_element: Type.PCBComponent,
+    footprint_elements: Type.AnySoupElement[]
+  ) {
+    const pcb_size = getSpatialBoundsFromSpatialElements(
+      footprint_elements
+        .map((elm) => {
+          try {
+            return toCenteredSpatialObj(elm)
+          } catch (e) {
+            return null
+          }
+        })
+        .filter(isTruthy)
+    )
+    pcb_element.width = pcb_size.w
+    pcb_element.height = pcb_size.h
+  }
+
   async build(bc: Type.BuildContext) {
     const pb = this.project_builder
     const elements: Type.AnyElement[] = []
@@ -423,6 +442,8 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
       layer: this.footprint.layer,
       center: bc.convert(this.footprint.position),
       rotation: this.footprint.rotation,
+      width: 0,
+      height: 0,
     }
 
     this.configureFootprint({
@@ -478,6 +499,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
       }
     }
 
+    this._computeSizeOfPcbElement(pcb_element, footprint_elements as any)
     elements.push(pcb_element, ...footprint_elements)
 
     // SPATIAL ADJUSTMENTS
