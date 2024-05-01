@@ -1,4 +1,4 @@
-# TSCircuit Builder
+# @tscircuit/builder
 
 [Docs](https://tscircuit.github.io/builder) &middot; [Github](https://github.com/tscircuit/builder) &middot; [tscircuit](https://tscircuit.com)
 
