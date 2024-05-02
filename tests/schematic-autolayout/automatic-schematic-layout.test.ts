@@ -1,5 +1,6 @@
 import { getTestFixture } from "tests/fixtures/get-test-fixture"
 import test from "ava"
+import { SchematicComponent } from "lib/types"
 
 test("automatic schematic layout 1", async (t) => {
   const { logSoup, pb } = getTestFixture(t)
@@ -48,4 +49,17 @@ test("automatic schematic layout 1", async (t) => {
     .build()
 
   await logSoup(soup)
+  const r1_source_component = soup.find(
+    (c): c is SchematicComponent =>
+      c.type === "source_component" && c.name === "R2"
+  )!
+
+  t.not(
+    soup.find(
+      (c): c is SchematicComponent =>
+        c.type === "schematic_component" &&
+        c.source_component_id === r1_source_component.source_component_id
+    )!.center.x,
+    0
+  )
 })

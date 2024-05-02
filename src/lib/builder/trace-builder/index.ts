@@ -113,17 +113,21 @@ export const createTraceBuilder = (
     for (const portSelector of internal.portSelectors) {
       const selectedElms = applySelector(parent_elements, portSelector)
       if (selectedElms.length === 0) {
-        return [
-          {
-            type: "source_error",
-            message: `No elements found for selector: ${portSelector}`,
-            ...extractIds(parent_elements?.[0] ?? {}),
-          },
-        ]
+        return {
+          source_errors: [
+            {
+              type: "source_error",
+              message: `No elements found for selector: ${portSelector}`,
+              ...extractIds(parent_elements?.[0] ?? {}),
+            },
+          ],
+          source_ports_in_route: [],
+        }
       }
       for (const selectedElm of selectedElms) {
         if (selectedElm.type !== "source_port") {
           return {
+            source_ports_in_route: [],
             source_errors: [
               {
                 type: "source_error",

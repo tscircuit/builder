@@ -205,7 +205,6 @@ export class GroupBuilderClass implements GroupBuilder {
     )
 
     if (this.auto_layout?.schematic) {
-      console.log(JSON.stringify(elements))
       const scene = AutoSch.convertSoupToScene(elements)
       // We have to manually add the connections in a simple way to avoid
       // routing here
