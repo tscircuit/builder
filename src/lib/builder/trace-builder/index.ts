@@ -34,8 +34,13 @@ export interface TraceBuilder {
     pcb_route_hints?: Type.PcbRouteHintInput[]
     thickness?: string | number
   }) => TraceBuilder
+  getConnections: () => string[]
   setRouteSolver: (routeSolver: RouteSolverOrString) => TraceBuilder
   addConnections: (portSelectors: Array<string>) => TraceBuilder
+  getSourcePortsInRoute: (parent_elements: Type.AnyElement[]) => {
+    source_ports_in_route: Type.SourcePort[]
+    source_errors: any[]
+  }
   build(
     elements: Type.AnyElement[],
     bc: Type.BuildContext
@@ -82,6 +87,8 @@ export const createTraceBuilder = (
     return builder
   }
 
+  builder.getConnections = () => internal.portSelectors
+
   builder.setProps = (props) => {
     if (props.path) {
       builder.addConnections(props.path)
@@ -101,45 +108,58 @@ export const createTraceBuilder = (
     return builder
   }
 
-  builder.build = async (
-    parentElements: Type.AnyElement[] = [],
-    bc: Type.BuildContext
-  ) => {
-    const sourcePortsInRoute: Type.SourcePort[] = []
+  builder.getSourcePortsInRoute = (parent_elements: Type.AnyElement[]) => {
+    const source_ports_in_route: Type.SourcePort[] = []
     for (const portSelector of internal.portSelectors) {
-      const selectedElms = applySelector(parentElements, portSelector)
+      const selectedElms = applySelector(parent_elements, portSelector)
       if (selectedElms.length === 0) {
-        return [
-          {
-            type: "source_error",
-            message: `No elements found for selector: ${portSelector}`,
-            ...extractIds(parentElements?.[0] ?? {}),
-          },
-        ]
+        return {
+          source_errors: [
+            {
+              type: "source_error",
+              message: `No elements found for selector: ${portSelector}`,
+              ...extractIds(parent_elements?.[0] ?? {}),
+            },
+          ],
+          source_ports_in_route: [],
+        }
       }
       for (const selectedElm of selectedElms) {
         if (selectedElm.type !== "source_port") {
-          return [
-            {
-              type: "source_error",
-              message: `non-source_port "${JSON.stringify(
-                selectedElm,
-                null,
-                "  "
-              )}" selected by selector "${portSelector}" `,
-              ...extractIds(selectedElm),
-            },
-          ]
+          return {
+            source_ports_in_route: [],
+            source_errors: [
+              {
+                type: "source_error",
+                message: `non-source_port "${JSON.stringify(
+                  selectedElm,
+                  null,
+                  "  "
+                )}" selected by selector "${portSelector}" `,
+                ...extractIds(selectedElm),
+              },
+            ],
+          }
         }
-        sourcePortsInRoute.push(selectedElm)
+        source_ports_in_route.push(selectedElm)
       }
     }
+    return { source_ports_in_route, source_errors: [] }
+  }
+
+  builder.build = async (
+    parent_elements: Type.AnyElement[] = [],
+    bc: Type.BuildContext
+  ) => {
+    const { source_ports_in_route, source_errors } =
+      builder.getSourcePortsInRoute(parent_elements)
+    if (source_errors?.length > 0) return source_errors
 
     const source_trace_id = builder.project_builder.getId("source_trace")
     const source_trace: Type.SourceTrace = {
       type: "source_trace",
       source_trace_id,
-      connected_source_port_ids: sourcePortsInRoute.map(
+      connected_source_port_ids: source_ports_in_route.map(
         (sp) => sp.source_port_id
       ),
     }
@@ -150,8 +170,8 @@ export const createTraceBuilder = (
 
     const schematic_trace_id = builder.project_builder.getId("schematic_trace")
 
-    const schematicTerminals = sourcePortsInRoute.map((sp) => {
-      const schematic_port = parentElements.find(
+    const schematicTerminals = source_ports_in_route.map((sp) => {
+      const schematic_port = parent_elements.find(
         (elm) =>
           elm.type === "schematic_port" &&
           elm.source_port_id === sp.source_port_id
@@ -169,7 +189,7 @@ export const createTraceBuilder = (
     })
 
     const schematic_obstacles = getSchematicObstaclesFromElements(
-      parentElements,
+      parent_elements,
       {
         excluded_schematic_port_ids: schematicTerminals.map(
           (t) => t.schematic_port_id
@@ -233,8 +253,8 @@ export const createTraceBuilder = (
     const pcb_trace_id = builder.project_builder.getId("pcb_trace")
     const pcb_errors: Type.PCBError[] = []
 
-    const pcb_terminals = sourcePortsInRoute.map((sp) => {
-      const pcb_port = parentElements.find(
+    const pcb_terminals = source_ports_in_route.map((sp) => {
+      const pcb_port = parent_elements.find(
         (elm) =>
           elm.type === "pcb_port" && elm.source_port_id === sp.source_port_id
       ) as Type.PCBPort | null
@@ -263,7 +283,7 @@ export const createTraceBuilder = (
       height: number
       layers: Type.LayerRef[]
     }> = [
-      ...parentElements
+      ...parent_elements
         .filter((elm): elm is Type.PCBSMTPad => elm.type === "pcb_smtpad")
         // Exclude the pads that are connected to the trace
         .filter((elm) => !pcb_terminal_port_ids.includes(elm.pcb_port_id!))
@@ -288,7 +308,7 @@ export const createTraceBuilder = (
             `Invalid pad shape for pcb_smtpad "${(pad as any).shape}"`
           )
         }),
-      ...parentElements
+      ...parent_elements
         .filter(
           (elm): elm is Type.PCBPlatedHole => elm.type === "pcb_plated_hole"
         )
@@ -371,12 +391,12 @@ export const createTraceBuilder = (
         (t) => t.x === undefined || t.y === undefined
       )
       if (invalid_terminal) {
-        const source_port = parentElements.find(
+        const source_port = parent_elements.find(
           (e) =>
             e.type === "source_port" &&
             e.source_port_id === (invalid_terminal as any).source_port_id
         ) as Type.SourcePort
-        const source_component = parentElements.find(
+        const source_component = parent_elements.find(
           (e) =>
             e.type === "source_component" &&
             e.source_component_id === source_port?.source_component_id

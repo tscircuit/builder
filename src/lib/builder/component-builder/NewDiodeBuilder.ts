@@ -17,6 +17,7 @@ export const { DiodeBuilderClass, createDiodeBuilder } = defineNewComponent({
           .setSchematicPosition({ x: -0.5, y: 0 })
           .setPinNumber(1)
           .setSchematicPinNumberVisible(false)
+          .setPortHints(["anode", "positive"])
           .setSchematicDirection("left")
       )
       .add("port", (pb) =>
@@ -24,6 +25,7 @@ export const { DiodeBuilderClass, createDiodeBuilder } = defineNewComponent({
           .setName("right")
           .setSchematicPosition({ x: 0.5, y: 0 })
           .setPinNumber(2)
+          .setPortHints(["cathode", "negative"])
           .setSchematicPinNumberVisible(false)
           .setSchematicDirection("right")
       )
