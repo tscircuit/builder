@@ -10,6 +10,8 @@ import {
 } from "./trace-builder"
 import { createConstraintBuilder } from "./constrained-layout-builder"
 import { createViaBuilder } from "./component-builder/ViaBuilder"
+import * as AutoSch from "@tscircuit/schematic-autolayout"
+import { pairs } from "lib/utils/pairs"
 
 export const getGroupAddables = () =>
   ({
@@ -37,6 +39,7 @@ export interface GroupBuilder {
   addables: GroupBuilderAddables
   reset: () => GroupBuilder
   setName: (name: string) => GroupBuilder
+  setProps: (props: any) => GroupBuilder
   appendChild(
     child: CB.ComponentBuilder | GroupBuilder | TraceBuilder
   ): GroupBuilder
@@ -77,6 +80,7 @@ export class GroupBuilderClass implements GroupBuilder {
   project_builder: ProjectBuilder
   name: string
   addables: GroupBuilderAddables
+  auto_layout?: { schematic: true }
 
   constructor(project_builder?: ProjectBuilder) {
     this.project_builder = project_builder!
@@ -110,6 +114,15 @@ export class GroupBuilderClass implements GroupBuilder {
   }
   setName(name) {
     this.name = name
+    return this
+  }
+  setProps(props) {
+    if (props.name) {
+      this.setName(props.name)
+    }
+    if (props.auto_schematic_layout) {
+      this.auto_layout = { schematic: true }
+    }
     return this
   }
   appendChild(child) {
@@ -183,13 +196,36 @@ export class GroupBuilderClass implements GroupBuilder {
     return this
   }
   async build(bc): Promise<Type.AnyElement[]> {
-    const elements: Type.AnyElement[] = []
+    let elements: Type.AnyElement[] = []
     elements.push(
       ..._.flatten(await Promise.all(this.groups.map((g) => g.build(bc))))
     )
     elements.push(
       ..._.flatten(await Promise.all(this.components.map((c) => c.build(bc))))
     )
+
+    if (this.auto_layout?.schematic) {
+      console.log(JSON.stringify(elements))
+      const scene = AutoSch.convertSoupToScene(elements)
+      // We have to manually add the connections in a simple way to avoid
+      // routing here
+
+      for (const trc of this.traces) {
+        const { source_ports_in_route } = trc.getSourcePortsInRoute(elements)
+        for (const [spa, spb] of pairs(source_ports_in_route)) {
+          scene.connections.push({
+            from: spa.source_port_id,
+            to: spb.source_port_id,
+          })
+        }
+      }
+
+      // console.log(JSON.stringify(scene))
+      const laid_out_scene = AutoSch.ascendingCentralLrBug1(scene)
+      // console.log(laid_out_scene)
+      AutoSch.mutateSoupForScene(elements, laid_out_scene)
+    }
+
     elements.push(
       ..._.flatten(
         await Promise.all(this.traces.map((c) => c.build(elements, bc)))

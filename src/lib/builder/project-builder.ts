@@ -9,7 +9,7 @@ import { createProjectFromElements } from "../project/create-project-from-elemen
 import convertUnits from "convert-units"
 import { createBoardBuilder } from "./board-builder"
 
-export type ProjectBuilder = Omit<GroupBuilder, "add"> & {
+export type ProjectBuilder = Omit<GroupBuilder, "add" | "setProps"> & {
   build_context: Type.BuildContext
   getId: (prefix: string) => string
   addGroup: (groupBuilderCallback: GroupBuilderCallback) => ProjectBuilder
@@ -27,6 +27,7 @@ export type ProjectBuilder = Omit<GroupBuilder, "add"> & {
       >
     ) => unknown
   ): ProjectBuilder
+  setProps: (props: any) => ProjectBuilder
   createBuildContext: () => Type.BuildContext
 }
 
