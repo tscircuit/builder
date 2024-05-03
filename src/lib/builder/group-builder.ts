@@ -15,6 +15,7 @@ import { pairs } from "lib/utils/pairs"
 import { applySelector } from "lib/apply-selector"
 import { transformPCBElement, transformPCBElements } from "./transform-elements"
 import { Matrix, compose, identity, translate } from "transformation-matrix"
+import { LayoutBuilder } from "@tscircuit/layout"
 
 export const getGroupAddables = () =>
   ({
@@ -84,7 +85,8 @@ export class GroupBuilderClass implements GroupBuilder {
   name: string
   addables: GroupBuilderAddables
   auto_layout?: { schematic: true }
-  manual_layout: Type.ManualLayout
+  manual_layout?: Type.ManualLayout
+  layout_builder?: LayoutBuilder
 
   constructor(project_builder?: ProjectBuilder) {
     this.project_builder = project_builder!
@@ -129,6 +131,9 @@ export class GroupBuilderClass implements GroupBuilder {
     }
     if (props.manual_layout) {
       this.manual_layout = props.manual_layout
+    }
+    if (props.layout) {
+      this.layout_builder = props.layout
     }
     return this
   }
@@ -223,6 +228,10 @@ export class GroupBuilderClass implements GroupBuilder {
       )
     }
 
+    if (this.layout_builder) {
+      this.layout_builder.applyToSoup(elements, bc)
+    }
+
     elements.push(
       ..._.flatten(
         await Promise.all(this.traces.map((c) => c.build(elements, bc)))
@@ -231,6 +240,9 @@ export class GroupBuilderClass implements GroupBuilder {
     return elements
   }
 
+  /**
+   * @deprecated use the layout prop (@tscircuit/layout) instead
+   */
   private _autoLayoutSchematic(elements: Type.AnySoupElement[]) {
     const scene = AutoSch.convertSoupToScene(elements)
     // We have to manually add the connections in a simple way to avoid
@@ -251,6 +263,9 @@ export class GroupBuilderClass implements GroupBuilder {
     AutoSch.mutateSoupForScene(elements, laid_out_scene)
   }
 
+  /**
+   * @deprecated use the layout prop (@tscircuit/layout) instead
+   */
   private _layoutPcbPositionsFromManualLayout(
     {
       elements,
