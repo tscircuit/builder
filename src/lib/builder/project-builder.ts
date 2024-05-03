@@ -69,6 +69,7 @@ export const createProjectBuilder = (): ProjectBuilder => {
       return { ...this, ...mutation, parent: this }
     },
   })
+  builder.getId = builder.createBuildContext().getId
 
   const groupBuilderAdd = builder.add.bind(builder)
   builder.add = (builder_type, callback) => {
