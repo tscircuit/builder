@@ -300,9 +300,10 @@ export class GroupBuilderClass implements GroupBuilder {
 
       let mat: Matrix = identity()
       if (relative_to === "group_center") {
+        const new_center = bc.convert(pcb_position.center)
         mat = compose(
           translate(-pcb_component.center.x, -pcb_component.center.y),
-          translate(pcb_position.center.x, pcb_position.center.y)
+          translate(new_center.x, new_center.y)
         )
       } else {
         throw new Error(
