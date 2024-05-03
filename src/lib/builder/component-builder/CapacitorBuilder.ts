@@ -15,7 +15,7 @@ export interface CapacitorBuilder
   builder_type: "capacitor_builder"
   setSourceProperties(
     properties: Except<
-      Type.SimpleCapacitor,
+      Soup.SourceSimpleCapacitorInput,
       "type" | "source_component_id" | "ftype"
     > & { name?: string }
   ): CapacitorBuilder
@@ -36,7 +36,7 @@ export class CapacitorBuilderClass
     this.settable_source_properties.push(...["capacitance"])
   }
 
-  setSourceProperties(props: Type.SimpleCapacitor) {
+  setSourceProperties(props: Type.SourceSimpleCapacitor) {
     this.source_properties = {
       ...this.source_properties,
       ...props,

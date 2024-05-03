@@ -10,16 +10,16 @@ export const createProjectFromElements = (
 ): Type.Project => {
   const project: Type.Project = {
     type: "project",
-    schematic_config:
-      (objects.find(
-        (o) => o.type === "schematic_config"
-      ) as Type.SchematicConfig) || defaultSchematicConfig,
+    // schematic_config:
+    //   (objects.find(
+    //     (o) => o.type === "schematic_config"
+    //   ) as Type.SchematicConfig) || defaultSchematicConfig,
     schematic_components: objects.filter(
       (o) => o.type === "schematic_component"
     ) as Type.SchematicComponent[],
-    schematic_groups: objects.filter(
-      (o) => o.type === "schematic_group"
-    ) as Type.SchematicGroup[],
+    // schematic_groups: objects.filter(
+    //   (o) => o.type === "schematic_group"
+    // ) as Type.SchematicGroup[],
     schematic_traces: objects.filter(
       (o) => o.type === "schematic_trace"
     ) as Type.SchematicTrace[],
@@ -29,12 +29,12 @@ export const createProjectFromElements = (
     schematic_texts: objects.filter(
       (o) => o.type === "schematic_text"
     ) as Type.SchematicText[],
-    pcb_config:
-      (objects.find((o) => o.type === "pcb_config") as Type.PCBConfig) ||
-      defaultPCBConfig,
-    pcb_groups: objects.filter(
-      (o) => o.type === "pcb_group"
-    ) as Type.PCBGroup[],
+    // pcb_config:
+    //   (objects.find((o) => o.type === "pcb_config") as Type.PCBConfig) ||
+    //   defaultPCBConfig,
+    // pcb_groups: objects.filter(
+    //   (o) => o.type === "pcb_group"
+    // ) as Type.PCBGroup[],
     pcb_components: objects.filter(
       (o) => o.type === "pcb_component"
     ) as Type.PCBComponent[],
@@ -42,15 +42,15 @@ export const createProjectFromElements = (
       (o) => o.type === "pcb_trace"
     ) as Type.PCBTrace[],
     pcb_ports: objects.filter((o) => o.type === "pcb_port") as Type.PCBPort[],
-    source_config:
-      (objects.find((o) => o.type === "source_config") as Type.SourceConfig) ||
-      defaultSourceConfig,
+    // source_config:
+    //   (objects.find((o) => o.type === "source_config") as Type.SourceConfig) ||
+    //   defaultSourceConfig,
     source_traces: objects.filter(
       (o) => o.type === "source_trace"
     ) as Type.SourceTrace[],
-    source_groups: objects.filter(
-      (o) => o.type === "source_group"
-    ) as Type.SourceGroup[],
+    // source_groups: objects.filter(
+    //   (o) => o.type === "source_group"
+    // ) as Type.SourceGroup[],
     source_components: objects.filter(
       (o) => o.type === "source_component"
     ) as Type.SourceComponent[],

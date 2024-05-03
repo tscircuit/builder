@@ -4,8 +4,15 @@ import * as sch from "./schematic"
 import * as src from "./source"
 
 export const any_soup_element = z.union([
-  src.source_simple_capacitor,
-  src.source_simple_resistor,
+  // TODO source_group
+  // TODO source_config
+  // TODO pcb_group
+  // TODO pcb_config
+  // TODO schematic_config
+  // TODO schematic_group
+  src.source_trace,
+  src.source_port,
+  src.any_source_component,
   pcb.pcb_component,
   pcb.pcb_hole,
   pcb.pcb_plated_hole,

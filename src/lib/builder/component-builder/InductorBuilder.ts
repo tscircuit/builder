@@ -11,7 +11,7 @@ export type InductorBuilderCallback = (rb: InductorBuilder) => unknown
 export interface InductorBuilder extends BaseComponentBuilder<InductorBuilder> {
   builder_type: "inductor_builder"
   setSourceProperties(
-    properties: Type.SimpleInductor & { name?: string }
+    properties: Type.SourceSimpleInductor & { name?: string }
   ): InductorBuilder
 }
 
@@ -29,7 +29,7 @@ export class InductorBuilderClass
     }
   }
 
-  setSourceProperties(props: Type.SimpleInductor) {
+  setSourceProperties(props: Type.SourceSimpleInductor) {
     this.source_properties = {
       ...this.source_properties,
       ...props,

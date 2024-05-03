@@ -24,20 +24,18 @@ export interface SchematicGroup {
   children_schematic_trace_ids: string[]
 }
 
-export type SchematicDrawing =
-  | Soup.SchematicBox
-  | Soup.SchematicLine
-  // TODO this text type seems redundant with schematic_text...
-  // It's attached to the symbol, so probably shouldn't be used often
-  | {
-      type: "schematic_drawing"
-      drawing_type: "text"
-      schematic_component_id: string
-      align: string
-      x: number
-      y: number
-      text: string
-    }
+export type SchematicDrawing = Soup.SchematicBox | Soup.SchematicLine
+// TODO this text type seems redundant with schematic_text...
+// It's attached to the symbol, so probably shouldn't be used often
+// | {
+//     type: "schematic_drawing"
+//     drawing_type: "text"
+//     schematic_component_id: string
+//     align: string
+//     x: number
+//     y: number
+//     text: string
+//   }
 
 type SchematicComponent = Soup.SchematicComponent
 
@@ -111,56 +109,58 @@ export interface SourceError {
 
 export interface Project {
   type: "project"
-  schematic_config: SchematicConfig
+  // schematic_config: SchematicConfig
   schematic_components: SchematicComponent[]
-  schematic_groups: SchematicGroup[]
+  // schematic_groups: SchematicGroup[]
   schematic_traces: SchematicTrace[]
   schematic_texts: SchematicText[]
   schematic_ports: Soup.SchematicPort[]
-  pcb_config: PCBConfig
-  pcb_groups: PCBGroup[]
+  // pcb_config: PCBConfig
+  // pcb_groups: PCBGroup[]
   pcb_components: Soup.PCBComponent[]
   pcb_traces: Soup.PCBTrace[]
   pcb_ports: Soup.PCBPort[]
-  source_config: SourceConfig
+  // source_config: SourceConfig
   source_traces: Soup.SourceTrace[]
-  source_groups: SourceGroup[]
+  // source_groups: SourceGroup[]
   source_components: SourceComponent[]
   source_ports: Soup.SourcePort[]
 }
 
-/**
- * @deprecated
- */
-export type AnyElement =
-  | Project
-  | SourceConfig
-  | SourceComponent
-  | SourceGroup
-  | Soup.SourceTrace
-  | Soup.SourcePort
-  | Soup.PCBTrace
-  | Soup.PCBComponent
-  | PCBGroup
-  | PCBConfig
-  | Soup.PCBPort
-  | Soup.PCBTrace
-  | Soup.PCBSMTPad
-  | PCBDrill
-  | Soup.PCBHole
-  | Soup.PCBPlatedHole
-  | Soup.PCBVia
-  | Soup.PCBPortNotMatchedError
-  | PCBError
-  | SchematicGroup
-  | SchematicComponent
-  | SchematicTrace
-  | SchematicConfig
-  | Soup.SchematicPort
-  | SchematicText
-  | SchematicDrawing
-  | SourceError
-  | Soup.PCBBoard
+// /**
+//  * @deprecated
+//  */
+// export type AnyElement =
+//   | Project
+//   | SourceConfig
+//   | SourceComponent
+//   | SourceGroup
+//   | Soup.SourceTrace
+//   | Soup.SourcePort
+//   | Soup.PCBTrace
+//   | Soup.PCBComponent
+//   | PCBGroup
+//   | PCBConfig
+//   | Soup.PCBPort
+//   | Soup.PCBTrace
+//   | Soup.PCBSMTPad
+//   | PCBDrill
+//   | Soup.PCBHole
+//   | Soup.PCBPlatedHole
+//   | Soup.PCBVia
+//   | Soup.PCBPortNotMatchedError
+//   | PCBError
+//   | SchematicGroup
+//   | SchematicComponent
+//   | SchematicTrace
+//   | SchematicConfig
+//   | Soup.SchematicPort
+//   | SchematicText
+//   | SchematicDrawing
+//   | SourceError
+//   | Soup.PCBBoard
+
+export type AnyElement = Soup.AnySoupElement
 
 export type ElementType = AnyElement["type"]
 export type ElementOfType<T extends ElementType> = Extract<

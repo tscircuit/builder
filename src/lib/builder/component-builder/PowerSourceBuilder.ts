@@ -14,7 +14,7 @@ export interface PowerSourceBuilder
   builder_type: "power_source_builder"
   setSourceProperties(
     properties: Except<
-      Type.SimplePowerSource,
+      Type.SourceSimplePowerSourceInput,
       "type" | "source_component_id" | "ftype"
     > & { name?: string }
   ): PowerSourceBuilder
@@ -34,7 +34,7 @@ export class PowerSourceBuilderClass
     this.settable_source_properties.push(...["voltage"])
   }
 
-  setSourceProperties(props: Type.SimplePowerSource) {
+  setSourceProperties(props: Type.SourceSimplePowerSource) {
     this.source_properties = {
       ...this.source_properties,
       ...props,

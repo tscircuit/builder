@@ -13,7 +13,7 @@ export interface DiodeBuilder extends BaseComponentBuilder<DiodeBuilder> {
   builder_type: "diode_builder"
   setSourceProperties(
     properties: Except<
-      Type.SimpleDiode,
+      Type.SourceSimpleDiodeInput,
       "type" | "source_component_id" | "ftype" | "name"
     > & { name?: string }
   ): DiodeBuilder
@@ -32,7 +32,7 @@ export class DiodeBuilderClass
     }
   }
 
-  setSourceProperties(props: Type.SimpleDiode) {
+  setSourceProperties(props: Type.SourceSimpleDiode) {
     this.source_properties = {
       ...this.source_properties,
       ...props,

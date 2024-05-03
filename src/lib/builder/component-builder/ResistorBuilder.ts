@@ -12,7 +12,7 @@ export interface ResistorBuilder extends BaseComponentBuilder<ResistorBuilder> {
   builder_type: "resistor_builder"
   setSourceProperties(
     properties: Except<
-      Type.SimpleResistor,
+      Type.SourceSimpleResistorInput,
       "type" | "source_component_id" | "ftype"
     > & { name?: string }
   ): ResistorBuilder
@@ -33,7 +33,7 @@ export class ResistorBuilderClass
     this.settable_source_properties.push(...["resistance"])
   }
 
-  setSourceProperties(props: Type.SimpleResistor) {
+  setSourceProperties(props: Type.SourceSimpleResistor) {
     this.source_properties = {
       ...this.source_properties,
       ...props,

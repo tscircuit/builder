@@ -19,7 +19,7 @@ export interface BugBuilder extends BaseComponentBuilder<BugBuilder> {
   builder_type: "bug_builder"
   setSourceProperties(
     properties: Except<
-      Type.SimpleBug,
+      Type.SourceSimpleBugInput,
       "type" | "source_component_id" | "ftype" | "name"
     > & { name?: string }
   ): BugBuilder

@@ -11,7 +11,7 @@ export interface GroundBuilder extends BaseComponentBuilder<GroundBuilder> {
   builder_type: "ground_builder"
   setSourceProperties(
     properties: Except<
-      Type.SimpleGround,
+      Type.SourceSimpleGroundInput,
       "type" | "source_component_id" | "ftype" | "name"
     > & { name?: string }
   ): GroundBuilder
@@ -31,7 +31,7 @@ export class GroundBuilderClass
     }
   }
 
-  setSourceProperties(props: Type.SimpleGround) {
+  setSourceProperties(props: Type.SourceSimpleGround) {
     this.source_properties = {
       ...this.source_properties,
       ...props,

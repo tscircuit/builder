@@ -24,8 +24,8 @@ export const transformSchematicElement = (
     }
   } else if (elm.type === "schematic_text") {
     elm.position = applyToPoint(matrix, elm.position)
-  } else if (elm.type === "schematic_group") {
-    elm.center = applyToPoint(matrix, elm.center)
+    // } else if (elm.type === "schematic_group") {
+    //   elm.center = applyToPoint(matrix, elm.center)
   } else if (elm.type === "schematic_trace") {
   } else if (elm.type === "schematic_box") {
     const { x, y } = applyToPoint(matrix, { x: elm.x, y: elm.y })
@@ -53,7 +53,6 @@ export const transformPCBElement = (elm: Type.AnyElement, matrix: Matrix) => {
   if (
     elm.type === "pcb_plated_hole" ||
     elm.type === "pcb_hole" ||
-    elm.type === "pcb_drill" ||
     elm.type === "pcb_via" ||
     elm.type === "pcb_smtpad" ||
     elm.type === "pcb_port"
