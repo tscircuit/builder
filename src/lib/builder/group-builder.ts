@@ -12,6 +12,9 @@ import { createConstraintBuilder } from "./constrained-layout-builder"
 import { createViaBuilder } from "./component-builder/ViaBuilder"
 import * as AutoSch from "@tscircuit/schematic-autolayout"
 import { pairs } from "lib/utils/pairs"
+import { applySelector } from "lib/apply-selector"
+import { transformPCBElement, transformPCBElements } from "./transform-elements"
+import { Matrix, compose, identity, translate } from "transformation-matrix"
 
 export const getGroupAddables = () =>
   ({
@@ -199,7 +202,8 @@ export class GroupBuilderClass implements GroupBuilder {
     tb(builder)
     return this
   }
-  async build(bc): Promise<Type.AnyElement[]> {
+
+  async build(bc: Type.BuildContext): Promise<Type.AnyElement[]> {
     let elements: Type.AnyElement[] = []
     elements.push(
       ..._.flatten(await Promise.all(this.groups.map((g) => g.build(bc))))
@@ -209,24 +213,14 @@ export class GroupBuilderClass implements GroupBuilder {
     )
 
     if (this.auto_layout?.schematic) {
-      const scene = AutoSch.convertSoupToScene(elements)
-      // We have to manually add the connections in a simple way to avoid
-      // routing here
+      this._autoLayoutSchematic(elements)
+    }
 
-      for (const trc of this.traces) {
-        const { source_ports_in_route } = trc.getSourcePortsInRoute(elements)
-        for (const [spa, spb] of pairs(source_ports_in_route)) {
-          scene.connections.push({
-            from: spa.source_port_id,
-            to: spb.source_port_id,
-          })
-        }
-      }
-
-      // console.log(JSON.stringify(scene))
-      const laid_out_scene = AutoSch.ascendingCentralLrBug1(scene)
-      // console.log(laid_out_scene)
-      AutoSch.mutateSoupForScene(elements, laid_out_scene)
+    if (this.manual_layout && this.manual_layout.pcb_positions) {
+      this._layoutPcbPositionsFromManualLayout(
+        { elements, manual_layout: this.manual_layout },
+        bc
+      )
     }
 
     elements.push(
@@ -235,6 +229,96 @@ export class GroupBuilderClass implements GroupBuilder {
       )
     )
     return elements
+  }
+
+  private _autoLayoutSchematic(elements: Type.AnySoupElement[]) {
+    const scene = AutoSch.convertSoupToScene(elements)
+    // We have to manually add the connections in a simple way to avoid
+    // routing here
+    for (const trc of this.traces) {
+      const { source_ports_in_route } = trc.getSourcePortsInRoute(elements)
+      for (const [spa, spb] of pairs(source_ports_in_route)) {
+        scene.connections.push({
+          from: spa.source_port_id,
+          to: spb.source_port_id,
+        })
+      }
+    }
+
+    // console.log(JSON.stringify(scene))
+    const laid_out_scene = AutoSch.ascendingCentralLrBug1(scene)
+    // console.log(laid_out_scene)
+    AutoSch.mutateSoupForScene(elements, laid_out_scene)
+  }
+
+  private _layoutPcbPositionsFromManualLayout(
+    {
+      elements,
+      manual_layout,
+    }: { elements: Type.AnySoupElement[]; manual_layout: Type.ManualLayout },
+    bc: Type.BuildContext
+  ) {
+    for (const pcb_position of manual_layout.pcb_positions!) {
+      const selector_matches = applySelector(elements, pcb_position.selector)
+      if (selector_matches.length === 0) {
+        elements.push({
+          pcb_error_id: bc.getId("pcb_error"),
+          type: "pcb_error",
+          message: `No elements found for selector: "${pcb_position.selector}"`,
+          error_type: "pcb_placement_error",
+        })
+        continue
+      } else if (selector_matches.length > 1) {
+        elements.push({
+          pcb_error_id: bc.getId("pcb_error"),
+          type: "pcb_error",
+          message: `Multiple elements found for selector: "${pcb_position.selector}"`,
+          error_type: "pcb_placement_error",
+          // TODO add sources
+        })
+        continue
+      }
+
+      const source_component = selector_matches[0] as Type.SourceComponent
+      const pcb_component = elements.find(
+        (e) =>
+          e.type === "pcb_component" &&
+          e.source_component_id === source_component.source_component_id
+      ) as Type.PCBComponent
+
+      if (!pcb_component) {
+        elements.push({
+          pcb_error_id: bc.getId("pcb_error"),
+          type: "pcb_error",
+          message: `No pcb_component found for source component: "${source_component.source_component_id}"`,
+          error_type: "pcb_placement_error",
+        })
+        continue
+      }
+
+      const relative_to = pcb_position.relative_to ?? "group_center"
+
+      let mat: Matrix = identity()
+      if (relative_to === "group_center") {
+        mat = compose(
+          translate(-pcb_component.center.x, -pcb_component.center.y),
+          translate(pcb_position.center.x, pcb_position.center.y)
+        )
+      } else {
+        throw new Error(
+          'relative_to is currently not supported for selectors (try using "group_center"'
+        )
+      }
+
+      transformPCBElements(
+        elements.filter(
+          (e) =>
+            "pcb_component_id" in e &&
+            e.pcb_component_id === pcb_component.pcb_component_id
+        ),
+        mat
+      )
+    }
   }
 }
 

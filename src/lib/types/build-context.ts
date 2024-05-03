@@ -10,6 +10,8 @@ export type BuildContext = {
     y: number
   }
 
+  getId: (prefix: string) => string
+
   schematic_component_id?: string
   source_component_id?: string
   pcb_component_id?: string
