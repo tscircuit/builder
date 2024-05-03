@@ -36,14 +36,14 @@ export const createProjectBuilder = (): ProjectBuilder => {
   builder.project_builder = builder
   const idCount = {}
   const resetIdCount = () => Object.keys(idCount).map((k) => (idCount[k] = 0))
-  builder.getId = (prefix: string) => {
-    idCount[prefix] = idCount[prefix] || 0
-    return `${prefix}_${idCount[prefix]++}`
-  }
   builder.build_group = builder.build
   builder.createBuildContext = (): Type.BuildContext => ({
     distance_unit: "mm",
     all_copper_layers: ["top", "bottom"],
+    getId(prefix: string) {
+      idCount[prefix] = idCount[prefix] || 0
+      return `${prefix}_${idCount[prefix]++}`
+    },
     convert(v) {
       if (typeof v === "undefined") return undefined
       if (typeof v === "number") return v
@@ -69,6 +69,7 @@ export const createProjectBuilder = (): ProjectBuilder => {
       return { ...this, ...mutation, parent: this }
     },
   })
+  builder.getId = builder.createBuildContext().getId
 
   const groupBuilderAdd = builder.add.bind(builder)
   builder.add = (builder_type, callback) => {
