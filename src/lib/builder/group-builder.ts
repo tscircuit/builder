@@ -81,6 +81,7 @@ export class GroupBuilderClass implements GroupBuilder {
   name: string
   addables: GroupBuilderAddables
   auto_layout?: { schematic: true }
+  manual_layout: Type.ManualLayout
 
   constructor(project_builder?: ProjectBuilder) {
     this.project_builder = project_builder!
@@ -122,6 +123,9 @@ export class GroupBuilderClass implements GroupBuilder {
     }
     if (props.auto_schematic_layout) {
       this.auto_layout = { schematic: true }
+    }
+    if (props.manual_layout) {
+      this.manual_layout = props.manual_layout
     }
     return this
   }
