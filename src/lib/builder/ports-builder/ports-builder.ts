@@ -167,6 +167,7 @@ export class PortsBuilderClass implements PortsBuilder {
           type: "pcb_port",
           pcb_port_id,
           source_port_id,
+          pcb_component_id: this.pcb_component_id,
         } as Type.PCBPort,
       ] as Type.AnyElement[]
     }) as Type.AnyElement[]

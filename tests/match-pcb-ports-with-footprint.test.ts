@@ -34,11 +34,13 @@ test("match pcb ports with footprint", async (t) => {
         type: "pcb_port" as const,
         pcb_port_id: "pcb_port_0",
         source_port_id: "source_port_0",
+        pcb_component_id: "simple_resistor_0",
       },
       {
         type: "pcb_port" as const,
         pcb_port_id: "pcb_port_1",
         source_port_id: "source_port_1",
+        pcb_component_id: "simple_resistor_0",
       },
     ],
     source_ports: [

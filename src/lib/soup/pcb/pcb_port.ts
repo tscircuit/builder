@@ -7,6 +7,7 @@ export const pcb_port = z
     type: z.literal("pcb_port"),
     pcb_port_id: z.string(),
     source_port_id: z.string(),
+    pcb_component_id: z.string(),
     x: distance,
     y: distance,
     layers: z.array(layer_ref),

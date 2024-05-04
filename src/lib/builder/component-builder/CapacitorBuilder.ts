@@ -80,6 +80,7 @@ export class CapacitorBuilderClass
 
     this.ports.setSchematicComponent(schematic_component_id)
     this.ports.setSourceComponent(source_component_id)
+    this.ports.setPCBComponent(pcb_component_id)
 
     const textElements: Type.SchematicText[] = []
 
