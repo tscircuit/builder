@@ -3,9 +3,9 @@ import { point } from "../common"
 import { distance } from "../units"
 import { layer_ref } from "./properties/layer_ref"
 
-export const pcb_tracehint = z
+export const pcb_trace_hint = z
   .object({
-    type: z.literal("pcb_tracehint"),
+    type: z.literal("pcb_trace_hint"),
     pcb_port_id: z.string(),
     pcb_component_id: z.string(),
     route: z.array(
@@ -18,3 +18,6 @@ export const pcb_tracehint = z
     ),
   })
   .describe("A hint that was used to generate a PCB trace")
+
+export type PcbTraceHint = z.infer<typeof pcb_trace_hint>
+export type PcbTraceHintInput = z.input<typeof pcb_trace_hint>

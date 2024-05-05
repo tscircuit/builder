@@ -8,6 +8,7 @@ import {
   TraceBuilder,
   TraceBuilderCallback,
 } from "./trace-builder"
+import { createTraceHintBuilder } from "./trace-hint-builder"
 import { createConstraintBuilder } from "./constrained-layout-builder"
 import { createViaBuilder } from "./component-builder/ViaBuilder"
 import * as AutoSch from "@tscircuit/schematic-autolayout"
@@ -32,6 +33,7 @@ export const getGroupAddables = () =>
     trace: createTraceBuilder,
     via: createViaBuilder,
     group: createGroupBuilder,
+    trace_hint: createTraceHintBuilder,
   } as const)
 
 export type GroupBuilderAddables = ReturnType<typeof getGroupAddables>
