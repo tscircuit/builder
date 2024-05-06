@@ -24,7 +24,10 @@ test("basic tracehint for pad", async (t) => {
   const trace_hint = trace_hints[0]
 
   // waiting for select
-  // const pcb_port = su(soup).pcb_port.getWhere({ source_port_id })
+  const pcb_port = su(soup).pcb_port.select(".R1 > .left")!
+
+  t.is(trace_hint.route[0].x, pcb_port.x - 1)
+  t.is(trace_hint.route[0].y, pcb_port.y + 1)
 
   logSoup(soup)
 })
