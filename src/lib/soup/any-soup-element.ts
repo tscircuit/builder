@@ -22,6 +22,7 @@ export const any_soup_element = z.union([
   pcb.pcb_via,
   pcb.pcb_smtpad,
   pcb.pcb_board,
+  pcb.pcb_trace_hint,
   pcb.pcb_trace_error,
   pcb.pcb_placement_error,
   pcb.pcb_port_not_matched_error,

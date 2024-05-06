@@ -14,5 +14,5 @@ export const pcb_port = z
   })
   .describe("Defines a port on the PCB")
 
-export type PCBPortInput = z.input<typeof pcb_port>
 export type PCBPort = z.infer<typeof pcb_port>
+export type PCBPortInput = z.input<typeof pcb_port>

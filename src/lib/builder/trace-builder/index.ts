@@ -2,6 +2,7 @@ import { InputPoint } from "./../../soup/common/point"
 import { extractIds } from "./../../utils/extract-ids"
 // TODO rename this to trace-builder
 
+import su from "@tscircuit/soup-util"
 import * as Type from "lib/types"
 import { Except, Simplify } from "type-fest"
 import { ProjectBuilder, GroupBuilder } from ".."
@@ -488,13 +489,33 @@ export const createTraceBuilder = (
       return solveForSingleLayerRoute(terminals, [...common_layers].sort()[0])
     }
 
-    if (internal.pcb_route_hints.length === 0) {
+    let pcb_route_hints = internal.pcb_route_hints ?? []
+
+    if (pcb_route_hints.length === 0) {
+      // check if there are any trace_hints that are relevant to our ports, if
+      // there are, use them as our route hints
+      const port0_hint = su(parent_elements).pcb_trace_hint.getWhere({
+        pcb_port_id: pcb_terminal_port_ids[0],
+      })
+      const port1_hint = su(parent_elements).pcb_trace_hint.getWhere({
+        pcb_port_id: pcb_terminal_port_ids[1],
+      })
+
+      if (port0_hint) {
+        pcb_route_hints.push(...port0_hint.route)
+      }
+      if (port1_hint) {
+        pcb_route_hints.push(...[...port1_hint.route].reverse())
+      }
+    }
+
+    if (pcb_route_hints.length === 0) {
       pcb_route.push(...solveForRoute(pcb_terminals))
     } else {
       // TODO add support for more than 2 terminals w/ hints
       const ordered_pcb_terminals_and_hints = [
         pcb_terminals[0],
-        ...(internal.pcb_route_hints as any).map((p) => ({
+        ...(pcb_route_hints as any).map((p) => ({
           ...p,
           x: bc.convert(p.x),
           y: bc.convert(p.y),
