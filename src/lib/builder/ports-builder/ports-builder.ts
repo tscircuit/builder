@@ -168,6 +168,8 @@ export class PortsBuilderClass implements PortsBuilder {
           pcb_port_id,
           source_port_id,
           pcb_component_id: this.pcb_component_id,
+          x: 0,
+          y: 0,
         } as Type.PCBPort,
       ] as Type.AnyElement[]
     }) as Type.AnyElement[]
