@@ -8,7 +8,7 @@ import {
   TraceBuilder,
   TraceBuilderCallback,
 } from "./trace-builder"
-import { createTraceHintBuilder } from "./trace-hint-builder"
+import { TraceHintBuilder, createTraceHintBuilder } from "./trace-hint-builder"
 import { createConstraintBuilder } from "./constrained-layout-builder"
 import { createViaBuilder } from "./component-builder/ViaBuilder"
 import * as AutoSch from "@tscircuit/schematic-autolayout"
@@ -83,6 +83,7 @@ export class GroupBuilderClass implements GroupBuilder {
   groups: GroupBuilder[]
   components: CB.BaseComponentBuilder<any>[]
   traces: TraceBuilder[]
+  trace_hints: TraceHintBuilder[]
   project_builder: ProjectBuilder
   name: string
   addables: GroupBuilderAddables
@@ -100,6 +101,7 @@ export class GroupBuilderClass implements GroupBuilder {
     this.groups = []
     this.components = []
     this.traces = []
+    this.trace_hints = []
     return this
   }
   add(new_builder_type, callback) {
@@ -161,6 +163,8 @@ export class GroupBuilderClass implements GroupBuilder {
       this.groups.push(child as any)
     } else if (child.builder_type === "trace_builder") {
       this.traces.push(child as any)
+    } else if (child.builder_type === "trace_hint_builder") {
+      this.trace_hints.push(child as any)
     } else if (this.addables[child.builder_type.split("_builder")[0]]) {
       this.components.push(child as any)
     } else {
@@ -231,6 +235,7 @@ export class GroupBuilderClass implements GroupBuilder {
     }
 
     if (this.layout_builder) {
+      // @ts-ignore
       this.layout_builder.applyToSoup(elements, bc)
     }
 
@@ -246,6 +251,7 @@ export class GroupBuilderClass implements GroupBuilder {
    * @deprecated use the layout prop (@tscircuit/layout) instead
    */
   private _autoLayoutSchematic(elements: Type.AnySoupElement[]) {
+    // @ts-ignore
     const scene = AutoSch.convertSoupToScene(elements)
     // We have to manually add the connections in a simple way to avoid
     // routing here
@@ -262,6 +268,7 @@ export class GroupBuilderClass implements GroupBuilder {
     // console.log(JSON.stringify(scene))
     const laid_out_scene = AutoSch.ascendingCentralLrBug1(scene)
     // console.log(laid_out_scene)
+    // @ts-ignore
     AutoSch.mutateSoupForScene(elements, laid_out_scene)
   }
 

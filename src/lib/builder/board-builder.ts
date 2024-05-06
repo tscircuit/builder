@@ -7,6 +7,7 @@ import * as Type from "lib/types"
 import * as CB from "./component-builder"
 import { TraceBuilder, createTraceBuilder } from "./trace-builder"
 import { ProjectBuilder } from "./project-builder"
+import { createTraceHintBuilder } from "./trace-hint-builder"
 
 export const getBoardAddables = () =>
   ({
@@ -23,6 +24,7 @@ export const getBoardAddables = () =>
     trace: createTraceBuilder,
     via: CB.createViaBuilder,
     group: createGroupBuilder,
+    trace_hint: createTraceHintBuilder,
   } as const)
 export type BoardBuilderAddables = ReturnType<typeof getBoardAddables>
 

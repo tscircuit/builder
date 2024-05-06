@@ -1,15 +1,12 @@
 import su from "@tscircuit/soup-util"
 import { applySelector } from "lib/apply-selector"
-import {
-  AnySoupElement,
-  LayerRef,
-  RouteHintPoint,
-  route_hint_point,
-} from "lib/soup"
+import { AnySoupElement, LayerRef, RouteHintPoint } from "lib/soup"
 import { BuildContext, Dimension } from "lib/types"
 import { ProjectBuilder } from "../project-builder"
 import { PcbTraceHint } from "lib/soup/pcb/pcb_trace_hint"
 import { z } from "zod"
+import { route_hint_point } from "@tscircuit/soup"
+import { BuilderInterface } from "../builder-interface"
 
 const trace_hints_props = z.object({
   for: z.string(),
@@ -21,7 +18,13 @@ const trace_hints_props = z.object({
 type TraceHintProps = z.infer<typeof trace_hints_props>
 type TraceHintPropsInput = z.input<typeof trace_hints_props>
 
+export interface TraceHintBuilder extends BuilderInterface {
+  setProps(new_props: Partial<TraceHintPropsInput>): this
+  build(parent_elements: AnySoupElement[], bc: BuildContext): AnySoupElement[]
+}
+
 class TraceHintBuilderClass {
+  builder_type: "trace_hint_builder" = "trace_hint_builder"
   props: Partial<TraceHintPropsInput>
 
   constructor() {
@@ -45,6 +48,10 @@ class TraceHintBuilderClass {
       throw new Error("TraceHintBuilder requires a 'for' prop")
     }
 
+    console.log({
+      parent_elements,
+      for: props.for,
+    })
     const target_elms = applySelector(parent_elements, props.for)
 
     if (target_elms.length === 0) {
@@ -112,6 +119,8 @@ class TraceHintBuilderClass {
   }
 }
 
-export const createTraceHintBuilder = (project_builder: ProjectBuilder) => {
+export const createTraceHintBuilder = (
+  project_builder: ProjectBuilder
+): TraceHintBuilder => {
   return new TraceHintBuilderClass()
 }
