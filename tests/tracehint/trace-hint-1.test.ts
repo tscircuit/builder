@@ -2,7 +2,7 @@ import test from "ava"
 import { su } from "@tscircuit/soup-util"
 import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
-test("basic tracehint for pad", async (t) => {
+test("trace hint 1: basic trace_hint for pad", async (t) => {
   const { logSoup, pb } = await getTestFixture(t)
 
   const soup = await pb
