@@ -48,10 +48,6 @@ class TraceHintBuilderClass {
       throw new Error("TraceHintBuilder requires a 'for' prop")
     }
 
-    console.log({
-      parent_elements,
-      for: props.for,
-    })
     const target_elms = applySelector(parent_elements, props.for)
 
     if (target_elms.length === 0) {
@@ -72,14 +68,14 @@ class TraceHintBuilderClass {
     }
 
     // Find associated pcb_port
-    const pcb_port = su(parent_elements).pcb_port.getUsing({
+    const pcb_port = su(parent_elements).pcb_port.getWhere({
       source_port_id: target_elm.source_port_id,
     })
 
     if (!pcb_port) {
       // TODO source error
       throw new Error(
-        `No pcb_port found for source_port: ${target_elm.source_port_id}/${this.props.for}`
+        `No pcb_port found for source_port: "${target_elm.source_port_id}"/"${this.props.for}"`
       )
     }
 

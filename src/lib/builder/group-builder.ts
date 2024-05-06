@@ -241,6 +241,12 @@ export class GroupBuilderClass implements GroupBuilder {
 
     elements.push(
       ..._.flatten(
+        await Promise.all(this.trace_hints.map((c) => c.build(elements, bc)))
+      )
+    )
+
+    elements.push(
+      ..._.flatten(
         await Promise.all(this.traces.map((c) => c.build(elements, bc)))
       )
     )
