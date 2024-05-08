@@ -19,7 +19,7 @@ export const transformSchematicElement = (
     if (elm.facing_direction) {
       elm.facing_direction = rotateDirection(
         elm.facing_direction,
-        (Math.acos(matrix.a) / Math.PI) * 2
+        -(Math.atan2(matrix.b, matrix.a) / Math.PI) * 2
       )
     }
   } else if (elm.type === "schematic_text") {
