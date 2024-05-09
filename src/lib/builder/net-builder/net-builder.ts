@@ -10,7 +10,7 @@ export interface NetBuilder extends BuilderInterface {
 }
 
 export class NetBuilderClass implements NetBuilder {
-  builder_type: "net_builder"
+  builder_type = "net_builder" as const
   props: any
 
   setProps(props: any) {
@@ -19,7 +19,11 @@ export class NetBuilderClass implements NetBuilder {
   }
 
   build(bc: BuildContext): AnySoupElement[] {
-    return []
+    return [
+      {
+        type: "source_net",
+      },
+    ]
   }
 }
 
