@@ -1,6 +1,17 @@
 import * as Type from "lib/types"
 import * as parsel from "parsel-js"
 import { convertAbbrToFType } from "./convert-abbr-to-ftype"
+import { AnySoupElement } from "@tscircuit/soup"
+
+const filterByType = (
+  elements: AnySoupElement[],
+  type: string
+): AnySoupElement[] => {
+  type = convertAbbrToFType(type)
+  return elements.filter(
+    (elm) => ("ftype" in elm && elm.ftype === type) || elm.type === type
+  )
+}
 
 /**
  * Filter elements to match the selector, e.g. to access the left port of a
@@ -36,10 +47,7 @@ export const applySelectorAST = (
                 doesElmMatchClassName(elm, left.name)
               )
             } else if (left.type === "type") {
-              const ftype = convertAbbrToFType(left.name)
-              matchElms = elements.filter(
-                (elm) => "ftype" in elm && elm.ftype === ftype
-              )
+              matchElms = filterByType(elements, left.name)
             }
 
             const childrenOfMatchingElms = matchElms.flatMap((matchElm) =>
@@ -80,17 +88,7 @@ export const applySelectorAST = (
       )
     }
     case "type": {
-      if (selectorAST.name === "net")
-        // @ts-ignore until @tscircuit/soup is completely adopted by builder
-        return elements.filter((elm) => elm.type === "source_net")
-      if (selectorAST.name === "port")
-        return elements.filter((elm) => elm.type === "source_port")
-
-      return elements.filter(
-        (elm) =>
-          elm.type === selectorAST.name ||
-          ("ftype" in elm && elm.ftype === convertAbbrToFType(selectorAST.name))
-      )
+      return filterByType(elements, selectorAST.name) as Type.AnyElement[]
     }
     case "class": {
       return elements.filter((elm) =>
