@@ -80,6 +80,12 @@ export const applySelectorAST = (
       )
     }
     case "type": {
+      if (selectorAST.name === "net")
+        // @ts-ignore until @tscircuit/soup is completely adopted by builder
+        return elements.filter((elm) => elm.type === "source_net")
+      if (selectorAST.name === "port")
+        return elements.filter((elm) => elm.type === "source_port")
+
       return elements.filter(
         (elm) =>
           elm.type === selectorAST.name ||

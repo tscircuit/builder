@@ -272,7 +272,8 @@ export class GroupBuilderClass implements GroupBuilder {
     // We have to manually add the connections in a simple way to avoid
     // routing here
     for (const trc of this.traces) {
-      const { source_ports_in_route } = trc.getSourcePortsInRoute(elements)
+      const { source_ports_in_route } =
+        trc.getSourcePortsAndNetsInRoute(elements)
       for (const [spa, spb] of pairs(source_ports_in_route)) {
         scene.connections.push({
           from: spa.source_port_id,
