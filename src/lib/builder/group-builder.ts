@@ -17,6 +17,7 @@ import { applySelector } from "lib/apply-selector"
 import { transformPCBElement, transformPCBElements } from "./transform-elements"
 import { Matrix, compose, identity, translate } from "transformation-matrix"
 import { LayoutBuilder } from "@tscircuit/layout"
+import { createNetBuilder } from "./net-builder/net-builder"
 
 export const getGroupAddables = () =>
   ({
@@ -34,6 +35,7 @@ export const getGroupAddables = () =>
     via: createViaBuilder,
     group: createGroupBuilder,
     trace_hint: createTraceHintBuilder,
+    net: createNetBuilder,
   } as const)
 
 export type GroupBuilderAddables = ReturnType<typeof getGroupAddables>
