@@ -18,6 +18,7 @@ import { transformPCBElement, transformPCBElements } from "./transform-elements"
 import { Matrix, compose, identity, translate } from "transformation-matrix"
 import { LayoutBuilder } from "@tscircuit/layout"
 import { createNetBuilder, NetBuilder } from "./net-builder/net-builder"
+import { AnySoupElement } from "@tscircuit/soup"
 
 export const getGroupAddables = () =>
   ({
@@ -296,7 +297,7 @@ export class GroupBuilderClass implements GroupBuilder {
     {
       elements,
       manual_layout,
-    }: { elements: Type.AnySoupElement[]; manual_layout: Type.ManualLayout },
+    }: { elements: AnySoupElement[]; manual_layout: Type.ManualLayout },
     bc: Type.BuildContext
   ) {
     for (const pcb_position of manual_layout.pcb_positions!) {

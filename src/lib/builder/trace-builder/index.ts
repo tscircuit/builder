@@ -135,7 +135,6 @@ export const createTraceBuilder = (
       for (const selectedElm of selectedElms) {
         if (
           selectedElm.type !== "source_port" &&
-          // @ts-expect-error until @tscircuit/soup is completely adopted by builder
           selectedElm.type !== "source_net"
         ) {
           return {
@@ -156,7 +155,6 @@ export const createTraceBuilder = (
         }
         if (selectedElm.type === "source_port") {
           source_ports_in_route.push(selectedElm)
-          // @ts-expect-error until @tscircuit/soup is completely adopted by builder
         } else if (selectedElm.type === "source_net") {
           source_nets_in_route.push(selectedElm)
         }
@@ -182,7 +180,6 @@ export const createTraceBuilder = (
         {
           source_net: source_nets_in_route[0],
           source_port: source_ports_in_route[0],
-          // @ts-expect-error until @tscircuit/soup is completely adopted by builder
           parent_elements,
         },
         bc

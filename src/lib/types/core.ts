@@ -2,6 +2,7 @@ import { LayerRef } from "lib/soup/pcb/properties/layer_ref"
 import { SourceComponent } from "./source-component"
 import { Dimension } from "./util"
 import * as Soup from "lib/soup"
+import { AnySoupElement } from "@tscircuit/soup"
 
 export interface SchematicConfig {
   type: "schematic_config"
@@ -160,7 +161,7 @@ export interface Project {
 //   | SourceError
 //   | Soup.PCBBoard
 
-export type AnyElement = Soup.AnySoupElement
+export type AnyElement = AnySoupElement
 
 export type ElementType = AnyElement["type"]
 export type ElementOfType<T extends ElementType> = Extract<
