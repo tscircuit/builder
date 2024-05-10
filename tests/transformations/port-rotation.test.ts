@@ -3,6 +3,7 @@ import test from "ava"
 import { logLayout } from "../utils/log-layout"
 import { getTestFixture } from "tests/fixtures/get-test-fixture"
 import { su } from "@tscircuit/soup-util"
+import { AnySoupElement } from "@tscircuit/soup"
 
 test("port rotation (facing_direction)", async (t) => {
   const { pb, logSoup } = await getTestFixture(t)

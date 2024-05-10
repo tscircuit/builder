@@ -35,5 +35,4 @@ export const any_soup_element = z.union([
   sch.schematic_path,
 ])
 
-export type AnySoupElement = z.infer<typeof any_soup_element>
-export type AnySoupElementInput = z.input<typeof any_soup_element>
+export type { AnySoupElement, AnySoupElementInput } from "@tscircuit/soup"

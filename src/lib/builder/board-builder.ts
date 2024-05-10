@@ -8,6 +8,7 @@ import * as CB from "./component-builder"
 import { TraceBuilder, createTraceBuilder } from "./trace-builder"
 import { ProjectBuilder } from "./project-builder"
 import { createTraceHintBuilder } from "./trace-hint-builder"
+import { createNetBuilder } from "./net-builder/net-builder"
 
 export const getBoardAddables = () =>
   ({
@@ -25,6 +26,7 @@ export const getBoardAddables = () =>
     via: CB.createViaBuilder,
     group: createGroupBuilder,
     trace_hint: createTraceHintBuilder,
+    net: createNetBuilder,
   } as const)
 export type BoardBuilderAddables = ReturnType<typeof getBoardAddables>
 

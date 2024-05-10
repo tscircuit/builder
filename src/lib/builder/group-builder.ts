@@ -17,6 +17,8 @@ import { applySelector } from "lib/apply-selector"
 import { transformPCBElement, transformPCBElements } from "./transform-elements"
 import { Matrix, compose, identity, translate } from "transformation-matrix"
 import { LayoutBuilder } from "@tscircuit/layout"
+import { createNetBuilder, NetBuilder } from "./net-builder/net-builder"
+import { AnySoupElement } from "@tscircuit/soup"
 
 export const getGroupAddables = () =>
   ({
@@ -34,6 +36,7 @@ export const getGroupAddables = () =>
     via: createViaBuilder,
     group: createGroupBuilder,
     trace_hint: createTraceHintBuilder,
+    net: createNetBuilder,
   } as const)
 
 export type GroupBuilderAddables = ReturnType<typeof getGroupAddables>
@@ -83,6 +86,7 @@ export class GroupBuilderClass implements GroupBuilder {
   groups: GroupBuilder[]
   components: CB.BaseComponentBuilder<any>[]
   traces: TraceBuilder[]
+  nets: NetBuilder[]
   trace_hints: TraceHintBuilder[]
   project_builder: ProjectBuilder
   name: string
@@ -102,6 +106,7 @@ export class GroupBuilderClass implements GroupBuilder {
     this.components = []
     this.traces = []
     this.trace_hints = []
+    this.nets = []
     return this
   }
   add(new_builder_type, callback) {
@@ -165,6 +170,8 @@ export class GroupBuilderClass implements GroupBuilder {
       this.traces.push(child as any)
     } else if (child.builder_type === "trace_hint_builder") {
       this.trace_hints.push(child as any)
+    } else if (child.builder_type === "net_builder") {
+      this.nets.push(child as any)
     } else if (this.addables[child.builder_type.split("_builder")[0]]) {
       this.components.push(child as any)
     } else {
@@ -245,6 +252,10 @@ export class GroupBuilderClass implements GroupBuilder {
       )
     )
 
+    elements.push(..._.flatten(this.nets.map((n) => n.build(bc))))
+
+    // Maybe scan traces for nets and add them if they don't exist
+
     elements.push(
       ..._.flatten(
         await Promise.all(this.traces.map((c) => c.build(elements, bc)))
@@ -262,7 +273,8 @@ export class GroupBuilderClass implements GroupBuilder {
     // We have to manually add the connections in a simple way to avoid
     // routing here
     for (const trc of this.traces) {
-      const { source_ports_in_route } = trc.getSourcePortsInRoute(elements)
+      const { source_ports_in_route } =
+        trc.getSourcePortsAndNetsInRoute(elements)
       for (const [spa, spb] of pairs(source_ports_in_route)) {
         scene.connections.push({
           from: spa.source_port_id,
@@ -285,7 +297,7 @@ export class GroupBuilderClass implements GroupBuilder {
     {
       elements,
       manual_layout,
-    }: { elements: Type.AnySoupElement[]; manual_layout: Type.ManualLayout },
+    }: { elements: AnySoupElement[]; manual_layout: Type.ManualLayout },
     bc: Type.BuildContext
   ) {
     for (const pcb_position of manual_layout.pcb_positions!) {

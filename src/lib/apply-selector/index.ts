@@ -1,27 +1,38 @@
 import * as Type from "lib/types"
 import * as parsel from "parsel-js"
 import { convertAbbrToFType } from "./convert-abbr-to-ftype"
+import { AnySoupElement } from "@tscircuit/soup"
+
+const filterByType = (
+  elements: AnySoupElement[],
+  type: string
+): AnySoupElement[] => {
+  type = convertAbbrToFType(type)
+  return elements.filter(
+    (elm) => ("ftype" in elm && elm.ftype === type) || elm.type === type
+  )
+}
 
 /**
  * Filter elements to match the selector, e.g. to access the left port of a
  * resistor you can do ".R1 > port.left"
  */
 export const applySelector = (
-  elements: Type.AnyElement[],
+  elements: AnySoupElement[],
   selectorRaw: string
-): Type.AnyElement[] => {
+): AnySoupElement[] => {
   const selectorAST = parsel.parse(selectorRaw)
   return applySelectorAST(elements, selectorAST!)
 }
 
-const doesElmMatchClassName = (elm: Type.AnyElement, className: string) =>
+const doesElmMatchClassName = (elm: AnySoupElement, className: string) =>
   ("name" in elm && elm.name === className) ||
   ("port_hints" in elm && elm.port_hints?.includes(className))
 
 export const applySelectorAST = (
-  elements: Type.AnyElement[],
+  elements: AnySoupElement[],
   selectorAST: parsel.AST
-): Type.AnyElement[] => {
+): AnySoupElement[] => {
   switch (selectorAST.type) {
     case "complex": {
       switch (selectorAST.combinator) {
@@ -36,10 +47,7 @@ export const applySelectorAST = (
                 doesElmMatchClassName(elm, left.name)
               )
             } else if (left.type === "type") {
-              const ftype = convertAbbrToFType(left.name)
-              matchElms = elements.filter(
-                (elm) => "ftype" in elm && elm.ftype === ftype
-              )
+              matchElms = filterByType(elements, left.name)
             }
 
             const childrenOfMatchingElms = matchElms.flatMap((matchElm) =>
@@ -80,11 +88,7 @@ export const applySelectorAST = (
       )
     }
     case "type": {
-      return elements.filter(
-        (elm) =>
-          elm.type === selectorAST.name ||
-          ("ftype" in elm && elm.ftype === convertAbbrToFType(selectorAST.name))
-      )
+      return filterByType(elements, selectorAST.name) as AnySoupElement[]
     }
     case "class": {
       return elements.filter((elm) =>

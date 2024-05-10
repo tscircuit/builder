@@ -19,6 +19,8 @@ import { pairs } from "lib/utils/pairs"
 import { mergeRoutes } from "./merge-routes"
 import { uniq } from "lib/utils/uniq"
 import { findPossibleTraceLayerCombinations } from "./find-possible-trace-layer-combinations"
+import { SourceNet } from "@tscircuit/soup"
+import { buildTraceForSinglePortAndNet } from "./build-trace-for-single-port-and-net"
 
 type RouteSolverOrString = Type.RouteSolver | "rmst" | "straight" | "route1"
 
@@ -38,8 +40,9 @@ export interface TraceBuilder {
   getConnections: () => string[]
   setRouteSolver: (routeSolver: RouteSolverOrString) => TraceBuilder
   addConnections: (portSelectors: Array<string>) => TraceBuilder
-  getSourcePortsInRoute: (parent_elements: Type.AnyElement[]) => {
+  getSourcePortsAndNetsInRoute: (parent_elements: Type.AnyElement[]) => {
     source_ports_in_route: Type.SourcePort[]
+    source_nets_in_route: SourceNet[]
     source_errors: any[]
   }
   build(
@@ -109,8 +112,11 @@ export const createTraceBuilder = (
     return builder
   }
 
-  builder.getSourcePortsInRoute = (parent_elements: Type.AnyElement[]) => {
+  builder.getSourcePortsAndNetsInRoute = (
+    parent_elements: Type.AnyElement[]
+  ) => {
     const source_ports_in_route: Type.SourcePort[] = []
+    const source_nets_in_route: SourceNet[] = []
     for (const portSelector of internal.portSelectors) {
       const selectedElms = applySelector(parent_elements, portSelector)
       if (selectedElms.length === 0) {
@@ -122,13 +128,18 @@ export const createTraceBuilder = (
               ...extractIds(parent_elements?.[0] ?? {}),
             },
           ],
+          source_nets_in_route: [],
           source_ports_in_route: [],
         }
       }
       for (const selectedElm of selectedElms) {
-        if (selectedElm.type !== "source_port") {
+        if (
+          selectedElm.type !== "source_port" &&
+          selectedElm.type !== "source_net"
+        ) {
           return {
             source_ports_in_route: [],
+            source_nets_in_route: [],
             source_errors: [
               {
                 type: "source_error",
@@ -142,19 +153,38 @@ export const createTraceBuilder = (
             ],
           }
         }
-        source_ports_in_route.push(selectedElm)
+        if (selectedElm.type === "source_port") {
+          source_ports_in_route.push(selectedElm)
+        } else if (selectedElm.type === "source_net") {
+          source_nets_in_route.push(selectedElm)
+        }
       }
     }
-    return { source_ports_in_route, source_errors: [] }
+    return { source_ports_in_route, source_nets_in_route, source_errors: [] }
   }
 
   builder.build = async (
     parent_elements: Type.AnyElement[] = [],
     bc: Type.BuildContext
   ) => {
-    const { source_ports_in_route, source_errors } =
-      builder.getSourcePortsInRoute(parent_elements)
+    const { source_ports_in_route, source_nets_in_route, source_errors } =
+      builder.getSourcePortsAndNetsInRoute(parent_elements)
+
     if (source_errors?.length > 0) return source_errors
+
+    if (
+      source_ports_in_route.length === 1 &&
+      source_nets_in_route.length === 1
+    ) {
+      return buildTraceForSinglePortAndNet(
+        {
+          source_net: source_nets_in_route[0],
+          source_port: source_ports_in_route[0],
+          parent_elements,
+        },
+        bc
+      )
+    }
 
     const source_trace_id = builder.project_builder.getId("source_trace")
     const source_trace: Type.SourceTrace = {

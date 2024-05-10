@@ -8,13 +8,14 @@ import {
 import { createProjectFromElements } from "../project/create-project-from-elements"
 import convertUnits from "convert-units"
 import { createBoardBuilder } from "./board-builder"
+import { AnySoupElement } from "@tscircuit/soup"
 
 export type ProjectBuilder = Omit<GroupBuilder, "add" | "setProps"> & {
   build_context: Type.BuildContext
   getId: (prefix: string) => string
   addGroup: (groupBuilderCallback: GroupBuilderCallback) => ProjectBuilder
   buildProject: () => Promise<Type.Project>
-  build(): Promise<Type.AnyElement[]>
+  build(): Promise<AnySoupElement[]>
   add<T extends keyof GroupBuilderAddables | "board">(
     builder_type: T,
     callback: (
