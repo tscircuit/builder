@@ -11,8 +11,19 @@ test("net builder 1", async (t) => {
     .add("trace", (tb) => tb.setProps({ from: ".R1 > .right", to: "net.N1" }))
     .build()
 
-  const [source_net] = su(soup).source_net.list()
+  const [source_net] = su(soup as any).source_net.list()
   t.is(source_net.name, "N1")
 
-  logSoup(soup)
+  const errors = soup.filter((e) => e.type.includes("_error"))
+
+  if (errors.length > 0) {
+    console.log(errors)
+  }
+  t.is(errors.length, 0)
+
+  const [net_label] = su(soup as any).schematic_net_label.list()
+
+  t.truthy(net_label)
+
+  await logSoup(soup)
 })

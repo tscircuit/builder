@@ -20,6 +20,7 @@ import { mergeRoutes } from "./merge-routes"
 import { uniq } from "lib/utils/uniq"
 import { findPossibleTraceLayerCombinations } from "./find-possible-trace-layer-combinations"
 import { SourceNet } from "@tscircuit/soup"
+import { buildTraceForSinglePortAndNet } from "./build-trace-for-single-port-and-net"
 
 type RouteSolverOrString = Type.RouteSolver | "rmst" | "straight" | "route1"
 
@@ -171,12 +172,22 @@ export const createTraceBuilder = (
     const { source_ports_in_route, source_nets_in_route, source_errors } =
       builder.getSourcePortsAndNetsInRoute(parent_elements)
 
-    // console.log({
-    //   source_nets_in_route,
-    //   source_ports_in_route,
-    //   source_errors,
-    // })
     if (source_errors?.length > 0) return source_errors
+
+    if (
+      source_ports_in_route.length === 1 &&
+      source_nets_in_route.length === 1
+    ) {
+      return buildTraceForSinglePortAndNet(
+        {
+          source_net: source_nets_in_route[0],
+          source_port: source_ports_in_route[0],
+          // @ts-expect-error until @tscircuit/soup is completely adopted by builder
+          parent_elements,
+        },
+        bc
+      )
+    }
 
     const source_trace_id = builder.project_builder.getId("source_trace")
     const source_trace: Type.SourceTrace = {
