@@ -50,3 +50,23 @@ export const rotateDirection = (
   }
   return direction
 }
+
+export const oppositeDirection = (
+  direction: "up" | "down" | "left" | "right"
+) => {
+  if (direction === "up") return "down"
+  else if (direction === "down") return "up"
+  else if (direction === "left") return "right"
+  else if (direction === "right") return "left"
+  throw new Error(`Invalid direction: ${direction}`)
+}
+
+export const oppositeSide = (
+  sideOrDir: "up" | "down" | "top" | "bottom" | "left" | "right"
+) => {
+  if (sideOrDir === "top" || sideOrDir === "up") return "bottom"
+  else if (sideOrDir === "bottom" || sideOrDir === "down") return "top"
+  else if (sideOrDir === "left") return "right"
+  else if (sideOrDir === "right") return "left"
+  throw new Error(`Invalid sideOrDir: ${sideOrDir}`)
+}

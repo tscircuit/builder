@@ -7,7 +7,7 @@ import type {
 } from "@tscircuit/soup"
 import { su } from "@tscircuit/soup-util"
 import type { BuildContext } from "lib/types"
-import { directionToVec } from "lib/utils"
+import { directionToVec, oppositeSide } from "lib/utils"
 
 export const buildTraceForSinglePortAndNet = (
   params: {
@@ -56,13 +56,16 @@ export const buildTraceForSinglePortAndNet = (
     type: "schematic_net_label",
     source_net_id: source_net.source_net_id,
     text: source_net.name,
+    anchor_side: oppositeSide(schematic_port.facing_direction),
     center: {
       x: schematic_port.center.x + port_vec.x * 0.25,
       y: schematic_port.center.y + port_vec.y * 0.25,
     },
   }
+
   // 2. create a pcb_error that we need to connect the net (we'll fix this later)
-  // 3. create a source trace
+  // alternatively, attempt to find nearest port also connected to the net and
+  // attempt to connect to that?
 
   return [source_trace, schematic_net_label]
 }
