@@ -1,6 +1,7 @@
 import type {
   AnySoupElement,
   SchematicNetLabel,
+  SchematicTrace,
   SourceNet,
   SourcePort,
   SourceTrace,
@@ -63,9 +64,29 @@ export const buildTraceForSinglePortAndNet = (
     },
   }
 
+  // Create a trace connecting the port to the net label
+  const schematic_trace: SchematicTrace = {
+    type: "schematic_trace",
+    schematic_trace_id: bc.getId("schematic_trace"),
+    source_trace_id: source_trace.source_trace_id,
+    edges: [
+      {
+        from: {
+          x: schematic_port.center.x,
+          y: schematic_port.center.y,
+        },
+        to: {
+          x: schematic_net_label.center.x - port_vec.x * 0.2,
+          y: schematic_net_label.center.y - port_vec.y * 0.2,
+        },
+        from_schematic_port_id: schematic_port.schematic_port_id,
+      },
+    ],
+  }
+
   // 2. create a pcb_error that we need to connect the net (we'll fix this later)
   // alternatively, attempt to find nearest port also connected to the net and
   // attempt to connect to that?
 
-  return [source_trace, schematic_net_label]
+  return [source_trace, schematic_net_label, schematic_trace]
 }
