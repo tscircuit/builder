@@ -58,8 +58,8 @@ export const buildTraceForSinglePortAndNet = (
     text: source_net.name,
     anchor_side: oppositeSide(schematic_port.facing_direction),
     center: {
-      x: schematic_port.center.x + port_vec.x * 0.25,
-      y: schematic_port.center.y + port_vec.y * 0.25,
+      x: schematic_port.center.x + port_vec.x * 1,
+      y: schematic_port.center.y + port_vec.y * 1,
     },
   }
 
