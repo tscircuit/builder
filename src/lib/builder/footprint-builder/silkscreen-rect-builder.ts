@@ -20,7 +20,7 @@ export class SilkscreenRectBuilderClass implements SilkscreenLineBuilder {
     return this
   }
   build(bc) {
-    throw new Error("Silkscreen rects are built inside the footprint builder")
+    const silkscreen_rect: PcbSilkscreenRect = {}
     return []
   }
 }
