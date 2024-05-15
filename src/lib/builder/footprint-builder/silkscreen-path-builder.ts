@@ -1,5 +1,9 @@
 import { BuildContext } from "lib/types"
-import { AnySoupElement, PcbSilkscreenPath } from "@tscircuit/soup"
+import {
+  AnySoupElement,
+  pcb_route_hints,
+  PcbSilkscreenPath,
+} from "@tscircuit/soup"
 import { BuilderInterface } from "../builder-interface"
 import { SilkscreenPathProps } from "@tscircuit/props"
 
@@ -20,8 +24,14 @@ export class SilkscreenPathBuilderClass implements SilkscreenPathBuilder {
     return this
   }
   build(bc) {
-    throw new Error("Silkscreen paths are built inside the footprint builder")
-    return []
+    const silkscreen_path: PcbSilkscreenPath = {
+      type: "pcb_silkscreen_path",
+      layer: "top",
+      pcb_component_id: bc.pcb_component_id,
+      pcb_silkscreen_path_id: bc.getId("pcb_silkscreen_path"),
+      route: pcb_route_hints.parse(this.props.route!),
+    }
+    return [silkscreen_path]
   }
 }
 
