@@ -38,6 +38,6 @@ export class SilkscreenLineBuilderClass implements SilkscreenLineBuilder {
   }
 }
 
-export const createSilkscreenLineBuilder = () => {
+export const createSilkscreenLineBuilder = (): SilkscreenLineBuilder => {
   return new SilkscreenLineBuilderClass()
 }

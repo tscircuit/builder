@@ -35,6 +35,6 @@ export class SilkscreenPathBuilderClass implements SilkscreenPathBuilder {
   }
 }
 
-export const createSilkscreenPathBuilder = () => {
+export const createSilkscreenPathBuilder = (): SilkscreenPathBuilder => {
   return new SilkscreenPathBuilderClass()
 }

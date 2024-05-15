@@ -4,13 +4,13 @@ import { BuilderInterface } from "../builder-interface"
 import { SilkscreenTextProps } from "@tscircuit/props"
 
 export interface SilkscreenTextBuilder extends BuilderInterface {
-  builder_type: "silkscreen_path_builder"
+  builder_type: "silkscreen_text_builder"
   setProps(props: SilkscreenTextProps): this
   build(bc: BuildContext): AnySoupElement[]
 }
 
 export class SilkscreenTextBuilderClass implements SilkscreenTextBuilder {
-  builder_type = "silkscreen_path_builder" as const
+  builder_type = "silkscreen_text_builder" as const
   props: Partial<SilkscreenTextProps>
   constructor() {
     this.props = {}
@@ -20,9 +20,22 @@ export class SilkscreenTextBuilderClass implements SilkscreenTextBuilder {
     return this
   }
   build(bc) {
-    throw new Error("Silkscreen text is built inside the footprint builder")
-    return []
+    const silkscreen_text: PcbSilkscreenText = {
+      type: "pcb_silkscreen_text",
+      layer: "top",
+      font: "tscircuit2024",
+      font_size: 0.5,
+      pcb_component_id: bc.pcb_component_id,
+      center: {
+        x: bc.convert(this.props.pcbX),
+        y: bc.convert(this.props.pcbY),
+      },
+      text: this.props.text!,
+    }
+    return [silkscreen_text]
   }
 }
 
-export const createSilkscreenTextBuilder = () => {}
+export const createSilkscreenTextBuilder = (): SilkscreenTextBuilder => {
+  return new SilkscreenTextBuilderClass()
+}

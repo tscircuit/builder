@@ -1,5 +1,9 @@
 import { BuildContext } from "lib/types"
-import { AnySoupElement, PcbSilkscreenPath } from "@tscircuit/soup"
+import {
+  AnySoupElement,
+  PcbSilkscreenCircle,
+  PcbSilkscreenPath,
+} from "@tscircuit/soup"
 import { BuilderInterface } from "../builder-interface"
 import type { SilkscreenCircleProps } from "@tscircuit/props"
 
@@ -20,8 +24,18 @@ export class SilkscreenCircleBuilderClass implements SilkscreenCircleBuilder {
     return this
   }
   build(bc) {
-    throw new Error("Silkscreen rects are built inside the footprint builder")
-    return []
+    const silkscreen_circle: PcbSilkscreenCircle = {
+      type: "pcb_silkscreen_circle",
+      layer: "top",
+      pcb_component_id: bc.pcb_component_id,
+      pcb_silkscreen_circle_id: bc.getId("pcb_silkscreen_circle"),
+      radius: bc.convert(this.props.radius!),
+      center: {
+        x: bc.convert(this.props.pcbX),
+        y: bc.convert(this.props.pcbY),
+      },
+    }
+    return [silkscreen_circle]
   }
 }
 
