@@ -19,7 +19,7 @@ import { pairs } from "lib/utils/pairs"
 import { mergeRoutes } from "./merge-routes"
 import { uniq } from "lib/utils/uniq"
 import { findPossibleTraceLayerCombinations } from "./find-possible-trace-layer-combinations"
-import { SourceNet } from "@tscircuit/soup"
+import { AnySoupElement, SourceNet } from "@tscircuit/soup"
 import { buildTraceForSinglePortAndNet } from "./build-trace-for-single-port-and-net"
 
 type RouteSolverOrString = Type.RouteSolver | "rmst" | "straight" | "route1"
@@ -164,7 +164,7 @@ export const createTraceBuilder = (
   }
 
   builder.build = async (
-    parent_elements: Type.AnyElement[] = [],
+    parent_elements: AnySoupElement[] = [],
     bc: Type.BuildContext
   ) => {
     const { source_ports_in_route, source_nets_in_route, source_errors } =

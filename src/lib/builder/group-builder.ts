@@ -242,7 +242,6 @@ export class GroupBuilderClass implements GroupBuilder {
     }
 
     if (this.layout_builder) {
-      // @ts-ignore
       this.layout_builder.applyToSoup(elements, bc)
     }
 

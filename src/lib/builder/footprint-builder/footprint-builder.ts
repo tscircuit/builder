@@ -16,6 +16,11 @@ import * as Footprint from "@tscircuit/footprints"
 import SparkfunPackages, {
   SparkfunComponentId,
 } from "@tscircuit/sparkfun-packages"
+import { createSilkscreenPathBuilder } from "./silkscreen-path-builder"
+import { createSilkscreenTextBuilder } from "./silkscreen-text-builder"
+import { createSilkscreenLineBuilder } from "./silkscreen-line-builder"
+import { createSilkscreenRectBuilder } from "./silkscreen-rect-builder"
+import { createSilkscreenCircleBuilder } from "./silkscreen-circle-builder"
 
 export type StandardFootprint =
   | "0402"
@@ -31,6 +36,11 @@ const getFootprintBuilderAddables = () =>
     hole: createHoleBuilder,
     platedhole: createPlatedHoleBuilder,
     pcbvia: createPcbViaBuilder,
+    silkscreenpath: createSilkscreenPathBuilder,
+    silkscreentext: createSilkscreenTextBuilder,
+    silkscreenline: createSilkscreenLineBuilder,
+    silkscreenrect: createSilkscreenRectBuilder,
+    silkscreencircle: createSilkscreenCircleBuilder,
     /* @deprecated */
     pcb_via: createPcbViaBuilder,
   } as const)
