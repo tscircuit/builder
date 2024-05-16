@@ -98,6 +98,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
   settable_source_properties: string[]
   settable_schematic_properties: string[]
   settable_pcb_properties: string[]
+  fixed_schematic_size: { width: number; height: number } | null = null
   ports: PortsBuilder
   footprint: FootprintBuilder
   schematic_symbol: SchematicSymbolBuilder
@@ -557,8 +558,13 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
 
     schematic_component.center.x = schematic_spatial_bounds.x
     schematic_component.center.y = schematic_spatial_bounds.y
-    schematic_component.size.width = schematic_spatial_bounds.w
-    schematic_component.size.height = schematic_spatial_bounds.h
+
+    if (this.fixed_schematic_size) {
+      schematic_component.size = this.fixed_schematic_size
+    } else {
+      schematic_component.size.width = schematic_spatial_bounds.w
+      schematic_component.size.height = schematic_spatial_bounds.h
+    }
 
     return elements
   }

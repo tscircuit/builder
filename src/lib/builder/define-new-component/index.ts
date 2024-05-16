@@ -39,6 +39,7 @@ export type OptsDef<
   source_properties: TZodSrcProps
   schematic_properties: TZodSchProps
   pcb_properties: TZodPcbProps
+  fixed_schematic_size?: { width: number; height: number }
 
   configurePorts?: (
     builder: Builder,
@@ -168,6 +169,7 @@ export const defineNewComponent = <
         ...this.settable_schematic_properties,
         ...Object.keys((opts.schematic_properties._def as any).shape()),
       ]
+      this.fixed_schematic_size = opts.fixed_schematic_size ?? null
     }
   }
 
