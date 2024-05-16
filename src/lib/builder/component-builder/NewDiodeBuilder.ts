@@ -59,24 +59,25 @@ export const { DiodeBuilderClass, createDiodeBuilder } = defineNewComponent({
 
     const lines = [h1, h2, t1, t2, t3, v1]
 
-    for (const line of lines) {
-      builder.schematic_symbol.add(
-        "schematic_line",
-        (sb) =>
-          sb.setProps({
-            x1: line.x1 - 0.5,
-            y1: line.y1,
-            x2: line.x2 - 0.5,
-            y2: line.y2,
-          })
-        // sb.setProps({
-        //   x1: `${line.x1}mm`,
-        //   y1: `${line.y1}mm`,
-        //   x2: `${line.x2}mm`,
-        //   y2: `${line.y2}mm`,
-        // })
-      )
-    }
+    // drawn inside schematic-viewer based on ftype
+    // for (const line of lines) {
+    //   builder.schematic_symbol.add(
+    //     "schematic_line",
+    //     (sb) =>
+    //       sb.setProps({
+    //         x1: line.x1 - 0.5,
+    //         y1: line.y1,
+    //         x2: line.x2 - 0.5,
+    //         y2: line.y2,
+    //       })
+    //     // sb.setProps({
+    //     //   x1: `${line.x1}mm`,
+    //     //   y1: `${line.y1}mm`,
+    //     //   x2: `${line.x2}mm`,
+    //     //   y2: `${line.y2}mm`,
+    //     // })
+    //   )
+    // }
 
     builder.schematic_symbol.add("schematic_text", (stb) =>
       stb.setProps({
