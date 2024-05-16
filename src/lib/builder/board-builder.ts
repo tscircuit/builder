@@ -18,6 +18,7 @@ export const getBoardAddables = () =>
     net_alias: CB.createNetAliasBuilder,
     capacitor: CB.createCapacitorBuilder,
     diode: CB.createDiodeBuilder,
+    led: CB.createLedBuilder,
     power_source: CB.createPowerSourceBuilder,
     inductor: CB.createInductorBuilder,
     ground: CB.createGroundBuilder,
