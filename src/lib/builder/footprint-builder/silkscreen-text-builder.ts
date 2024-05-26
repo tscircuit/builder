@@ -26,10 +26,11 @@ export class SilkscreenTextBuilderClass implements SilkscreenTextBuilder {
       font: "tscircuit2024",
       font_size: bc.convert(this.props.fontSize) ?? 0.2,
       pcb_component_id: bc.pcb_component_id,
-      center: {
+      anchor_position: {
         x: bc.convert(this.props.pcbX),
         y: bc.convert(this.props.pcbY),
       },
+      anchor_alignment: this.props.anchorAlignment ?? "center",
       text: this.props.text!,
     }
     return [silkscreen_text]
