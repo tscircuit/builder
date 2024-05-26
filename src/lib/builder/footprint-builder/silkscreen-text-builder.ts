@@ -24,7 +24,7 @@ export class SilkscreenTextBuilderClass implements SilkscreenTextBuilder {
       type: "pcb_silkscreen_text",
       layer: "top",
       font: "tscircuit2024",
-      font_size: 0.5,
+      font_size: bc.convert(this.props.fontSize) ?? 0.2,
       pcb_component_id: bc.pcb_component_id,
       center: {
         x: bc.convert(this.props.pcbX),
