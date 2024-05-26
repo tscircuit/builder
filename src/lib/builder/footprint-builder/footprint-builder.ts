@@ -49,6 +49,18 @@ export type FootprintBuilderAddables = ReturnType<
   typeof getFootprintBuilderAddables
 >
 
+const allowed_childen_builder_types = [
+  "smtpad_builder",
+  "hole_builder",
+  "plated_hole_builder",
+  "via_builder",
+  "silkscreen_path_builder",
+  "silkscreen_text_builder",
+  "silkscreen_line_builder",
+  "silkscreen_rect_builder",
+  "silkscreen_circle_builder",
+]
+
 export interface FootprintBuilder {
   builder_type: "footprint_builder"
   project_builder: ProjectBuilder
@@ -87,10 +99,7 @@ export class FootprintBuilderClass implements FootprintBuilder {
   }
 
   appendChild(child) {
-    if (child.builder_type === "smtpad_builder") {
-      this.children.push(child)
-      return this
-    } else if (child.builder_type === "plated_hole_builder") {
+    if (allowed_childen_builder_types.includes(child.builder_type)) {
       this.children.push(child)
       return this
     } else if (child.builder_type === "footprint_builder") {
