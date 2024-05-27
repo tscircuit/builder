@@ -243,7 +243,7 @@ export class GroupBuilderClass implements GroupBuilder {
     }
 
     if (this.layout_builder) {
-      elements = this.layout_builder.applyToSoup(elements, bc)
+      elements = this.layout_builder.applyToSoup(elements as any, bc) as any
     }
 
     elements.push(
