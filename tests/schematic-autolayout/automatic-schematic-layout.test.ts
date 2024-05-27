@@ -1,13 +1,14 @@
 import { getTestFixture } from "tests/fixtures/get-test-fixture"
 import test from "ava"
 import { SchematicComponent } from "lib/types"
+import { layout } from "@tscircuit/layout"
 
 test("automatic schematic layout 1", async (t) => {
   const { logSoup, pb } = getTestFixture(t)
 
   const soup = await pb
     .setProps({
-      auto_schematic_layout: true,
+      layout: layout().autoLayoutSchematic(),
     })
     .add("bug", (cb) =>
       cb
