@@ -9,7 +9,7 @@ export const { DiodeBuilderClass, createDiodeBuilder } = defineNewComponent({
   }),
   schematic_properties: z.object({}),
   pcb_properties: z.object({}),
-  fixed_schematic_size: { width: 1, height: 1 },
+  fixed_schematic_size: { width: 1, height: 0.5 },
   configurePorts(builder, ctx) {
     builder.ports
       .add("port", (pb) =>
