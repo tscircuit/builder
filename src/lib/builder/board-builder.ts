@@ -69,7 +69,7 @@ export class BoardBuilderClass
   }
 
   setProps(props: BoardProps): this {
-    super.setProps(props)
+    GroupBuilderClass.prototype.setProps.call(this, props)
     // have to manually set board props for now
     this.props = { ...this.props, ...props }
     return this
