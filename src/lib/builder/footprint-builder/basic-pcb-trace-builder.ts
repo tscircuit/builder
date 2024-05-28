@@ -5,7 +5,7 @@ import {
   PcbSilkscreenPath,
   PCBTrace,
 } from "@tscircuit/soup"
-import { BuilderInterface } from "./builder-interface"
+import type { BuilderInterface } from "../builder-interface"
 import type { PcbTraceProps } from "@tscircuit/props"
 
 export interface BasicPcbTraceBuilder extends BuilderInterface {
