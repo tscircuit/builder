@@ -46,6 +46,7 @@ export const matchPCBPortsWithFootprintAndMutate = ({
     const footprint_element = footprint_elements[i]
     if (footprint_element.type === "pcb_hole") continue
     if (footprint_element.type === "pcb_trace") continue
+    if (footprint_element.type.includes("silkscreen")) continue
     if (!("port_hints" in footprint_element)) {
       if (footprint_element.type === "pcb_via") {
         ;(footprint_elements[i] as any).port_hints = []
