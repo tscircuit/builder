@@ -33,6 +33,7 @@ export class SilkscreenLineBuilderClass implements SilkscreenLineBuilder {
       x2: bc.convert(this.props.x2!),
       y1: bc.convert(this.props.y1!),
       y2: bc.convert(this.props.y2!),
+      stroke_width: 0.1,
     }
     return [silkscreen_line]
   }

@@ -8,7 +8,7 @@ import { BuilderInterface } from "../builder-interface"
 import type { SilkscreenCircleProps } from "@tscircuit/props"
 
 export interface SilkscreenCircleBuilder extends BuilderInterface {
-  builder_type: "basic_trace_builder"
+  builder_type: "silkscreen_circle_builder"
   setProps(props: SilkscreenCircleProps): this
   build(bc: BuildContext): AnySoupElement[]
 }
