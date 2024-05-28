@@ -21,6 +21,7 @@ import { createSilkscreenTextBuilder } from "./silkscreen-text-builder"
 import { createSilkscreenLineBuilder } from "./silkscreen-line-builder"
 import { createSilkscreenRectBuilder } from "./silkscreen-rect-builder"
 import { createSilkscreenCircleBuilder } from "./silkscreen-circle-builder"
+import { createBasicPcbTraceBuilder } from "../basic-pcb-trace-builder"
 
 export type StandardFootprint =
   | "0402"
@@ -43,6 +44,7 @@ const getFootprintBuilderAddables = () =>
     silkscreencircle: createSilkscreenCircleBuilder,
     /* @deprecated */
     pcb_via: createPcbViaBuilder,
+    pcbtrace: createBasicPcbTraceBuilder,
   } as const)
 
 export type FootprintBuilderAddables = ReturnType<
@@ -59,6 +61,7 @@ const allowed_childen_builder_types = [
   "silkscreen_line_builder",
   "silkscreen_rect_builder",
   "silkscreen_circle_builder",
+  "basic_trace_builder",
 ]
 
 export interface FootprintBuilder {
