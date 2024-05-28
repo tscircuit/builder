@@ -7,9 +7,12 @@ import type {
   PCBHole,
   PCBVia,
 } from "../../types"
+import type { PCBTrace } from "@tscircuit/soup"
 
 interface Parameters {
-  footprint_elements: Array<PCBSMTPad | PCBPlatedHole | PCBHole | PCBVia>
+  footprint_elements: Array<
+    PCBSMTPad | PCBPlatedHole | PCBHole | PCBVia | PCBTrace
+  >
   pcb_ports: Omit<PCBPort, "x" | "y" | "layers">[]
   source_ports: SourcePort[]
 }
@@ -42,6 +45,7 @@ export const matchPCBPortsWithFootprintAndMutate = ({
   for (let i = 0; i < footprint_elements.length; i++) {
     const footprint_element = footprint_elements[i]
     if (footprint_element.type === "pcb_hole") continue
+    if (footprint_element.type === "pcb_trace") continue
     if (!("port_hints" in footprint_element)) {
       if (footprint_element.type === "pcb_via") {
         ;(footprint_elements[i] as any).port_hints = []
