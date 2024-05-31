@@ -10,7 +10,7 @@
     "dist"
   ],
   "scripts": {
-    "test": "ava",
+    "test": "FULL_TEST=1 ava",
     "build": "tsup",
     "build:docs": "typedoc",
     "typecheck": "tsc --noEmit",
