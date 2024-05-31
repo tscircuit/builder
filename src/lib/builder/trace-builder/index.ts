@@ -10,7 +10,7 @@ import { ProjectClass, createProjectFromElements } from "lib/project"
 import { applySelector } from "lib/apply-selector"
 export { convertToReadableTraceTree } from "./convert-to-readable-route-tree"
 import { straightRouteSolver } from "./straight-route-solver"
-import { rmstSolver } from "./rmst-solver"
+// import { rmstSolver } from "./rmst-solver"
 import { route1Solver } from "./route1-solver"
 import { findRoute } from "@tscircuit/routing"
 import { Point } from "lib/soup"
@@ -79,9 +79,10 @@ export const createTraceBuilder = (
   builder.setRouteSolver = (routeSolver: RouteSolverOrString) => {
     if (typeof routeSolver === "string") {
       internal.routeSolver =
-        routeSolver === "rmst"
-          ? rmstSolver
-          : routeSolver === "route1"
+        // routeSolver === "rmst"
+        // ? rmstSolver
+        // :
+        routeSolver === "route1"
           ? route1Solver
           : routeSolver === "straight"
           ? straightRouteSolver

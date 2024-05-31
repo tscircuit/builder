@@ -1,6 +1,6 @@
 import * as Type from "lib/types"
 import { directionToVec, vecToDirection } from "lib/utils/direction-to-vec"
-import findRectilinearRoute from "rectilinear-router"
+// import findRectilinearRoute from "rectilinear-router"
 import { sub, componentSum, mult, norm } from "lib/utils/point-math"
 
 type Edge = {
@@ -41,14 +41,18 @@ function flipEdges(e1: Edge, e2: Edge) {
   }
 }
 
-/** Rectilinear Minimum Steiner Tree Solver */
+/**
+ * @deprecated DISABLED DUE TO BUNDLE SIZE FROM DEPS
+ * Rectilinear Minimum Steiner Tree Solver
+ * */
 export const rmstSolver: Type.RouteSolver = async ({
   terminals,
   obstacles,
 }) => {
-  const route = await findRectilinearRoute({
-    terminals: terminals.map(({ x, y }) => [x, y]),
-  })
+  // const route = await findRectilinearRoute({
+  //   terminals: terminals.map(({ x, y }) => [x, y]),
+  // })
+  const route = null as any
 
   const edges = route.map(
     ({ from, to, fromTerminalIndex, toTerminalIndex }) => ({
