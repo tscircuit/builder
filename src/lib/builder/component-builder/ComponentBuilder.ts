@@ -8,11 +8,7 @@ import {
 import { compose, rotate, transform, translate } from "transformation-matrix"
 import { transformSchematicElements } from "lib/builder/transform-elements"
 import getPortPosition from "../../utils/get-port-position"
-import {
-  createFootprintBuilder,
-  FootprintBuilder,
-  StandardFootprint,
-} from "../footprint-builder"
+import { createFootprintBuilder, FootprintBuilder } from "../footprint-builder"
 import {
   createSchematicSymbolBuilder,
   SchematicSymbolBuilder,
@@ -26,7 +22,6 @@ import _ from "lodash"
 import { maybeConvertToPoint } from "lib/utils/maybe-convert-to-point"
 import { isTruthy } from "lib/utils/is-truthy"
 import { removeNulls } from "lib/utils/remove-nulls"
-import { SparkfunComponentId } from "@tscircuit/sparkfun-packages"
 import { SupplierName } from "lib/soup/pcb/properties/supplier_name"
 
 export interface BaseComponentBuilder<T> {
@@ -63,9 +58,7 @@ export interface BaseComponentBuilder<T> {
   setProps: (
     props: T extends { props?: any } ? T["props"] : any
   ) => BaseComponentBuilder<T>
-  setFootprint(
-    fp: FootprintBuilder | StandardFootprint
-  ): BaseComponentBuilder<T>
+  setFootprint(fp: FootprintBuilder | string): BaseComponentBuilder<T>
   modifyFootprint(cb: (fb: FootprintBuilder) => any): BaseComponentBuilder<T>
   modifyPorts(cb: (pb: PortsBuilder) => any): BaseComponentBuilder<T>
   modifySchematic(
@@ -316,7 +309,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
     return this
   }
 
-  setFootprint(fp: FootprintBuilder | SparkfunComponentId) {
+  setFootprint(fp: FootprintBuilder | string) {
     if (typeof fp === "string") {
       this.footprint.loadStandardFootprint(fp)
     } else if (fp?.builder_type === "footprint_builder") {
