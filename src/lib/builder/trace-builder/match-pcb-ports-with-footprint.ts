@@ -17,8 +17,12 @@ interface Parameters {
   source_ports: SourcePort[]
 }
 
-type FootprintElement = PCBSMTPad | PCBPlatedHole | PCBHole | PCBVia
+type FootprintElement = PCBSMTPad | PCBPlatedHole | PCBHole | PCBVia | PCBTrace
 const getCenterOfFootprintElement = (elm: FootprintElement): Point => {
+  if (elm.type === "pcb_trace")
+    throw new Error(
+      `Can't get center of a trace- likely a bug that this function was called`
+    )
   return elm
 }
 
