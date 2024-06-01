@@ -12,23 +12,14 @@ import {
 } from "../transform-elements"
 import { SMTPadBuilder, createSMTPadBuilder } from "./smt-pad-builder"
 import { associatePcbPortsWithPads } from "./associate-pcb-ports-with-pads"
-import * as Footprint from "@tscircuit/footprints"
-import SparkfunPackages, {
-  SparkfunComponentId,
-} from "@tscircuit/sparkfun-packages"
 import { createSilkscreenPathBuilder } from "./silkscreen-path-builder"
 import { createSilkscreenTextBuilder } from "./silkscreen-text-builder"
 import { createSilkscreenLineBuilder } from "./silkscreen-line-builder"
 import { createSilkscreenRectBuilder } from "./silkscreen-rect-builder"
 import { createSilkscreenCircleBuilder } from "./silkscreen-circle-builder"
 import { createBasicPcbTraceBuilder } from "./basic-pcb-trace-builder"
+import { fp } from "@tscircuit/footprinter"
 
-export type StandardFootprint =
-  | "0402"
-  | "0603"
-  | "0805"
-  | "1210"
-  | SparkfunComponentId
 export type FootprintBuilderCallback = (rb: FootprintBuilder) => unknown
 
 const getFootprintBuilderAddables = () =>
@@ -78,19 +69,19 @@ export interface FootprintBuilder {
     builder_type: T,
     callback: (builder: ReturnType<FootprintBuilderAddables[T]>) => unknown
   ): FootprintBuilder
-  setStandardFootprint(footprint_name: SparkfunComponentId): FootprintBuilder
-  loadStandardFootprint(footprint_name: SparkfunComponentId): FootprintBuilder
+  setStandardFootprint(footprint_name: string): FootprintBuilder
+  loadStandardFootprint(footprint_name: string): FootprintBuilder
   setRotation: (rotation: number | `${number}deg`) => FootprintBuilder
   setLayer: (layer: Type.LayerRef) => FootprintBuilder
   build(bc: Type.BuildContext): Promise<Type.AnyElement[]>
 }
 
 export class FootprintBuilderClass implements FootprintBuilder {
-  builder_type: "footprint_builder" = "footprint_builder"
+  builder_type = "footprint_builder" as const
   project_builder: ProjectBuilder
   addables: FootprintBuilderAddables
   position: Type.Point
-  rotation: number = 0
+  rotation = 0
   layer: Type.LayerRef = "top"
 
   children: SMTPadBuilder[] = []
@@ -147,60 +138,59 @@ export class FootprintBuilderClass implements FootprintBuilder {
     return this
   }
 
-  loadStandardFootprint(footprint_name: StandardFootprint) {
-    if (footprint_name === "0805") footprint_name = "sparkfun:0805"
-    if (footprint_name === "0603") footprint_name = "sparkfun:0603"
-    if (footprint_name === "1210") footprint_name = "sparkfun:1210"
-    if (footprint_name === "0402") {
-      this.addPad((smtpad) => {
-        smtpad.setShape("rect")
-        smtpad.setSize(0.6, 0.6)
-        smtpad.setPosition(-0.5, 0)
-        smtpad.setLayer(this.layer)
-        smtpad.addPortHints(["left", "1"])
-        // smtpad.setSize("0.5mm", "0.5mm")
-        // smtpad.setPosition("-0.5mm", "0mm")
-      })
-      this.addPad((smtpad) => {
-        smtpad.setShape("rect")
-        smtpad.setSize(0.6, 0.6)
-        smtpad.setPosition(0.5, 0)
-        smtpad.setLayer(this.layer)
-        smtpad.addPortHints(["right", "2"])
-      })
-    } else if (footprint_name in SparkfunPackages) {
-      const sf_pkg = SparkfunPackages[footprint_name]
-      for (const smd of sf_pkg.smd!) {
-        this.addPad((smtpad) => {
-          smtpad.setShape("rect")
-          smtpad.setSize(smd.dx, smd.dy)
-          smtpad.setPosition(smd.x, smd.y)
-          smtpad.setLayer(smd.layer === 1 ? this.layer : "silkscreen")
-
-          const position_hints = []
-
-          if (sf_pkg.smd!.length === 2) {
-            const other_smd = sf_pkg.smd!.find((s) => s !== smd)!
-            if (smd.x < other_smd.x) {
-              smtpad.addPortHints(["left"])
-            } else if (smd.x > other_smd.x) {
-              smtpad.addPortHints(["right"])
-            }
-          }
-          smtpad.addPortHints([smd.name.toString()])
-        })
+  loadStandardFootprint(footprint_name: string) {
+    try {
+      const fp_soup = fp.string(footprint_name).soup()
+      const fb: FootprintBuilder = this
+      for (const elm of fp_soup) {
+        if (elm.type === "pcb_smtpad") {
+          fb.add("smtpad", (pb) => pb.setProps(elm))
+        } else if (elm.type === "pcb_plated_hole") {
+          fb.add("platedhole", (pb) => pb.setProps(elm))
+        } else if (elm.type === "pcb_hole") {
+          fb.add("hole", (pb) => pb.setProps(elm))
+        } else if (elm.type === "pcb_silkscreen_circle") {
+          fb.add("silkscreencircle", (pb) =>
+            pb.setProps({
+              ...elm,
+              pcbX: elm.center.x,
+              pcbY: elm.center.y,
+            })
+          )
+        } else if (elm.type === "pcb_silkscreen_line") {
+          fb.add("silkscreenline", (pb) =>
+            pb.setProps({
+              ...elm,
+              strokeWidth: elm.stroke_width,
+            })
+          )
+        } else if (elm.type === "pcb_silkscreen_path") {
+          fb.add("silkscreenpath", (pb) =>
+            pb.setProps({
+              ...elm,
+              strokeWidth: elm.stroke_width,
+            })
+          )
+        } else if (elm.type === "pcb_silkscreen_rect") {
+          fb.add("silkscreenrect", (pb) =>
+            pb.setProps({
+              ...elm,
+              pcbX: elm.center.x,
+              pcbY: elm.center.y,
+              // TODO silkscreen rect isFilled, isOutline etc.
+            })
+          )
+        }
       }
-      // TODO sf_pkg.wire
-      // TODO sf_pkg.text
-    } else {
+    } catch (e: any) {
       throw new Error(
-        `Unknown standard footprint name: "${footprint_name}" (examples: 0402, 0603)`
+        `Could not understand footprint: "${footprint_name}" (examples: 0402, 0603)\n\n${e.toString()}`
       )
     }
     return this
   }
 
-  setStandardFootprint(footprint_name: StandardFootprint): FootprintBuilder {
+  setStandardFootprint(footprint_name: string): FootprintBuilder {
     return this.loadStandardFootprint(footprint_name)
   }
 

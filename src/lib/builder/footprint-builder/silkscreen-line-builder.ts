@@ -1,6 +1,7 @@
 import { BuildContext } from "lib/types"
 import {
   AnySoupElement,
+  LayerRef,
   PcbSilkscreenLine,
   PcbSilkscreenPath,
 } from "@tscircuit/soup"
@@ -26,14 +27,16 @@ export class SilkscreenLineBuilderClass implements SilkscreenLineBuilder {
   build(bc) {
     const silkscreen_line: PcbSilkscreenLine = {
       type: "pcb_silkscreen_line",
-      layer: "top",
+      layer: (this.props.layer as "top" | "bottom") ?? "top",
       pcb_component_id: bc.pcb_component_id,
       pcb_silkscreen_line_id: bc.getId("pcb_silkscreen_path"),
       x1: bc.convert(this.props.x1!),
       x2: bc.convert(this.props.x2!),
       y1: bc.convert(this.props.y1!),
       y2: bc.convert(this.props.y2!),
-      stroke_width: 0.1,
+      stroke_width: this.props.strokeWidth
+        ? bc.convert(this.props.strokeWidth)
+        : 0.1,
     }
     return [silkscreen_line]
   }

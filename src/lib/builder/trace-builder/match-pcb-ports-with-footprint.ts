@@ -6,8 +6,8 @@ import type {
   Point,
   PCBHole,
   PCBVia,
-} from "../../types"
-import type { PCBTrace } from "@tscircuit/soup"
+  PCBTrace,
+} from "@tscircuit/soup"
 
 interface Parameters {
   footprint_elements: Array<
@@ -17,9 +17,8 @@ interface Parameters {
   source_ports: SourcePort[]
 }
 
-const getCenterOfFootprintElement = (
-  elm: PCBSMTPad | PCBPlatedHole | PCBHole | PCBVia
-): Point => {
+type FootprintElement = PCBSMTPad | PCBPlatedHole | PCBHole | PCBVia
+const getCenterOfFootprintElement = (elm: FootprintElement): Point => {
   return elm
 }
 
