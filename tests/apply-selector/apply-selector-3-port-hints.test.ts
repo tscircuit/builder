@@ -41,4 +41,8 @@ test("applySelector 3: port hints", async (t) => {
   ])
   // @ts-ignore
   t.is(applySelector(elements, ".U1 > port.1")[0]!.name, "A")
+  // @ts-ignore
+  t.is(applySelector(elements, ".U1 > .1")[0]!.name, "A")
+  // @ts-ignore
+  t.is(applySelector(elements, ".U1 > .A")[0]!.name, "A")
 })
