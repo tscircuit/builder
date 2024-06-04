@@ -2,7 +2,7 @@
 
 [Docs](https://tscircuit.github.io/builder) &middot; [Github](https://github.com/tscircuit/builder) &middot; [tscircuit](https://tscircuit.com)
 
-TSCircuit Builder is a Typescript builder pattern for constructing schematic and PCB layouts. `@tscircuit/builder` is an internal module, [use tscircuit tsx instead](https://github.com/tscircuit/tscircuit)
+TSCircuit Builder is a Typescript builder pattern for constructing schematic and PCB layouts. `@tscircuit/builder` is an internal module, [use tscircuit tsx instead](https://github.com/tscircuit/tscircuit). The builder is basically "the DOM for building circuits"
 
 TSCircuit TSX eventually renders to a builder. The builder will build
 TSCircuit Soup, a JSON output. Soup can be rendered to
