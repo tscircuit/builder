@@ -4,7 +4,7 @@ import {
   rotateDirection,
   vecToDirection,
 } from "lib/utils/direction-to-vec"
-import { Matrix, applyToPoint } from "transformation-matrix"
+import { Matrix, applyToPoint, decomposeTSR } from "transformation-matrix"
 
 export const transformSchematicElement = (
   elm: Type.AnyElement,
@@ -60,8 +60,31 @@ export const transformPCBElement = (elm: Type.AnyElement, matrix: Matrix) => {
     const { x, y } = applyToPoint(matrix, { x: elm.x, y: elm.y })
     elm.x = x
     elm.y = y
+  } else if (elm.type === "pcb_silkscreen_text") {
+    elm.anchor_position = applyToPoint(matrix, elm.anchor_position)
+  } else if (
+    elm.type === "pcb_silkscreen_circle" ||
+    elm.type === "pcb_silkscreen_rect"
+  ) {
+    elm.center = applyToPoint(matrix, elm.center)
   } else if (elm.type === "pcb_component") {
     elm.center = applyToPoint(matrix, elm.center)
+  } else if (elm.type === "pcb_silkscreen_path" || elm.type === "pcb_trace") {
+    elm.route = elm.route.map((rp) => {
+      const tp = applyToPoint(matrix, rp) as { x: number; y: number }
+      rp.x = tp.x
+      rp.y = tp.y
+      return rp
+    })
+  } else if (elm.type === "pcb_silkscreen_line") {
+    const p1 = { x: elm.x1, y: elm.y1 }
+    const p2 = { x: elm.x2, y: elm.y2 }
+    const p1t = applyToPoint(matrix, p1)
+    const p2t = applyToPoint(matrix, p2)
+    elm.x1 = p1t.x
+    elm.y1 = p1t.y
+    elm.x2 = p2t.x
+    elm.y2 = p2t.y
   }
   return elm
 }
@@ -70,5 +93,17 @@ export const transformPCBElements = (
   elms: Type.AnyElement[],
   matrix: Matrix
 ) => {
-  return elms.map((elm) => transformPCBElement(elm, matrix))
+  const tsr = decomposeTSR(matrix)
+  const flipPadWidthHeight =
+    Math.round(tsr.rotation.angle / (Math.PI / 2)) % 2 === 1
+  let transformedElms = elms.map((elm) => transformPCBElement(elm, matrix))
+  if (flipPadWidthHeight) {
+    transformedElms = transformedElms.map((elm) => {
+      if (elm.type === "pcb_smtpad" && elm.shape === "rect") {
+        ;[elm.width, elm.height] = [elm.height, elm.width]
+      }
+      return elm
+    })
+  }
+  return transformedElms
 }

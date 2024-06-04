@@ -6,7 +6,7 @@ import {
 import { z } from "zod"
 import { BuildContext } from "lib/types"
 import { getZodSchemaDefaults } from "lib/utils/get-zod-schema-defaults"
-import type { StandardFootprint, FootprintBuilder } from "../footprint-builder"
+import type { FootprintBuilder } from "../footprint-builder"
 
 type DefaultSrcProps = { name: string }
 type DefaultSchematicProps = {
@@ -20,7 +20,7 @@ type DefaultPcbProps = {
   pcb_x: string | number
   pcb_y: string | number
   pcb_rotation: string | number
-  footprint: StandardFootprint | FootprintBuilder
+  footprint: string | FootprintBuilder
 }
 
 export type OptsDef<
