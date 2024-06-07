@@ -4,7 +4,6 @@ import _ from "lodash"
 import { ProjectBuilder } from "./project-builder"
 import {
   createTraceBuilder,
-  convertToReadableTraceTree,
   TraceBuilder,
   TraceBuilderCallback,
 } from "./trace-builder"

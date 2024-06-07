@@ -55,15 +55,6 @@ export const matchPCBPortsWithFootprintAndMutate = ({
         ;(footprint_elements[i] as any).port_hints = []
         continue
       }
-
-      // TODO error
-      console.warn(
-        `Footprint element has an undefined port_hints array: ${JSON.stringify(
-          footprint_elements[i],
-          null,
-          "  "
-        )}`
-      )
       ;(footprint_elements[i] as any).port_hints = []
     }
     if ("port_hints" in footprint_element && footprint_element.port_hints) {

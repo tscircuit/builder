@@ -3,9 +3,8 @@ import {
   AnySoupElement,
   FabricationNotePath,
   pcb_route_hints,
-  PcbSilkscreenPath,
 } from "@tscircuit/soup"
-import { BuilderInterface } from "../builder-interface"
+import type { BuilderInterface } from "../builder-interface"
 import { FabricationNotePathProps } from "@tscircuit/props"
 
 export interface FabricationNotePathBuilder extends BuilderInterface {
@@ -31,7 +30,7 @@ export class FabricationNotePathBuilderClass
       type: "fabrication_note_path",
       layer: "top",
       pcb_component_id: bc.pcb_component_id,
-      pcb_silkscreen_path_id: bc.getId("pcb_silkscreen_path"),
+      fabrication_note_path_id: bc.getId("fabrication_note_path"),
       route: pcb_route_hints.parse(this.props.route!),
       stroke_width: bc.convert(this.props.strokeWidth) ?? 0.1,
     }

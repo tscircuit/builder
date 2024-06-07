@@ -1,8 +1,4 @@
-import {
-  createFabricationNotePathBuilder,
-  createFabricationNoteTextBuilder,
-  type ProjectBuilder,
-} from "lib/project"
+import { type ProjectBuilder } from "lib/project"
 import { createPlatedHoleBuilder } from "./plated-hole-builder"
 import { createHoleBuilder } from "./hole-builder"
 import { createPcbViaBuilder } from "./pcb-via-builder"
@@ -22,6 +18,8 @@ import { createSilkscreenLineBuilder } from "./silkscreen-line-builder"
 import { createSilkscreenRectBuilder } from "./silkscreen-rect-builder"
 import { createSilkscreenCircleBuilder } from "./silkscreen-circle-builder"
 import { createBasicPcbTraceBuilder } from "./basic-pcb-trace-builder"
+import { createFabricationNotePathBuilder } from "./fabrication-note-path-builder"
+import { createFabricationNoteTextBuilder } from "./fabrication-note-text-builder"
 import { fp } from "@tscircuit/footprinter"
 
 export type FootprintBuilderCallback = (rb: FootprintBuilder) => unknown
