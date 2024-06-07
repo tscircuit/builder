@@ -1,4 +1,8 @@
-import { type ProjectBuilder } from "lib/project"
+import {
+  createFabricationNotePathBuilder,
+  createFabricationNoteTextBuilder,
+  type ProjectBuilder,
+} from "lib/project"
 import { createPlatedHoleBuilder } from "./plated-hole-builder"
 import { createHoleBuilder } from "./hole-builder"
 import { createPcbViaBuilder } from "./pcb-via-builder"
@@ -36,6 +40,8 @@ const getFootprintBuilderAddables = () =>
     /* @deprecated */
     pcb_via: createPcbViaBuilder,
     pcbtrace: createBasicPcbTraceBuilder,
+    fabricationnotepath: createFabricationNotePathBuilder,
+    fabricationnotetext: createFabricationNoteTextBuilder,
   } as const)
 
 export type FootprintBuilderAddables = ReturnType<
@@ -53,6 +59,8 @@ const allowed_childen_builder_types = [
   "silkscreen_rect_builder",
   "silkscreen_circle_builder",
   "basic_trace_builder",
+  "fabrication_note_path_builder",
+  "fabrication_note_text_builder",
 ]
 
 export interface FootprintBuilder {
@@ -178,6 +186,18 @@ export class FootprintBuilderClass implements FootprintBuilder {
               pcbX: elm.center.x,
               pcbY: elm.center.y,
               // TODO silkscreen rect isFilled, isOutline etc.
+            })
+          )
+        } else if (elm.type === "fabrication_note_path") {
+          fb.add("fabricationnotepath", (pb) => pb.setProps(elm))
+        } else if (elm.type === "fabrication_note_text") {
+          fb.add("fabricationnotetext", (pb) =>
+            pb.setProps({
+              ...elm,
+              pcbX: elm.anchor_position.x,
+              pcbY: elm.anchor_position.y,
+              anchorAlignment: elm.anchor_alignment,
+              fontSize: elm.font_size,
             })
           )
         }
