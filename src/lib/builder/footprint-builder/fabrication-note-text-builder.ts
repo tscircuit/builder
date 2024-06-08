@@ -1,5 +1,5 @@
 import { BuildContext } from "lib/types"
-import { AnySoupElement, FabricationNoteText } from "@tscircuit/soup"
+import { AnySoupElement, PcbFabricationNoteText } from "@tscircuit/soup"
 import { BuilderInterface } from "../builder-interface"
 import { FabricationNoteTextProps } from "@tscircuit/props"
 
@@ -22,7 +22,7 @@ export class FabricationNoteTextBuilderClass
     return this
   }
   build(bc) {
-    const fabrication_note_text: FabricationNoteText = {
+    const fabrication_note_text: PcbFabricationNoteText = {
       type: "pcb_fabrication_note_text",
       layer: this.props.layer as any,
       font: this.props.font ?? "tscircuit2024",

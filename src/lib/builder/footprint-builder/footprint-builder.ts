@@ -186,9 +186,9 @@ export class FootprintBuilderClass implements FootprintBuilder {
               // TODO silkscreen rect isFilled, isOutline etc.
             })
           )
-        } else if (elm.type === "fabrication_note_path") {
+        } else if (elm.type === "pcb_fabrication_note_path") {
           fb.add("fabricationnotepath", (pb) => pb.setProps(elm))
-        } else if (elm.type === "fabrication_note_text") {
+        } else if (elm.type === "pcb_fabrication_note_text") {
           fb.add("fabricationnotetext", (pb) =>
             pb.setProps({
               ...elm,

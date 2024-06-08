@@ -33,6 +33,6 @@ test("[smoke] fabrication", async (t) => {
     )
     .build()
 
-  const [fbt] = su(soup).fabrication_note_text.list()
+  const [fbt] = su(soup).pcb_fabrication_note_text.list()
   t.is(fbt.text, "Hello World")
 })
