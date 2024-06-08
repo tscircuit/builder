@@ -1,7 +1,7 @@
 import { BuildContext } from "lib/types"
 import {
   AnySoupElement,
-  FabricationNotePath,
+  PcbFabricationNotePath,
   pcb_route_hints,
 } from "@tscircuit/soup"
 import type { BuilderInterface } from "../builder-interface"
@@ -26,8 +26,8 @@ export class FabricationNotePathBuilderClass
     return this
   }
   build(bc) {
-    const fabrication_note_path: FabricationNotePath = {
-      type: "fabrication_note_path",
+    const fabrication_note_path: PcbFabricationNotePath = {
+      type: "pcb_fabrication_note_path",
       layer: "top",
       pcb_component_id: bc.pcb_component_id,
       fabrication_note_path_id: bc.getId("fabrication_note_path"),
