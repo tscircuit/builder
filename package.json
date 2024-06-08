@@ -23,7 +23,6 @@
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/npm": "^9.0.1",
     "@semantic-release/release-notes-generator": "^10.0.3",
-    "@tscircuit/soup": "^0.0.30",
     "ava": "^4.3.3",
     "dpdm": "^3.13.0",
     "esbuild": "^0.15.18",
@@ -39,6 +38,7 @@
   },
   "dependencies": {
     "@lume/kiwi": "^0.1.0",
+    "@tscircuit/soup": "^0.0.30",
     "@tscircuit/footprinter": "^0.0.41",
     "@tscircuit/layout": "^0.0.17",
     "@tscircuit/props": "^0.0.11",
