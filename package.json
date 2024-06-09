@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "@lume/kiwi": "^0.1.0",
-    "@tscircuit/footprinter": "^0.0.41",
+    "@tscircuit/footprinter": "^0.0.42",
     "@tscircuit/layout": "^0.0.17",
     "@tscircuit/props": "^0.0.11",
     "@tscircuit/routing": "^1.3.1",
