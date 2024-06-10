@@ -77,6 +77,7 @@ export interface FootprintBuilder {
   ): FootprintBuilder
   setStandardFootprint(footprint_name: string): FootprintBuilder
   loadStandardFootprint(footprint_name: string): FootprintBuilder
+  loadFootprintFromSoup(soup: Type.AnySoupElement[]): FootprintBuilder
   setRotation: (rotation: number | `${number}deg`) => FootprintBuilder
   setLayer: (layer: Type.LayerRef) => FootprintBuilder
   build(bc: Type.BuildContext): Promise<Type.AnyElement[]>
@@ -198,6 +199,7 @@ export class FootprintBuilderClass implements FootprintBuilder {
         )
       }
     }
+    return this
   }
 
   loadStandardFootprint(footprint_name: string) {
