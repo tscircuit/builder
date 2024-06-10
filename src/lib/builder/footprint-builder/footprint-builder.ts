@@ -77,6 +77,7 @@ export interface FootprintBuilder {
   ): FootprintBuilder
   setStandardFootprint(footprint_name: string): FootprintBuilder
   loadStandardFootprint(footprint_name: string): FootprintBuilder
+  loadFootprintFromSoup(soup: Type.AnySoupElement[]): FootprintBuilder
   setRotation: (rotation: number | `${number}deg`) => FootprintBuilder
   setLayer: (layer: Type.LayerRef) => FootprintBuilder
   build(bc: Type.BuildContext): Promise<Type.AnyElement[]>
@@ -144,62 +145,67 @@ export class FootprintBuilderClass implements FootprintBuilder {
     return this
   }
 
+  loadFootprintFromSoup(soup: Type.AnySoupElement[]) {
+    const fb: FootprintBuilder = this
+    for (const elm of soup) {
+      if (elm.type === "pcb_smtpad") {
+        fb.add("smtpad", (pb) => pb.setProps(elm))
+      } else if (elm.type === "pcb_plated_hole") {
+        fb.add("platedhole", (pb) => pb.setProps(elm))
+      } else if (elm.type === "pcb_hole") {
+        fb.add("hole", (pb) => pb.setProps(elm))
+      } else if (elm.type === "pcb_silkscreen_circle") {
+        fb.add("silkscreencircle", (pb) =>
+          pb.setProps({
+            ...elm,
+            pcbX: elm.center.x,
+            pcbY: elm.center.y,
+          })
+        )
+      } else if (elm.type === "pcb_silkscreen_line") {
+        fb.add("silkscreenline", (pb) =>
+          pb.setProps({
+            ...elm,
+            strokeWidth: elm.stroke_width,
+          })
+        )
+      } else if (elm.type === "pcb_silkscreen_path") {
+        fb.add("silkscreenpath", (pb) =>
+          pb.setProps({
+            ...elm,
+            strokeWidth: elm.stroke_width,
+          })
+        )
+      } else if (elm.type === "pcb_silkscreen_rect") {
+        fb.add("silkscreenrect", (pb) =>
+          pb.setProps({
+            ...elm,
+            pcbX: elm.center.x,
+            pcbY: elm.center.y,
+            // TODO silkscreen rect isFilled, isOutline etc.
+          })
+        )
+      } else if (elm.type === "pcb_fabrication_note_path") {
+        fb.add("fabricationnotepath", (pb) => pb.setProps(elm))
+      } else if (elm.type === "pcb_fabrication_note_text") {
+        fb.add("fabricationnotetext", (pb) =>
+          pb.setProps({
+            ...elm,
+            pcbX: elm.anchor_position.x,
+            pcbY: elm.anchor_position.y,
+            anchorAlignment: elm.anchor_alignment,
+            fontSize: elm.font_size,
+          })
+        )
+      }
+    }
+    return this
+  }
+
   loadStandardFootprint(footprint_name: string) {
     try {
       const fp_soup = fp.string(footprint_name).soup()
-      const fb: FootprintBuilder = this
-      for (const elm of fp_soup) {
-        if (elm.type === "pcb_smtpad") {
-          fb.add("smtpad", (pb) => pb.setProps(elm))
-        } else if (elm.type === "pcb_plated_hole") {
-          fb.add("platedhole", (pb) => pb.setProps(elm))
-        } else if (elm.type === "pcb_hole") {
-          fb.add("hole", (pb) => pb.setProps(elm))
-        } else if (elm.type === "pcb_silkscreen_circle") {
-          fb.add("silkscreencircle", (pb) =>
-            pb.setProps({
-              ...elm,
-              pcbX: elm.center.x,
-              pcbY: elm.center.y,
-            })
-          )
-        } else if (elm.type === "pcb_silkscreen_line") {
-          fb.add("silkscreenline", (pb) =>
-            pb.setProps({
-              ...elm,
-              strokeWidth: elm.stroke_width,
-            })
-          )
-        } else if (elm.type === "pcb_silkscreen_path") {
-          fb.add("silkscreenpath", (pb) =>
-            pb.setProps({
-              ...elm,
-              strokeWidth: elm.stroke_width,
-            })
-          )
-        } else if (elm.type === "pcb_silkscreen_rect") {
-          fb.add("silkscreenrect", (pb) =>
-            pb.setProps({
-              ...elm,
-              pcbX: elm.center.x,
-              pcbY: elm.center.y,
-              // TODO silkscreen rect isFilled, isOutline etc.
-            })
-          )
-        } else if (elm.type === "pcb_fabrication_note_path") {
-          fb.add("fabricationnotepath", (pb) => pb.setProps(elm))
-        } else if (elm.type === "pcb_fabrication_note_text") {
-          fb.add("fabricationnotetext", (pb) =>
-            pb.setProps({
-              ...elm,
-              pcbX: elm.anchor_position.x,
-              pcbY: elm.anchor_position.y,
-              anchorAlignment: elm.anchor_alignment,
-              fontSize: elm.font_size,
-            })
-          )
-        }
-      }
+      this.loadFootprintFromSoup(fp_soup)
     } catch (e: any) {
       throw new Error(
         `Could not understand footprint: "${footprint_name}" (examples: 0402, 0603)\n\n${e.toString()}`
