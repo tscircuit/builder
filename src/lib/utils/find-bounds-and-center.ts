@@ -9,15 +9,15 @@ export const findBoundsAndCenter = (
     .map((elm) => getDebugLayoutObject(elm))
     .filter(isTruthy)
 
-  let minX = debugObjects[0].x
+  let minX = debugObjects[0].x - debugObjects[0].width / 2
   let maxX = debugObjects[0].x + debugObjects[0].width / 2
-  let minY = debugObjects[0].y
+  let minY = debugObjects[0].y - debugObjects[0].height / 2
   let maxY = debugObjects[0].y + debugObjects[0].height / 2
 
   for (const obj of debugObjects.slice(1)) {
-    minX = Math.min(minX, obj.x)
+    minX = Math.min(minX, obj.x - obj.width / 2)
     maxX = Math.max(maxX, obj.x + obj.width / 2)
-    minY = Math.min(minY, obj.y)
+    minY = Math.min(minY, obj.y - obj.height / 2)
     maxY = Math.max(maxY, obj.y + obj.height / 2)
   }
 
