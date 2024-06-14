@@ -1,20 +1,19 @@
 import { getTestFixture } from "tests/fixtures/get-test-fixture"
 import test from "ava"
 import { PCBComponent, manual_layout } from "index"
+import { layout } from "@tscircuit/layout"
 
 test("pcb manual layout in group builder", async (t) => {
   const { logSoup, pb } = getTestFixture(t)
 
   const soup = await pb
     .setProps({
-      manual_layout: {
-        pcb_positions: [
-          {
-            selector: ".R1",
-            center: { x: -1, y: 1 },
-          },
-        ],
-      },
+      layout: layout().manualPcbPlacement([
+        {
+          selector: ".R1",
+          center: { x: -1, y: 1 },
+        },
+      ]),
     })
     .add("resistor", (rb) =>
       rb.setProps({

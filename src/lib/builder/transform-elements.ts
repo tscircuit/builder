@@ -60,7 +60,10 @@ export const transformPCBElement = (elm: Type.AnyElement, matrix: Matrix) => {
     const { x, y } = applyToPoint(matrix, { x: elm.x, y: elm.y })
     elm.x = x
     elm.y = y
-  } else if (elm.type === "pcb_silkscreen_text") {
+  } else if (
+    elm.type === "pcb_silkscreen_text" ||
+    elm.type === "pcb_fabrication_note_text"
+  ) {
     elm.anchor_position = applyToPoint(matrix, elm.anchor_position)
   } else if (
     elm.type === "pcb_silkscreen_circle" ||
@@ -69,7 +72,11 @@ export const transformPCBElement = (elm: Type.AnyElement, matrix: Matrix) => {
     elm.center = applyToPoint(matrix, elm.center)
   } else if (elm.type === "pcb_component") {
     elm.center = applyToPoint(matrix, elm.center)
-  } else if (elm.type === "pcb_silkscreen_path" || elm.type === "pcb_trace") {
+  } else if (
+    elm.type === "pcb_silkscreen_path" ||
+    elm.type === "pcb_trace" ||
+    elm.type === "pcb_fabrication_note_path"
+  ) {
     elm.route = elm.route.map((rp) => {
       const tp = applyToPoint(matrix, rp) as { x: number; y: number }
       rp.x = tp.x
