@@ -101,9 +101,13 @@ export class BugBuilderClass
       throw new Error("port_labels is required when building a <bug />")
     }
 
+    const extended_port_arrangement = {
+      ...port_arrangement,
+      pin_spacing: this.schematic_properties.pin_spacing,
+    }
     const port_indices = getPortIndices(port_arrangement)
     for (const pn of port_indices) {
-      const portPosition = getPortPosition(port_arrangement, pn)
+      const portPosition = getPortPosition(extended_port_arrangement, pn)
       this.ports.addPort({
         name: port_labels[pn],
         pin_number: pn,

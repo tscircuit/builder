@@ -23,6 +23,7 @@ import { maybeConvertToPoint } from "lib/utils/maybe-convert-to-point"
 import { isTruthy } from "lib/utils/is-truthy"
 import { removeNulls } from "lib/utils/remove-nulls"
 import { SupplierName } from "lib/soup/pcb/properties/supplier_name"
+import { remapProp } from "./remap-prop"
 
 export interface BaseComponentBuilder<T> {
   project_builder: ProjectBuilder
@@ -184,6 +185,14 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
   setProps(props) {
     const unused_props: string[] = []
 
+    // Remap props e.g. schPortArrangement -> port_arrangement
+    for (const [prop_key, prop_val] of Object.entries(props)) {
+      const [remapped_key, remapped_val] = remapProp(prop_key, prop_val)
+      if (prop_key !== remapped_key) {
+        props[remapped_key] = remapped_val
+      }
+    }
+
     for (const [prop_key, prop_val] of Object.entries(props)) {
       const point = maybeConvertToPoint(prop_val)
 
@@ -206,6 +215,10 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
         this.setFootprintCenter(prop_val, props.pcb_cy)
       } else if (prop_key === "pcb_center" && point) {
         this.setFootprintCenter(prop_val, props.pcb_y)
+      } else if (prop_key === "port_arrangement") {
+        this.setSchematicProperties({ port_arrangement: prop_val })
+      } else if (prop_key === "port_labels") {
+        this.setSchematicProperties({ port_labels: prop_val })
       } else if (
         ["y", "schematic_y", "pcb_y", "sch_y", "cy"].includes(prop_key)
       ) {
@@ -253,7 +266,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
         // passed, we want to totally ignore this and not add it to unused props
       } else {
         unused_props.push(prop_key)
-        console.warn(`Unused property passed: "${prop_key}"`)
+        // console.warn(`Unused property passed: "${prop_key}"`)
       }
     }
 
