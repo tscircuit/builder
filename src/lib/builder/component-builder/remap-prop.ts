@@ -20,6 +20,8 @@ export const remapProp = (prop: string, val: any): [string, any] => {
       return ["port_labels", val]
     case "pinSpacing":
       return ["pin_spacing", val]
+    case "schPinSpacing":
+      return ["pin_spacing", val]
     default:
       return [prop, val]
   }
