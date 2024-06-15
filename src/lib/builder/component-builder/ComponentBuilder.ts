@@ -101,7 +101,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
     this.footprint = createFootprintBuilder(project_builder)
     this.schematic_symbol = createSchematicSymbolBuilder(project_builder)
     this.settable_source_properties = ["name", "part_numbers"]
-    this.settable_schematic_properties = []
+    this.settable_schematic_properties = ["pin_spacing"]
     this.settable_pcb_properties = []
     // this.part_numbers = []
     this.supplier_part_numbers = {}
