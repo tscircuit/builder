@@ -24,6 +24,10 @@ export type SideSizes = {
 
 export type PortArrangement = SideSizes | ExplicitPinMappingArrangement
 
+export type ExtendedPortArrangement = PortArrangement & {
+  pin_spacing?: number
+}
+
 export const hasExplicitPinMapping = (
   pa: PortArrangement
 ): pa is ExplicitPinMappingArrangement => {
@@ -119,7 +123,7 @@ const MIN_SIDE_DIST = 1.5
 /**
  * Distance between ports on the same side
  */
-const PORT_SPACING = 0.5
+export const DEFAULT_PIN_SPACING = 0.5
 
 /**
  * These are all the defined port indices, for regular bugs all ports are
@@ -146,8 +150,9 @@ export const getPortIndices = (pa: PortArrangement): number[] => {
 }
 
 export const getPortArrangementSize = (
-  port_arrangement: PortArrangement
+  port_arrangement: ExtendedPortArrangement
 ): { width: number; height: number; total_ports: number } => {
+  const pinSpacing = port_arrangement.pin_spacing ?? DEFAULT_PIN_SPACING
   const {
     top_size = 0,
     right_size = 0,
@@ -159,13 +164,13 @@ export const getPortArrangementSize = (
 
   const width = Math.max(
     MIN_SIDE_DIST,
-    (top_size + 1) * PORT_SPACING,
-    (bottom_size + 1) * PORT_SPACING
+    (top_size + 1) * pinSpacing,
+    (bottom_size + 1) * pinSpacing
   )
   const height = Math.max(
     MIN_SIDE_DIST,
-    (left_size + 1) * PORT_SPACING,
-    (right_size + 1) * PORT_SPACING
+    (left_size + 1) * pinSpacing,
+    (right_size + 1) * pinSpacing
   )
   return { width, height, total_ports }
 }
@@ -176,13 +181,14 @@ export const getPortArrangementSize = (
  * top-left and traveling down the left side. The index begins with 1.
  */
 export const getPortPosition = (
-  port_arrangement: PortArrangement,
+  port_arrangement: ExtendedPortArrangement,
   position: number
 ): {
   x: number
   y: number
   side: "top" | "bottom" | "left" | "right"
 } => {
+  const pin_spacing = port_arrangement.pin_spacing ?? DEFAULT_PIN_SPACING
   const {
     top_size = 0,
     right_size = 0,
@@ -228,19 +234,19 @@ export const getPortPosition = (
   let y: number
   if (side === "top") {
     const i_dist_center = index - (top_size - 1) / 2
-    x = i_dist_center * PORT_SPACING
+    x = i_dist_center * pin_spacing
     y = height / 2
   } else if (side === "bottom") {
     const i_dist_center = index - (bottom_size - 1) / 2
-    x = i_dist_center * PORT_SPACING
+    x = i_dist_center * pin_spacing
     y = -height / 2
   } else if (side === "left") {
     const i_dist_center = -index + (left_size - 1) / 2
-    y = i_dist_center * PORT_SPACING
+    y = i_dist_center * pin_spacing
     x = -width / 2
   } else if (side === "right") {
     const i_dist_center = index - (right_size - 1) / 2
-    y = i_dist_center * PORT_SPACING
+    y = i_dist_center * pin_spacing
     x = width / 2
   } else {
     throw new Error(`Invalid side "${side}", can't set x/y values`)

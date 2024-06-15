@@ -55,6 +55,7 @@ export const convertSoupToExcellonDrillCommands = ({
       element.type === "pcb_hole" ||
       element.type === "pcb_via"
     ) {
+      if (!("hole_diameter" in element)) continue
       if (!diameterToToolNumber[element.hole_diameter]) {
         builder.add("aper_function_header", {
           is_plated: true,
@@ -88,6 +89,7 @@ export const convertSoupToExcellonDrillCommands = ({
           (element.type === "pcb_plated_hole" || element.type === "pcb_via")
         )
           continue
+        if (!("hole_diameter" in element)) continue
         if (diameterToToolNumber[element.hole_diameter] === i) {
           builder.add("drill_at", {
             x: mmToInch(element.x),
