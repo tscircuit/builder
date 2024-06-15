@@ -1,5 +1,4 @@
 import _ from "lodash"
-import type { SchematicPortArrangement } from "@tscircuit/props"
 
 export type VerticalPortSideConfiguration = {
   pin_definition_direction?: "top-to-bottom" | "bottom-to-top"
