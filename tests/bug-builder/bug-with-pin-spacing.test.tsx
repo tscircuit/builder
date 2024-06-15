@@ -16,7 +16,7 @@ test("bug with pin spacing", async (t) => {
           1: "D0",
           2: "D1",
         },
-        pinSpacing: 3,
+        pinSpacing: 1,
         center: { x: 0, y: 0 },
       })
     )

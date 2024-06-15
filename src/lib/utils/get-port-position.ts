@@ -124,7 +124,7 @@ const MIN_SIDE_DIST = 1.5
 /**
  * Distance between ports on the same side
  */
-const PIN_SPACING = 0.5
+export const DEFAULT_PIN_SPACING = 0.5
 
 /**
  * These are all the defined port indices, for regular bugs all ports are
@@ -153,7 +153,7 @@ export const getPortIndices = (pa: PortArrangement): number[] => {
 export const getPortArrangementSize = (
   port_arrangement: ExtendedPortArrangement
 ): { width: number; height: number; total_ports: number } => {
-  const pinSpacing = port_arrangement.pin_spacing ?? PIN_SPACING
+  const pinSpacing = port_arrangement.pin_spacing ?? DEFAULT_PIN_SPACING
   const {
     top_size = 0,
     right_size = 0,
@@ -189,7 +189,7 @@ export const getPortPosition = (
   y: number
   side: "top" | "bottom" | "left" | "right"
 } => {
-  const pin_spacing = port_arrangement.pin_spacing ?? PIN_SPACING
+  const pin_spacing = port_arrangement.pin_spacing ?? DEFAULT_PIN_SPACING
   const {
     top_size = 0,
     right_size = 0,

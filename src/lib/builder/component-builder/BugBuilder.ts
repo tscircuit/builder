@@ -7,6 +7,7 @@ import { compose, rotate, translate } from "transformation-matrix"
 import { PortsBuilder } from "../ports-builder"
 import { Except } from "type-fest"
 import getPortPosition, {
+  DEFAULT_PIN_SPACING,
   getPortArrangementSize,
   getPortIndices,
 } from "../../utils/get-port-position"
@@ -72,15 +73,23 @@ export class BugBuilderClass
       throw new Error("port_arrangement is required when building a <bug />")
     }
 
-    const port_arrangement_size = getPortArrangementSize(port_arrangement)
+    const pin_spacing =
+      this.schematic_properties?.pin_spacing ?? DEFAULT_PIN_SPACING
+    const extended_port_arrangement = {
+      ...port_arrangement,
+      pin_spacing: this.schematic_properties.pin_spacing,
+    }
+    const port_arrangement_size = getPortArrangementSize(
+      extended_port_arrangement
+    )
     const schematic_component: Soup.SchematicComponent = {
       type: "schematic_component",
       source_component_id,
       schematic_component_id,
       rotation: this.schematic_rotation ?? 0,
       size: {
-        width: port_arrangement_size.width - 0.5,
-        height: port_arrangement_size.height - 0.5,
+        width: port_arrangement_size.width - pin_spacing,
+        height: port_arrangement_size.height - pin_spacing,
       },
       center: this.schematic_position || { x: 0, y: 0 },
       ...this.schematic_properties,
@@ -101,10 +110,6 @@ export class BugBuilderClass
       throw new Error("port_labels is required when building a <bug />")
     }
 
-    const extended_port_arrangement = {
-      ...port_arrangement,
-      pin_spacing: this.schematic_properties.pin_spacing,
-    }
     const port_indices = getPortIndices(port_arrangement)
     for (const pn of port_indices) {
       const portPosition = getPortPosition(extended_port_arrangement, pn)
