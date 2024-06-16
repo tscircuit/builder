@@ -37,7 +37,7 @@
     "tsup": "^8.0.2",
     "type-fest": "^2.19.0",
     "typescript": "^5.4.3",
-    "zod": "^3.21.4"
+    "zod": "^3.23.8"
   },
   "peerDependencies": {
     "@tscircuit/props": "*",
