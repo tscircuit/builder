@@ -17,7 +17,7 @@ import { getSchematicObstaclesFromElements } from "./schematic-routing/get-schem
 import { pairs } from "lib/utils/pairs"
 import { mergeRoutes } from "./pcb-routing/merge-routes"
 import { uniq } from "lib/utils/uniq"
-import { findPossibleTraceLayerCombinations } from "./find-possible-trace-layer-combinations"
+import { findPossibleTraceLayerCombinations } from "./pcb-routing/find-possible-trace-layer-combinations"
 import { AnySoupElement, SourceNet } from "@tscircuit/soup"
 import { buildTraceForSinglePortAndNet } from "./build-trace-for-single-port-and-net"
 import { getPcbObstacles } from "./pcb-routing/get-pcb-obstacles"
@@ -25,6 +25,7 @@ import { solveForSingleLayerRoute } from "./pcb-routing/solve-for-single-layer-r
 import { TracePcbRoutingContext } from "./pcb-routing/trace-pcb-routing-context"
 import { solveForRoute } from "./pcb-routing/solve-for-route"
 import { createNoCommonLayersError } from "./pcb-errors"
+import { buildPcbTraceElements } from "./build-pcb-trace-elements"
 
 type RouteSolverOrString = Type.RouteSolver | "rmst" | "straight" | "route1"
 
@@ -282,164 +283,16 @@ export const createTraceBuilder = (
       edges,
     }
 
-    // ----------------------------
-    // PCB ROUTING
-    // ----------------------------
-
-    const pcb_trace_id = builder.project_builder.getId("pcb_trace")
-    const pcb_errors: Type.PCBError[] = []
-
-    const pcb_terminals = source_ports_in_route.map((sp) => {
-      const pcb_port = parent_elements.find(
-        (elm) =>
-          elm.type === "pcb_port" && elm.source_port_id === sp.source_port_id
-      ) as Type.PCBPort | null
-      if (!pcb_port)
-        throw new Error(
-          `source_port "${sp.source_port_id}" is missing a pcb_port`
-        )
-      return pcb_port
-    })
-    const pcb_terminal_port_ids = pcb_terminals.map((t) => t.pcb_port_id)
-
-    if (internal.pcb_route_hints.length > 0 && pcb_terminals.length !== 2) {
-      throw new Error(
-        "PCB route hints currently aren't supported for traces with more than 2 terminals"
-      )
-    }
-
-    const thickness_mm =
-      internal.thickness === "inherit"
-        ? 0.2 // TODO derive from net/context
-        : bc.convert(internal.thickness as any)
-    const pcb_obstacles = getPcbObstacles({
-      elements: parent_elements,
-      pcb_terminal_port_ids,
-      obstacle_margin: thickness_mm * 2,
-    })
-    const pcb_routing_ctx: TracePcbRoutingContext = {
-      ...bc,
-      mutable_pcb_errors: pcb_errors,
-      source_trace_id,
-      pcb_trace_id,
-      pcb_terminal_port_ids,
-      thickness_mm,
-      elements: parent_elements,
-      pcb_obstacles,
-    }
-
-    const pcb_route: Type.PCBTrace["route"] = []
-
-    // TODO put in solve for Route
-
-    let pcb_route_hints = internal.pcb_route_hints ?? []
-
-    if (pcb_route_hints.length === 0) {
-      // check if there are any trace_hints that are relevant to our ports, if
-      // there are, use them as our route hints
-      const port0_hint = su(parent_elements).pcb_trace_hint.getWhere({
-        pcb_port_id: pcb_terminal_port_ids[0],
-      })
-      const port1_hint = su(parent_elements).pcb_trace_hint.getWhere({
-        pcb_port_id: pcb_terminal_port_ids[1],
-      })
-
-      if (port0_hint) {
-        pcb_route_hints.push(...port0_hint.route)
-      }
-      if (port1_hint) {
-        pcb_route_hints.push(...[...port1_hint.route].reverse())
-      }
-    }
-
-    if (pcb_route_hints.length === 0) {
-      pcb_route.push(...solveForRoute(pcb_terminals, pcb_routing_ctx))
-    } else {
-      // TODO add support for more than 2 terminals w/ hints
-      const ordered_pcb_terminals_and_hints = [
-        pcb_terminals[0],
-        ...(pcb_route_hints as any).map((p) => ({
-          ...p,
-          x: bc.convert(p.x),
-          y: bc.convert(p.y),
-        })),
-        pcb_terminals[1],
-      ]
-
-      const candidate_layer_combinations = findPossibleTraceLayerCombinations(
-        ordered_pcb_terminals_and_hints
-      )
-
-      if (candidate_layer_combinations.length === 0) {
-        pcb_errors.push(createNoCommonLayersError(pcb_routing_ctx))
-      } else {
-        const routes: Type.PCBTrace["route"][] = []
-
-        // TODO explore all candidate layer combinations
-        const layer_selection = candidate_layer_combinations[0].layer_path
-
-        const ordered_with_layer_hints = ordered_pcb_terminals_and_hints.map(
-          (t, idx) => {
-            if (t.via) {
-              return {
-                ...t,
-                via_to_layer: layer_selection[idx],
-              }
-            } else {
-              return { ...t, layers: [layer_selection[idx]] }
-            }
-          }
-        )
-
-        for (let [a, b] of pairs(ordered_with_layer_hints)) {
-          routes.push(solveForRoute([a, b], pcb_routing_ctx))
-        }
-        if (routes.some((route) => route.length === 0)) {
-          pcb_errors.push({
-            pcb_error_id: builder.project_builder.getId("pcb_error"),
-            type: "pcb_error",
-            error_type: "pcb_trace_error",
-            message: `No route could be found for terminals`,
-            pcb_trace_id,
-            source_trace_id,
-            pcb_component_ids: [], // TODO
-            pcb_port_ids: pcb_terminal_port_ids,
-          })
-        } else {
-          pcb_route.push(...mergeRoutes(routes))
-        }
-      }
-    }
-
-    // Iterate over the pcb_route and if there is a layer switch without an
-    // associated port, add a via. This is a bit of a hack, it maybe should
-    // be done by explicitly adding the via in the route / inside the
-    // solveForRoute function
-    const pcb_vias: Type.PCBVia[] = [
-      ...pairs(pcb_route).flatMap(([a, b]) => {
-        if ("layer" in a && "layer" in b && a.layer !== b.layer) {
-          return [
-            {
-              type: "pcb_via",
-              x: a.x,
-              y: a.y,
-              from_layer: a.layer,
-              to_layer: b.layer,
-              hole_diameter: 0.2,
-              outer_diameter: 0.4,
-            } as Type.PCBVia,
-          ]
-        }
-        return []
-      }),
-    ].filter((via: any): via is Type.PCBVia => via !== null)
-
-    const pcb_trace: Type.PCBTrace = {
-      type: "pcb_trace",
-      pcb_trace_id,
-      source_trace_id: source_trace_id,
-      route: pcb_route,
-    }
+    const { pcb_trace, pcb_vias, pcb_errors } = buildPcbTraceElements(
+      {
+        elements: parent_elements,
+        source_ports_in_route,
+        source_trace_id,
+        thickness: internal.thickness,
+        pcb_route_hints: internal.pcb_route_hints,
+      },
+      bc
+    )
 
     return [
       source_trace,
