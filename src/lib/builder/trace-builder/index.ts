@@ -19,10 +19,12 @@ import { mergeRoutes } from "./pcb-routing/merge-routes"
 import { uniq } from "lib/utils/uniq"
 import { findPossibleTraceLayerCombinations } from "./find-possible-trace-layer-combinations"
 import { AnySoupElement, SourceNet } from "@tscircuit/soup"
-import { buildTraceForSinglePortAndNet } from "./pcb-routing/build-trace-for-single-port-and-net"
+import { buildTraceForSinglePortAndNet } from "./build-trace-for-single-port-and-net"
 import { getPcbObstacles } from "./pcb-routing/get-pcb-obstacles"
 import { solveForSingleLayerRoute } from "./pcb-routing/solve-for-single-layer-route"
 import { PcbRoutingContext } from "./pcb-routing/pcb-routing-context"
+import { solveForRoute } from "./pcb-routing/solve-for-route"
+import { createNoCommonLayersError } from "./pcb-errors"
 
 type RouteSolverOrString = Type.RouteSolver | "rmst" | "straight" | "route1"
 
@@ -322,138 +324,13 @@ export const createTraceBuilder = (
       pcb_trace_id,
       pcb_terminal_port_ids,
       thickness_mm,
+      elements: parent_elements,
+      pcb_obstacles,
     }
 
     const pcb_route: Type.PCBTrace["route"] = []
 
-    function solveForRoute(
-      terminals: Array<Type.PCBPort | Type.PcbRouteHint>
-    ): Type.PCBTrace["route"] {
-      // 1. if all terminals are on the same layer, solve
-      // 2. if some terminals have layer unspecified but at least one does, and
-      //    there are no disagreeing layers, solve
-      // 3. if this is a terminal pair and it's across two layers, check if one
-      //    terminal is "traversable" to the other terminal's layer (i.e. a
-      //    plated hole or via / compatible via "layers")
-      // 4. otherwise throw (for now)
-
-      // This can be due to an undefined footprint or unmatched pcb_port, but
-      // there should be an error earlier than this
-      const invalid_terminal = terminals.find(
-        (t) => t.x === undefined || t.y === undefined
-      )
-      if (invalid_terminal) {
-        const source_port = parent_elements.find(
-          (e) =>
-            e.type === "source_port" &&
-            e.source_port_id === (invalid_terminal as any).source_port_id
-        ) as Type.SourcePort
-        const source_component = parent_elements.find(
-          (e) =>
-            e.type === "source_component" &&
-            e.source_component_id === source_port?.source_component_id
-        ) as Type.SourceComponent
-        pcb_errors.push({
-          pcb_error_id: builder.project_builder.getId("pcb_error"),
-          type: "pcb_error",
-          error_type: "pcb_trace_error",
-          message: `Terminal "${
-            source_port?.name
-              ? `.${source_component?.name} > .${source_port?.name}`
-              : JSON.stringify(invalid_terminal)
-          }" has no x/y coordinates, this may be due to a missing footprint or unmatched pcb port`,
-          pcb_trace_id,
-          source_trace_id,
-          pcb_component_ids: [], // TODO
-          pcb_port_ids: pcb_terminal_port_ids,
-        })
-        return []
-      }
-
-      const candidate_layers: Type.LayerRef[] = uniq(
-        terminals.flatMap((t) => {
-          if ("layers" in t) return t.layers
-          if ("via_to_layer" in t && t["via_to_layer"]) return [t.via_to_layer]
-          return []
-        })
-      )
-
-      const common_layers = candidate_layers.filter((layer) =>
-        terminals.every((t) => {
-          if ("layers" in t) return t.layers.includes(layer)
-          return true
-        })
-      )
-
-      if (candidate_layers.length === 0) {
-        pcb_errors.push({
-          pcb_error_id: builder.project_builder.getId("pcb_error"),
-          type: "pcb_error",
-          error_type: "pcb_trace_error",
-          message: `No layers specified for terminals`,
-          pcb_trace_id,
-          source_trace_id,
-          pcb_component_ids: [], // TODO
-          pcb_port_ids: pcb_terminal_port_ids,
-        })
-        return []
-      }
-
-      if (common_layers.length === 1) {
-        return solveForSingleLayerRoute(
-          {
-            terminals: terminals.map((t) => ({
-              x: t.x,
-              y: t.y,
-            })),
-            pcb_obstacles,
-            layer: common_layers[0],
-          },
-          pcb_routing_ctx
-        )
-      }
-
-      if (common_layers.length === 0) {
-        pcb_errors.push({
-          pcb_error_id: builder.project_builder.getId("pcb_error"),
-          type: "pcb_error",
-          error_type: "pcb_trace_error",
-          message: `Terminals are on different layers and no common layer could be resolved`,
-          pcb_trace_id,
-          source_trace_id,
-          pcb_component_ids: [], // TODO
-          pcb_port_ids: pcb_terminal_port_ids,
-        })
-        return []
-      }
-
-      const LAYER_SELECTION_PREFERENCE = ["top", "bottom", "inner1", "inner2"]
-
-      for (const layer of common_layers) {
-        if (LAYER_SELECTION_PREFERENCE.includes(layer)) {
-          return solveForSingleLayerRoute(
-            {
-              terminals: terminals.map((t) => ({
-                x: t.x,
-                y: t.y,
-              })),
-              pcb_obstacles,
-              layer: layer,
-            },
-            pcb_routing_ctx
-          )
-        }
-      }
-
-      return solveForSingleLayerRoute(
-        {
-          terminals,
-          layer: [...common_layers].sort()[0],
-          pcb_obstacles,
-        },
-        pcb_routing_ctx
-      )
-    }
+    // TODO put in solve for Route
 
     let pcb_route_hints = internal.pcb_route_hints ?? []
 
@@ -476,7 +353,7 @@ export const createTraceBuilder = (
     }
 
     if (pcb_route_hints.length === 0) {
-      pcb_route.push(...solveForRoute(pcb_terminals))
+      pcb_route.push(...solveForRoute(pcb_terminals, pcb_routing_ctx))
     } else {
       // TODO add support for more than 2 terminals w/ hints
       const ordered_pcb_terminals_and_hints = [
@@ -494,16 +371,7 @@ export const createTraceBuilder = (
       )
 
       if (candidate_layer_combinations.length === 0) {
-        pcb_errors.push({
-          pcb_error_id: builder.project_builder.getId("pcb_error"),
-          type: "pcb_error",
-          error_type: "pcb_trace_error",
-          message: `No common layers could be resolved for terminals`,
-          pcb_trace_id,
-          source_trace_id,
-          pcb_component_ids: [], // TODO
-          pcb_port_ids: pcb_terminal_port_ids,
-        })
+        pcb_errors.push(createNoCommonLayersError(pcb_routing_ctx))
       } else {
         const routes: Type.PCBTrace["route"][] = []
 
@@ -524,7 +392,7 @@ export const createTraceBuilder = (
         )
 
         for (let [a, b] of pairs(ordered_with_layer_hints)) {
-          routes.push(solveForRoute([a, b]))
+          routes.push(solveForRoute([a, b], pcb_routing_ctx))
         }
         if (routes.some((route) => route.length === 0)) {
           pcb_errors.push({

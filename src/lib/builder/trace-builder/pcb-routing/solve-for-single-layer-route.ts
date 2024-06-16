@@ -8,18 +8,12 @@ export function solveForSingleLayerRoute(
   params: {
     terminals: Point[]
     layer: LayerRef
-    pcb_obstacles: PcbObstacle[]
     pcb_solver_grid?: PcbSolverGrid
   },
   ctx: PcbRoutingContext
 ): PCBTrace["route"] {
-  const {
-    terminals,
-    layer,
-    pcb_obstacles,
-    pcb_solver_grid = default_pcb_solver_grid,
-  } = params
-  const { thickness_mm } = ctx
+  const { terminals, layer, pcb_solver_grid = default_pcb_solver_grid } = params
+  const { thickness_mm, pcb_obstacles } = ctx
   try {
     const solved_route = findRoute({
       grid: pcb_solver_grid,
