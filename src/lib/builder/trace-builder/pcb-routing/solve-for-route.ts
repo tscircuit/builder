@@ -5,14 +5,18 @@ import type {
   PcbRouteHint,
   SourcePort,
 } from "@tscircuit/soup"
-import type { PcbRoutingContext } from "./pcb-routing-context"
+import type { TracePcbRoutingContext } from "./trace-pcb-routing-context"
 import { SourceComponent } from "lib/types"
 import { uniq } from "lib/utils/uniq"
 import { solveForSingleLayerRoute } from "./solve-for-single-layer-route"
+import {
+  createNoLayersSpecifiedError,
+  createPcbTraceError,
+} from "../pcb-errors"
 
 export function solveForRoute(
   terminals: Array<PCBPort | PcbRouteHint>,
-  ctx: PcbRoutingContext
+  ctx: TracePcbRoutingContext
 ): PCBTrace["route"] {
   // 1. if all terminals are on the same layer, solve
   // 2. if some terminals have layer unspecified but at least one does, and
@@ -22,14 +26,7 @@ export function solveForRoute(
   //    plated hole or via / compatible via "layers")
   // 4. otherwise throw (for now)
 
-  const {
-    elements,
-    mutable_pcb_errors: pcb_errors,
-    pcb_trace_id,
-    source_trace_id,
-    pcb_component_id,
-    pcb_terminal_port_ids,
-  } = ctx
+  const { elements, mutable_pcb_errors: pcb_errors } = ctx
 
   // This can be due to an undefined footprint or unmatched pcb_port, but
   // there should be an error earlier than this
@@ -47,20 +44,16 @@ export function solveForRoute(
         e.type === "source_component" &&
         e.source_component_id === source_port?.source_component_id
     ) as SourceComponent
-    pcb_errors.push({
-      pcb_error_id: ctx.getId("pcb_error"),
-      type: "pcb_error",
-      error_type: "pcb_trace_error",
-      message: `Terminal "${
-        source_port?.name
-          ? `.${source_component?.name} > .${source_port?.name}`
-          : JSON.stringify(invalid_terminal)
-      }" has no x/y coordinates, this may be due to a missing footprint or unmatched pcb port`,
-      pcb_trace_id,
-      source_trace_id,
-      pcb_component_ids: [], // TODO
-      pcb_port_ids: pcb_terminal_port_ids,
-    })
+    pcb_errors.push(
+      createPcbTraceError(
+        `Terminal "${
+          source_port?.name
+            ? `.${source_component?.name} > .${source_port?.name}`
+            : JSON.stringify(invalid_terminal)
+        }" has no x/y coordinates, this may be due to a missing footprint or unmatched pcb port`,
+        ctx
+      )
+    )
     return []
   }
 
@@ -80,16 +73,7 @@ export function solveForRoute(
   )
 
   if (candidate_layers.length === 0) {
-    pcb_errors.push({
-      pcb_error_id: builder.project_builder.getId("pcb_error"),
-      type: "pcb_error",
-      error_type: "pcb_trace_error",
-      message: `No layers specified for terminals`,
-      pcb_trace_id,
-      source_trace_id,
-      pcb_component_ids: [], // TODO
-      pcb_port_ids: pcb_terminal_port_ids,
-    })
+    pcb_errors.push(createNoLayersSpecifiedError(ctx))
     return []
   }
 
@@ -107,16 +91,12 @@ export function solveForRoute(
   }
 
   if (common_layers.length === 0) {
-    pcb_errors.push({
-      pcb_error_id: ctx.getId("pcb_error"),
-      type: "pcb_error",
-      error_type: "pcb_trace_error",
-      message: `Terminals are on different layers and no common layer could be resolved`,
-      pcb_trace_id,
-      source_trace_id,
-      pcb_component_ids: [], // TODO
-      pcb_port_ids: pcb_terminal_port_ids,
-    })
+    pcb_errors.push(
+      createPcbTraceError(
+        "Terminals are on different layers and no common layer could be resolved",
+        ctx
+      )
+    )
     return []
   }
 

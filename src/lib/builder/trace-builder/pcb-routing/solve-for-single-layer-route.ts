@@ -2,7 +2,7 @@ import { findRoute } from "@tscircuit/routing"
 import type { LayerRef, PCBTrace, Point } from "@tscircuit/soup"
 import type { PcbObstacle } from "./get-pcb-obstacles"
 import { PcbSolverGrid, default_pcb_solver_grid } from "./pcb-solver-grid"
-import type { PcbRoutingContext } from "./pcb-routing-context"
+import type { TracePcbRoutingContext } from "./trace-pcb-routing-context"
 
 export function solveForSingleLayerRoute(
   params: {
@@ -10,7 +10,7 @@ export function solveForSingleLayerRoute(
     layer: LayerRef
     pcb_solver_grid?: PcbSolverGrid
   },
-  ctx: PcbRoutingContext
+  ctx: TracePcbRoutingContext
 ): PCBTrace["route"] {
   const { terminals, layer, pcb_solver_grid = default_pcb_solver_grid } = params
   const { thickness_mm, pcb_obstacles } = ctx

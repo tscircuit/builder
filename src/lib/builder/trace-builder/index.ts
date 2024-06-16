@@ -22,7 +22,7 @@ import { AnySoupElement, SourceNet } from "@tscircuit/soup"
 import { buildTraceForSinglePortAndNet } from "./build-trace-for-single-port-and-net"
 import { getPcbObstacles } from "./pcb-routing/get-pcb-obstacles"
 import { solveForSingleLayerRoute } from "./pcb-routing/solve-for-single-layer-route"
-import { PcbRoutingContext } from "./pcb-routing/pcb-routing-context"
+import { TracePcbRoutingContext } from "./pcb-routing/trace-pcb-routing-context"
 import { solveForRoute } from "./pcb-routing/solve-for-route"
 import { createNoCommonLayersError } from "./pcb-errors"
 
@@ -317,7 +317,7 @@ export const createTraceBuilder = (
       pcb_terminal_port_ids,
       obstacle_margin: thickness_mm * 2,
     })
-    const pcb_routing_ctx: PcbRoutingContext = {
+    const pcb_routing_ctx: TracePcbRoutingContext = {
       ...bc,
       mutable_pcb_errors: pcb_errors,
       source_trace_id,
