@@ -57,6 +57,7 @@ const allowed_childen_builder_types = [
   "silkscreen_rect_builder",
   "silkscreen_circle_builder",
   "basic_trace_builder",
+  "basic_pcb_trace_builder",
   "fabrication_note_path_builder",
   "fabrication_note_text_builder",
 ]

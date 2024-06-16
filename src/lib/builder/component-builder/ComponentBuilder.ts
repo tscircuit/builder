@@ -114,10 +114,9 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
         this.ports.appendChild(child)
         return this
       }
-      case "smtpad_builder": {
-        this.footprint.appendChild(child)
-        return this
-      }
+      case "smtpad_builder":
+      case "basic_pcb_trace_builder":
+      case "pcb_trace_builder":
       case "plated_hole_builder": {
         this.footprint.appendChild(child)
         return this
