@@ -5,7 +5,7 @@ import type {
   PCBSMTPad,
 } from "@tscircuit/soup"
 
-type PcbObstacle = {
+export type PcbObstacle = {
   center: { x: number; y: number }
   width: number
   height: number

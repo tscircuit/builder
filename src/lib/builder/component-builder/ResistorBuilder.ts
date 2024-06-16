@@ -17,7 +17,9 @@ export interface ResistorBuilder extends BaseComponentBuilder<ResistorBuilder> {
       "type" | "source_component_id" | "ftype"
     > & { name?: string }
   ): ResistorBuilder
-  setProps(props: ResistorProps): ResistorBuilder
+  // TODO use proper resistor props soon
+  // setProps(props: ResistorProps): ResistorBuilder
+  setProps(props: any): ResistorBuilder
 }
 
 export class ResistorBuilderClass

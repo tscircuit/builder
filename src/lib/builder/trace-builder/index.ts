@@ -9,19 +9,20 @@ import { ProjectBuilder, GroupBuilder } from ".."
 import { ProjectClass, createProjectFromElements } from "lib/project"
 import { applySelector } from "lib/apply-selector"
 export { convertToReadableTraceTree } from "./convert-to-readable-route-tree"
-import { straightRouteSolver } from "./straight-route-solver"
+import { straightRouteSolver } from "./route-solvers/straight-route-solver"
 // import { rmstSolver } from "./rmst-solver"
-import { route1Solver } from "./route1-solver"
-import { findRoute } from "@tscircuit/routing"
+import { route1Solver } from "./route-solvers/route1-solver"
 import { Point } from "lib/soup"
-import { getSchematicObstaclesFromElements } from "./get-schematic-obstacles-from-elements"
+import { getSchematicObstaclesFromElements } from "./schematic-routing/get-schematic-obstacles-from-elements"
 import { pairs } from "lib/utils/pairs"
-import { mergeRoutes } from "./merge-routes"
+import { mergeRoutes } from "./pcb-routing/merge-routes"
 import { uniq } from "lib/utils/uniq"
 import { findPossibleTraceLayerCombinations } from "./find-possible-trace-layer-combinations"
 import { AnySoupElement, SourceNet } from "@tscircuit/soup"
-import { buildTraceForSinglePortAndNet } from "./build-trace-for-single-port-and-net"
-import { getPcbObstacles } from "./get-pcb-obstacles"
+import { buildTraceForSinglePortAndNet } from "./pcb-routing/build-trace-for-single-port-and-net"
+import { getPcbObstacles } from "./pcb-routing/get-pcb-obstacles"
+import { solveForSingleLayerRoute } from "./pcb-routing/solve-for-single-layer-route"
+import { PcbRoutingContext } from "./pcb-routing/pcb-routing-context"
 
 type RouteSolverOrString = Type.RouteSolver | "rmst" | "straight" | "route1"
 
@@ -314,56 +315,16 @@ export const createTraceBuilder = (
       pcb_terminal_port_ids,
       obstacle_margin: thickness_mm * 2,
     })
-    const pcb_solver_grid = {
-      marginSegments: 20,
-      maxGranularSearchSegments: 50,
-      segmentSize: 0.2, // mm
+    const pcb_routing_ctx: PcbRoutingContext = {
+      ...bc,
+      mutable_pcb_errors: pcb_errors,
+      source_trace_id,
+      pcb_trace_id,
+      pcb_terminal_port_ids,
+      thickness_mm,
     }
 
     const pcb_route: Type.PCBTrace["route"] = []
-
-    function solveForSingleLayerRoute(
-      terminals: Point[],
-      layer: Type.LayerRef
-    ) {
-      try {
-        const solved_route = findRoute({
-          grid: pcb_solver_grid,
-          obstacles: pcb_obstacles.filter((obstacle) =>
-            obstacle.layers.includes(layer)
-          ),
-          pointsToConnect: terminals,
-        })
-
-        if (solved_route.pathFound) {
-          const route: Type.PCBTrace["route"] = []
-          for (const point of solved_route.points) {
-            route.push({
-              route_type: "wire",
-              layer,
-              width: thickness_mm,
-              x: point.x,
-              y: point.y,
-              // TODO add start_pcb_port_id & end_pcb_port_id
-            })
-          }
-          return route
-        }
-        return []
-      } catch (e) {
-        pcb_errors.push({
-          pcb_error_id: builder.project_builder.getId("pcb_error"),
-          type: "pcb_error",
-          error_type: "pcb_trace_error",
-          message: `Error while pcb-trace-route solving: ${e.toString()}`,
-          pcb_trace_id,
-          source_trace_id,
-          pcb_component_ids: [], // TODO
-          pcb_port_ids: pcb_terminal_port_ids,
-        })
-        return []
-      }
-    }
 
     function solveForRoute(
       terminals: Array<Type.PCBPort | Type.PcbRouteHint>
@@ -440,11 +401,15 @@ export const createTraceBuilder = (
 
       if (common_layers.length === 1) {
         return solveForSingleLayerRoute(
-          terminals.map((t) => ({
-            x: t.x,
-            y: t.y,
-          })),
-          common_layers[0]
+          {
+            terminals: terminals.map((t) => ({
+              x: t.x,
+              y: t.y,
+            })),
+            pcb_obstacles,
+            layer: common_layers[0],
+          },
+          pcb_routing_ctx
         )
       }
 
@@ -467,16 +432,27 @@ export const createTraceBuilder = (
       for (const layer of common_layers) {
         if (LAYER_SELECTION_PREFERENCE.includes(layer)) {
           return solveForSingleLayerRoute(
-            terminals.map((t) => ({
-              x: t.x,
-              y: t.y,
-            })),
-            layer
+            {
+              terminals: terminals.map((t) => ({
+                x: t.x,
+                y: t.y,
+              })),
+              pcb_obstacles,
+              layer: layer,
+            },
+            pcb_routing_ctx
           )
         }
       }
 
-      return solveForSingleLayerRoute(terminals, [...common_layers].sort()[0])
+      return solveForSingleLayerRoute(
+        {
+          terminals,
+          layer: [...common_layers].sort()[0],
+          pcb_obstacles,
+        },
+        pcb_routing_ctx
+      )
     }
 
     let pcb_route_hints = internal.pcb_route_hints ?? []
