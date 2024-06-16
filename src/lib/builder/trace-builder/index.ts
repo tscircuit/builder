@@ -21,6 +21,7 @@ import { uniq } from "lib/utils/uniq"
 import { findPossibleTraceLayerCombinations } from "./find-possible-trace-layer-combinations"
 import { AnySoupElement, SourceNet } from "@tscircuit/soup"
 import { buildTraceForSinglePortAndNet } from "./build-trace-for-single-port-and-net"
+import { getPcbObstacles } from "./get-pcb-obstacles"
 
 type RouteSolverOrString = Type.RouteSolver | "rmst" | "straight" | "route1"
 
@@ -308,53 +309,11 @@ export const createTraceBuilder = (
       internal.thickness === "inherit"
         ? 0.2 // TODO derive from net/context
         : bc.convert(internal.thickness as any)
-    const omargin = thickness_mm * 2
-    const pcb_obstacles: Array<{
-      center: { x: number; y: number }
-      width: number
-      height: number
-      layers: Type.LayerRef[]
-    }> = [
-      ...parent_elements
-        .filter((elm): elm is Type.PCBSMTPad => elm.type === "pcb_smtpad")
-        // Exclude the pads that are connected to the trace
-        .filter((elm) => !pcb_terminal_port_ids.includes(elm.pcb_port_id!))
-        .map((pad) => {
-          if (pad.shape === "rect") {
-            return {
-              center: { x: pad.x, y: pad.y },
-              width: pad.width + omargin * 2,
-              height: pad.height + omargin * 2,
-              layers: [pad.layer],
-            }
-          } else if (pad.shape === "circle") {
-            // TODO support better circle obstacles
-            return {
-              center: { x: pad.x, y: pad.y },
-              width: pad.radius * 2 + omargin * 2,
-              height: pad.radius * 2 + omargin * 2,
-              layers: [pad.layer],
-            }
-          }
-          throw new Error(
-            `Invalid pad shape for pcb_smtpad "${(pad as any).shape}"`
-          )
-        }),
-      ...parent_elements
-        .filter(
-          (elm): elm is Type.PCBPlatedHole => elm.type === "pcb_plated_hole"
-        )
-        // Exclude the holes that are connected to the trace
-        .filter((elm) => !pcb_terminal_port_ids.includes(elm.pcb_port_id!))
-        .map((hole) => {
-          return {
-            center: { x: hole.x, y: hole.y },
-            width: hole.outer_diameter + omargin * 2,
-            height: hole.outer_diameter + omargin * 2,
-            layers: hole.layers,
-          }
-        }),
-    ]
+    const pcb_obstacles = getPcbObstacles({
+      elements: parent_elements,
+      pcb_terminal_port_ids,
+      obstacle_margin: thickness_mm * 2,
+    })
     const pcb_solver_grid = {
       marginSegments: 20,
       maxGranularSearchSegments: 50,

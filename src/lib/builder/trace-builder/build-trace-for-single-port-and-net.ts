@@ -89,6 +89,8 @@ export const buildTraceForSinglePortAndNet = (
 
   // HACK: look for the nearest port connected to the same net, and connect to
   // that
+  // su_handle
+  // TODO waiting on trace builder refactor
 
   return [source_trace, schematic_net_label, schematic_trace]
 }

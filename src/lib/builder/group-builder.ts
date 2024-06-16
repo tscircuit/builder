@@ -2,11 +2,8 @@ import * as Type from "lib/types"
 import * as CB from "./component-builder"
 import _ from "lodash"
 import { ProjectBuilder } from "./project-builder"
-import {
-  createTraceBuilder,
-  TraceBuilder,
-  TraceBuilderCallback,
-} from "./trace-builder"
+import { TraceBuilder, TraceBuilderCallback } from "./trace-builder"
+import { createTraceBuilder } from "./trace-builder/createTraceBuilder"
 import { TraceHintBuilder, createTraceHintBuilder } from "./trace-hint-builder"
 import { createConstraintBuilder } from "./constrained-layout-builder"
 import { createViaBuilder } from "./component-builder/ViaBuilder"
@@ -266,6 +263,8 @@ export class GroupBuilderClass implements GroupBuilder {
         }
       }
     }
+
+    bc.source_ports_for_nets_in_group = net_name_to_source_port_ids
 
     for (const trace of this.traces) {
       elements.push(...(await trace.build(elements, bc)))
