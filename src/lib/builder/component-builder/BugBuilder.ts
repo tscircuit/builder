@@ -134,7 +134,7 @@ export class BugBuilderClass
           rotation: 0,
 
           position: {
-            x: portPosition.x + (is_left ? 0.4 : -0.4),
+            x: portPosition.x + (is_left ? 0.8 : -0.8) * pin_spacing,
             y: portPosition.y,
           },
         }
