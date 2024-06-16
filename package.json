@@ -23,6 +23,9 @@
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/npm": "^9.0.1",
     "@semantic-release/release-notes-generator": "^10.0.3",
+    "@tscircuit/props": "^0.0.15",
+    "@tscircuit/soup": "^0.0.34",
+    "@tscircuit/soup-util": "^0.0.11",
     "ava": "^4.3.3",
     "dpdm": "^3.13.0",
     "esbuild": "^0.15.18",
@@ -36,15 +39,17 @@
     "typescript": "^5.4.3",
     "zod": "^3.21.4"
   },
+  "peerDependencies": {
+    "@tscircuit/props": "*",
+    "@tscircuit/soup": "*",
+    "@tscircuit/soup-util": "*"
+  },
   "dependencies": {
     "@lume/kiwi": "^0.1.0",
     "@tscircuit/footprinter": "^0.0.43",
     "@tscircuit/layout": "^0.0.21",
-    "@tscircuit/props": "^0.0.11",
     "@tscircuit/routing": "^1.3.1",
     "@tscircuit/schematic-autolayout": "^0.0.5",
-    "@tscircuit/soup": "^0.0.34",
-    "@tscircuit/soup-util": "^0.0.11",
     "convert-units": "^2.3.4",
     "fast-json-stable-stringify": "^2.1.0",
     "format-si-prefix": "^0.3.2",

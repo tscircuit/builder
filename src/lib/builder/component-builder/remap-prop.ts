@@ -1,4 +1,5 @@
 import { removeNulls } from "lib/utils/remove-nulls"
+import { length } from "@tscircuit/soup"
 
 export const remapProp = (prop: string, val: any): [string, any] => {
   switch (prop) {
@@ -19,9 +20,8 @@ export const remapProp = (prop: string, val: any): [string, any] => {
     case "pinLabels":
       return ["port_labels", val]
     case "pinSpacing":
-      return ["pin_spacing", val]
     case "schPinSpacing":
-      return ["pin_spacing", val]
+      return ["pin_spacing", length.parse(val)]
     default:
       return [prop, val]
   }
