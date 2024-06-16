@@ -242,13 +242,35 @@ export class GroupBuilderClass implements GroupBuilder {
 
     elements.push(..._.flatten(this.nets.map((n) => n.build(bc))))
 
-    // Maybe scan traces for nets and add them if they don't exist
+    // TODO parallelize by dependency (don't do traces with the same net at the
+    // same time)
 
-    elements.push(
-      ..._.flatten(
-        await Promise.all(this.traces.map((c) => c.build(elements, bc)))
-      )
-    )
+    // big issue: from inside trace.build we don't know all the ports connected
+    // to various nets, we could iterate over the traces and prime them or add
+    // it as a parameter somehow, e.g. the build context could contain something
+    // like a net_to_ports map
+
+    const net_name_to_source_port_ids: Record<string, string[]> = {}
+    for (const net of this.nets) {
+      net_name_to_source_port_ids[net.props.name!] = []
+      for (const trace of this.traces) {
+        const connections = trace.getConnections()
+        const { source_ports_in_route } =
+          await trace.getSourcePortsAndNetsInRoute(elements)
+        for (const conn of connections) {
+          if (conn === `.${net.props.name}`) {
+            net_name_to_source_port_ids[net.props.name!].push(
+              ...source_ports_in_route.map((p) => p.source_port_id!)
+            )
+          }
+        }
+      }
+    }
+
+    for (const trace of this.traces) {
+      elements.push(...(await trace.build(elements, bc)))
+    }
+
     return elements
   }
 }

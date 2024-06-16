@@ -22,9 +22,8 @@ export const buildTraceForSinglePortAndNet = (
 
   const source_trace_id = bc.getId("source_trace")
 
-  const schematic_port = su(
-    params.parent_elements as any
-  ).schematic_port.getWhere({
+  const su_handle = su(params.parent_elements)
+  const schematic_port = su(params.parent_elements).schematic_port.getWhere({
     source_port_id: source_port.source_port_id,
   })
 
@@ -87,6 +86,9 @@ export const buildTraceForSinglePortAndNet = (
   // 2. create a pcb_error that we need to connect the net (we'll fix this later)
   // alternatively, attempt to find nearest port also connected to the net and
   // attempt to connect to that?
+
+  // HACK: look for the nearest port connected to the same net, and connect to
+  // that
 
   return [source_trace, schematic_net_label, schematic_trace]
 }
