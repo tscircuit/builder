@@ -186,6 +186,8 @@ export const createTraceBuilder = (
         {
           source_net: source_nets_in_route[0],
           source_port: source_ports_in_route[0],
+          thickness: internal.thickness,
+          pcb_route_hints: internal.pcb_route_hints,
           parent_elements,
         },
         bc
