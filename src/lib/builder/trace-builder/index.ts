@@ -43,6 +43,7 @@ export interface TraceBuilder {
     thickness?: string | number
   }) => TraceBuilder
   getConnections: () => string[]
+  getNetNames: () => string[]
   setRouteSolver: (routeSolver: RouteSolverOrString) => TraceBuilder
   addConnections: (portSelectors: Array<string>) => TraceBuilder
   getSourcePortsAndNetsInRoute: (parent_elements: Type.AnyElement[]) => {
@@ -116,6 +117,12 @@ export const createTraceBuilder = (
       internal.thickness = props.thickness
     }
     return builder
+  }
+
+  builder.getNetNames = () => {
+    return internal.portSelectors
+      .filter((p) => p.startsWith("net."))
+      .map((p) => p.slice(4))
   }
 
   builder.getSourcePortsAndNetsInRoute = (

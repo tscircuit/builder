@@ -237,7 +237,25 @@ export class GroupBuilderClass implements GroupBuilder {
       )
     )
 
-    elements.push(..._.flatten(this.nets.map((n) => n.build(bc))))
+    // Find any inferred nets from trace paths that aren't represented
+    const explicit_net_names = this.nets.map((n) => n.props.name)
+    const implicit_net_names: string[] = []
+    for (const trace of this.traces) {
+      const trace_net_names = trace.getNetNames()
+      implicit_net_names.push(
+        ...trace_net_names.filter((n) => !explicit_net_names.includes(n))
+      )
+    }
+
+    const implicit_net_builders = implicit_net_names.map((n) =>
+      createNetBuilder(this.project_builder).setProps({ name: n })
+    )
+
+    elements.push(
+      ..._.flatten(
+        this.nets.concat(implicit_net_builders).map((n) => n.build(bc))
+      )
+    )
 
     // TODO parallelize by dependency (don't do traces with the same net at the
     // same time)
