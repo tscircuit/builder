@@ -242,11 +242,9 @@ export class GroupBuilderClass implements GroupBuilder {
     // TODO parallelize by dependency (don't do traces with the same net at the
     // same time)
 
-    // big issue: from inside trace.build we don't know all the ports connected
-    // to various nets, we could iterate over the traces and prime them or add
-    // it as a parameter somehow, e.g. the build context could contain something
-    // like a net_to_ports map
-
+    // HACK we should really combine traces with the same net into a single
+    // trace builder rather than having each trace manage connecting itself
+    // to the net
     const net_name_to_source_port_ids: Record<string, string[]> = {}
     for (const net of this.nets) {
       net_name_to_source_port_ids[net.props.name!] = []
@@ -255,7 +253,10 @@ export class GroupBuilderClass implements GroupBuilder {
         const { source_ports_in_route } =
           await trace.getSourcePortsAndNetsInRoute(elements)
         for (const conn of connections) {
-          if (conn === `.${net.props.name}`) {
+          if (
+            conn === `.${net.props.name}` ||
+            conn === `net.${net.props.name}`
+          ) {
             net_name_to_source_port_ids[net.props.name!].push(
               ...source_ports_in_route.map((p) => p.source_port_id!)
             )
@@ -263,7 +264,6 @@ export class GroupBuilderClass implements GroupBuilder {
         }
       }
     }
-
     bc.source_ports_for_nets_in_group = net_name_to_source_port_ids
 
     for (const trace of this.traces) {
