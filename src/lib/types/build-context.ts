@@ -17,6 +17,8 @@ export type BuildContext = {
   pcb_component_id?: string
   all_copper_layers: LayerRef[]
 
+  source_ports_for_nets_in_group?: Record<string, string[]>
+
   parent?: BuildContext
   fork: (mutation: Partial<BuildContext>) => BuildContext
 }

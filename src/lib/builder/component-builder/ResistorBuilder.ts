@@ -6,6 +6,7 @@ import { compose, rotate, translate } from "transformation-matrix"
 import { PortsBuilder } from "../ports-builder/ports-builder"
 import { Except } from "type-fest"
 import { matchPCBPortsWithFootprintAndMutate } from "../trace-builder/match-pcb-ports-with-footprint"
+import { resistorProps, type ResistorProps } from "@tscircuit/props"
 
 export type ResistorBuilderCallback = (rb: ResistorBuilder) => unknown
 export interface ResistorBuilder extends BaseComponentBuilder<ResistorBuilder> {
@@ -16,6 +17,9 @@ export interface ResistorBuilder extends BaseComponentBuilder<ResistorBuilder> {
       "type" | "source_component_id" | "ftype"
     > & { name?: string }
   ): ResistorBuilder
+  // TODO use proper resistor props soon
+  // setProps(props: ResistorProps): ResistorBuilder
+  setProps(props: any): ResistorBuilder
 }
 
 export class ResistorBuilderClass
@@ -40,6 +44,9 @@ export class ResistorBuilderClass
     }
     return this
   }
+  // setProps(props: ResistorProps) {
+  //   return super.setProps(resistorProps.parse(props))
+  // }
 
   async build(bc: Type.BuildContext) {
     const elements: Type.AnyElement[] = []

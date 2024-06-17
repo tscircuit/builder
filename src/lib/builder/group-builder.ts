@@ -2,11 +2,8 @@ import * as Type from "lib/types"
 import * as CB from "./component-builder"
 import _ from "lodash"
 import { ProjectBuilder } from "./project-builder"
-import {
-  createTraceBuilder,
-  TraceBuilder,
-  TraceBuilderCallback,
-} from "./trace-builder"
+import { TraceBuilder, TraceBuilderCallback } from "./trace-builder"
+import { createTraceBuilder } from "./trace-builder"
 import { TraceHintBuilder, createTraceHintBuilder } from "./trace-hint-builder"
 import { createConstraintBuilder } from "./constrained-layout-builder"
 import { createViaBuilder } from "./component-builder/ViaBuilder"
@@ -242,13 +239,37 @@ export class GroupBuilderClass implements GroupBuilder {
 
     elements.push(..._.flatten(this.nets.map((n) => n.build(bc))))
 
-    // Maybe scan traces for nets and add them if they don't exist
+    // TODO parallelize by dependency (don't do traces with the same net at the
+    // same time)
 
-    elements.push(
-      ..._.flatten(
-        await Promise.all(this.traces.map((c) => c.build(elements, bc)))
-      )
-    )
+    // HACK we should really combine traces with the same net into a single
+    // trace builder rather than having each trace manage connecting itself
+    // to the net
+    const net_name_to_source_port_ids: Record<string, string[]> = {}
+    for (const net of this.nets) {
+      net_name_to_source_port_ids[net.props.name!] = []
+      for (const trace of this.traces) {
+        const connections = trace.getConnections()
+        const { source_ports_in_route } =
+          await trace.getSourcePortsAndNetsInRoute(elements)
+        for (const conn of connections) {
+          if (
+            conn === `.${net.props.name}` ||
+            conn === `net.${net.props.name}`
+          ) {
+            net_name_to_source_port_ids[net.props.name!].push(
+              ...source_ports_in_route.map((p) => p.source_port_id!)
+            )
+          }
+        }
+      }
+    }
+    bc.source_ports_for_nets_in_group = net_name_to_source_port_ids
+
+    for (const trace of this.traces) {
+      elements.push(...(await trace.build(elements, bc)))
+    }
+
     return elements
   }
 }

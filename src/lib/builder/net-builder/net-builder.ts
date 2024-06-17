@@ -13,6 +13,7 @@ export type Props = {
 
 export interface NetBuilder extends BuilderInterface {
   builder_type: "net_builder"
+  props: Partial<Props>
   setProps(props: Props): this
   build(bc: BuildContext): AnySoupElement[]
 }

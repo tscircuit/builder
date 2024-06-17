@@ -1,5 +1,5 @@
 import test from "ava"
-import { findPossibleTraceLayerCombinations } from "lib/builder/trace-builder/find-possible-trace-layer-combinations"
+import { findPossibleTraceLayerCombinations } from "lib/builder/trace-builder/pcb-routing/find-possible-trace-layer-combinations"
 
 test("find possible trace layer combinations 1", (t) => {
   const candidates = findPossibleTraceLayerCombinations([
