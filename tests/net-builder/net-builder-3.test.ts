@@ -12,8 +12,20 @@ test("net builder 3 (create multiple net labels for same net)", async (t) => {
     .add("resistor", (rb) =>
       rb.setProps({ resistance: 100, name: "R2" }).setSchematicCenter(2, 0)
     )
+    .add("resistor", (rb) =>
+      rb
+        .setProps({ resistance: 100, name: "R3", rotation: "90deg" })
+        .setSchematicCenter(0, 2)
+    )
+    .add("resistor", (rb) =>
+      rb
+        .setProps({ resistance: 100, name: "R4", rotation: "-90deg" })
+        .setSchematicCenter(0, -2)
+    )
     .add("trace", (tb) => tb.setProps({ from: ".R1 > .right", to: "net.N1" }))
     .add("trace", (tb) => tb.setProps({ from: ".R2 > .left", to: "net.N1" }))
+    .add("trace", (tb) => tb.setProps({ from: ".R3 > .left", to: "net.N1" }))
+    .add("trace", (tb) => tb.setProps({ from: ".R4 > .left", to: "net.N1" }))
     .build()
   await logSoup(soup)
 
