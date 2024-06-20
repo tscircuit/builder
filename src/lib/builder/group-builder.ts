@@ -243,7 +243,10 @@ export class GroupBuilderClass implements GroupBuilder {
     for (const trace of this.traces) {
       const trace_net_names = trace.getNetNames()
       implicit_net_names.push(
-        ...trace_net_names.filter((n) => !explicit_net_names.includes(n))
+        ...trace_net_names.filter(
+          (n) =>
+            !explicit_net_names.includes(n) && !implicit_net_names.includes(n)
+        )
       )
     }
 
