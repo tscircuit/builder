@@ -26,6 +26,7 @@ import { TracePcbRoutingContext } from "./pcb-routing/trace-pcb-routing-context"
 import { solveForRoute } from "./pcb-routing/solve-for-route"
 import { createNoCommonLayersError } from "./pcb-errors"
 import { buildPcbTraceElements } from "./build-pcb-trace-elements"
+import { portOffsetWrapper } from "./route-solvers/port-offset-wrapper"
 
 type RouteSolverOrString = Type.RouteSolver | "rmst" | "straight" | "route1"
 
@@ -71,7 +72,7 @@ export const createTraceBuilder = (
   } as any
   const internal = {
     portSelectors: [] as string[],
-    routeSolver: route1Solver as Type.RouteSolver,
+    routeSolver: portOffsetWrapper(route1Solver as Type.RouteSolver),
     schematic_route_hints: [] as InputPoint[],
     pcb_route_hints: [] as InputPoint[],
     thickness: "inherit" as string | number,
@@ -89,12 +90,12 @@ export const createTraceBuilder = (
         // ? rmstSolver
         // :
         routeSolver === "route1"
-          ? route1Solver
+          ? portOffsetWrapper(route1Solver)
           : routeSolver === "straight"
           ? straightRouteSolver
-          : route1Solver // TODO default to rmstOrRoute1Solver
+          : portOffsetWrapper(route1Solver) // TODO default to rmstOrRoute1Solver
     }
-    internal.routeSolver = routeSolver as any
+    internal.routeSolver = portOffsetWrapper(routeSolver as any) as any
     return builder
   }
 

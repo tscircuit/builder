@@ -22,6 +22,10 @@ export const remapProp = (prop: string, val: any): [string, any] => {
     case "pinSpacing":
     case "schPinSpacing":
       return ["pin_spacing", length.parse(val)]
+    case "schX":
+      return ["x", length.parse(val)]
+    case "schY":
+      return ["y", length.parse(val)]
     default:
       return [prop, val]
   }
