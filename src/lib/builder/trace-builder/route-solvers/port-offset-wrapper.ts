@@ -34,14 +34,16 @@ export const portOffsetWrapper =
         const ot = offsetTerminals[i]
 
         // Find nearest point in the route to the offset terminal
-        const nearestPoint = edges.reduce(
-          (nearest, edge) => {
-            const dist = Math.hypot(edge.from.x - ot.x, edge.from.y - ot.y)
-            if (dist < nearest.dist) return { dist, point: edge.from }
-            return nearest
-          },
-          { dist: Infinity, point: { x: 0, y: 0 } }
-        )
+        const nearestPoint = edges
+          .flatMap((edge) => [edge.from, edge.to])
+          .reduce(
+            (nearest, p) => {
+              const dist = Math.hypot(p.x - ot.x, p.y - ot.y)
+              if (dist < nearest.dist) return { dist, point: p }
+              return nearest
+            },
+            { dist: Infinity, point: { x: 0, y: 0 } }
+          )
 
         return {
           from: { x: t.x, y: t.y, ti: i },

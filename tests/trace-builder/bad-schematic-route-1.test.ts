@@ -9,7 +9,7 @@ test("bad schematic route 1", async (t) => {
       rb.setProps({
         resistance: 100,
         name: "R1",
-        rotation: "-90deg",
+        rotation: "90deg",
         schX: -2,
         schY: -2,
       })
