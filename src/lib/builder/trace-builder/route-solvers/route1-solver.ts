@@ -25,7 +25,10 @@ export const route1Solver: Type.RouteSolver = async ({
   }))
 
   const pathFindingParams = {
-    pointsToConnect: terminals,
+    pointsToConnect: terminals.map((t) => ({
+      ...t,
+      directionBias: t.facing_direction,
+    })),
     obstacles: transformedObstacles,
     grid: {
       maxGranularSearchSegments: 50,
@@ -35,7 +38,7 @@ export const route1Solver: Type.RouteSolver = async ({
   }
 
   const result = findSchematicRoute(
-    movePointsOutsideObstacles(pathFindingParams)
+    movePointsOutsideObstacles(pathFindingParams) as any
   )
 
   // TODO log pathFindingParams for submission to
