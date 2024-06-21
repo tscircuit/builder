@@ -22,18 +22,18 @@ test("net builder 3 (create multiple net labels for same net)", async (t) => {
         .setProps({ resistance: 100, name: "R4", rotation: "-90deg" })
         .setSchematicCenter(0, -2)
     )
-    .add("trace", (tb) => tb.setProps({ from: ".R1 > .right", to: "net.N1" }))
-    .add("trace", (tb) => tb.setProps({ from: ".R2 > .left", to: "net.N1" }))
+    .add("trace", (tb) =>
+      tb.setProps({ from: ".R1 > .right", to: "net.LONGLONG" })
+    )
+    .add("trace", (tb) =>
+      tb.setProps({ from: ".R2 > .left", to: "net.MEDIUM" })
+    )
     .add("trace", (tb) => tb.setProps({ from: ".R3 > .left", to: "net.N1" }))
-    .add("trace", (tb) => tb.setProps({ from: ".R4 > .left", to: "net.N1" }))
+    .add("trace", (tb) => tb.setProps({ from: ".R4 > .left", to: "net.SML" }))
     .build()
   await logSoup(soup)
 
-  const [source_net] = su(soup).source_net.list()
-  if (!source_net) {
-    t.fail("source net wasn't created")
-  }
-  t.is(source_net.name, "N1")
+  t.is(su(soup).source_net.list().length, 4)
 
   const errors = soup.filter((e) => e.type.includes("_error"))
 

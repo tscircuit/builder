@@ -57,6 +57,16 @@ export const buildTraceForSinglePortAndNet = (
   }
 
   const port_vec = directionToVec(schematic_port.facing_direction)
+  const nl_vec = {
+    x: port_vec.x * Math.max(0.5, 0.1 * source_net.name.length),
+    y: port_vec.y * 0.5,
+  }
+  const is_vertical = Math.abs(port_vec.y) > 0.5
+  // HACK: I just eyeball'd this equation, it's the distance between the port
+  // and the net label line
+  const tip_to_port_dist = is_vertical
+    ? 0.3
+    : 0.3 - Math.max(0, 0.04 * source_net.name.length - 0.2)
 
   // 1. create a schematic_net_label
   const schematic_net_label: SchematicNetLabel = {
@@ -65,8 +75,8 @@ export const buildTraceForSinglePortAndNet = (
     text: source_net.name,
     anchor_side: oppositeSide(schematic_port.facing_direction),
     center: {
-      x: schematic_port.center.x + port_vec.x * 0.5,
-      y: schematic_port.center.y + port_vec.y * 0.5,
+      x: schematic_port.center.x + nl_vec.x,
+      y: schematic_port.center.y + nl_vec.y,
     },
   }
 
@@ -82,8 +92,8 @@ export const buildTraceForSinglePortAndNet = (
           y: schematic_port.center.y,
         },
         to: {
-          x: schematic_net_label.center.x - port_vec.x * 0.2,
-          y: schematic_net_label.center.y - port_vec.y * 0.2,
+          x: schematic_port.center.x + port_vec.x * tip_to_port_dist,
+          y: schematic_port.center.y + port_vec.y * tip_to_port_dist,
         },
         from_schematic_port_id: schematic_port.schematic_port_id,
       },
