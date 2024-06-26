@@ -16,7 +16,6 @@ export const getSchematicObstaclesFromElements = (
   opts?: Options
 ): Array<Obstacle2> => {
   const obstacles: Obstacle2[] = []
-
   for (const elm of elms) {
     switch (elm.type) {
       case "schematic_component": {
@@ -39,8 +38,39 @@ export const getSchematicObstaclesFromElements = (
         })
         continue
       }
+      case "schematic_net_label": {
+        let offsetX = 0,
+          offsetY = 0
+        const labelWidth = 0.1 
+        const labelHeight = 0.1
+
+        // Adjust the obstacle position based on the anchor side
+        switch (elm.anchor_side) {
+          case "top":
+            offsetY = -labelHeight / 2
+            break
+          case "bottom":
+            offsetY = labelHeight / 2
+            break
+          case "left":
+            offsetX = labelWidth / 2
+            break
+          case "right":
+            offsetX = -labelWidth / 2
+            break
+        }
+
+        obstacles.push({
+          cx: elm.center.x + offsetX,
+          cy: elm.center.y + offsetY,
+          w: labelWidth * 50,
+          h: labelHeight * 50,
+        })
+        continue
+      }
     }
   }
 
+  console.log(obstacles)
   return obstacles
 }
