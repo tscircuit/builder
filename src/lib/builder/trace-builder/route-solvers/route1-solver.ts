@@ -1,3 +1,4 @@
+import { logSoup } from "@tscircuit/log-soup"
 import * as Type from "lib/types"
 import {
   findSchematicRoute,
@@ -36,6 +37,12 @@ export const route1Solver: Type.RouteSolver = async ({
       segmentSize: 0.1,
     },
   }
+
+  console.log("before sending", movePointsOutsideObstacles(pathFindingParams))
+  await logSoup(
+    "seveibar - test obstacles after last transforms",
+    movePointsOutsideObstacles(pathFindingParams).obstacles
+  )
 
   const result = findSchematicRoute(
     movePointsOutsideObstacles(pathFindingParams) as any
