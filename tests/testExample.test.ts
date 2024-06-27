@@ -1,7 +1,7 @@
 import test from "ava"
 import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
-test("(rishabh) no traces through net labels", async (t) => {
+test("(seveibar) no traces through net labels", async (t) => {
   const { pb, logSoup } = await getTestFixture(t)
 
   const soup = await pb
@@ -16,7 +16,7 @@ test("(rishabh) no traces through net labels", async (t) => {
     .add("resistor", (rb) =>
       rb
         .setProps({ resistance: 100, name: "R3", rotation: "-90deg" })
-        .setSchematicCenter(0, -2)
+        .setSchematicCenter(-0.5, -2)
     )
     .add("trace", (tb) =>
       tb.setProps({ from: ".R1 > .right", to: "net.LONGLONG" })
