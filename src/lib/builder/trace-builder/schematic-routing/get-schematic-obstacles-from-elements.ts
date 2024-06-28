@@ -41,8 +41,8 @@ export const getSchematicObstaclesFromElements = (
       case "schematic_net_label": {
         let offsetX = 0,
           offsetY = 0
-        const labelWidth = 0.1 
-        const labelHeight = 0.1
+        const labelWidth = 0.4 + elm.text.length * 0.1 
+        const labelHeight = 0.25
 
         // Adjust the obstacle position based on the anchor side
         switch (elm.anchor_side) {
@@ -52,25 +52,18 @@ export const getSchematicObstaclesFromElements = (
           case "bottom":
             offsetY = labelHeight / 2
             break
-          case "left":
-            offsetX = labelWidth / 2
-            break
-          case "right":
-            offsetX = -labelWidth / 2
-            break
         }
 
         obstacles.push({
           cx: elm.center.x + offsetX,
           cy: elm.center.y + offsetY,
-          w: labelWidth * 50,
-          h: labelHeight * 50,
+          w: labelWidth,
+          h: labelHeight,
         })
         continue
       }
     }
   }
 
-  console.log(obstacles)
   return obstacles
 }
