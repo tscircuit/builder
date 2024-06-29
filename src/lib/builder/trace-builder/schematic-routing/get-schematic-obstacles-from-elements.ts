@@ -41,7 +41,7 @@ export const getSchematicObstaclesFromElements = (
       case "schematic_net_label": {
         let offsetX = 0,
           offsetY = 0
-        const labelWidth = 0.4 + elm.text.length * 0.1 
+        const labelWidth = 0.4 + elm.text.length * 0.1
         const labelHeight = 0.25
 
         // Adjust the obstacle position based on the anchor side
