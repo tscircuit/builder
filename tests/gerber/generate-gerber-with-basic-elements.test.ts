@@ -62,6 +62,7 @@ test("Generate simple gerber with basic elements", async (t) => {
     },
     {
       type: "pcb_plated_hole",
+      shape: "circle",
       x: 4,
       y: 1,
       hole_diameter: 0.8,

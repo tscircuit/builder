@@ -211,6 +211,10 @@ export class BugBuilderClass
     //   source_ports: elements.filter((elm) => elm.type === "source_port"),
     // } as any)
 
+    elements.push(
+      ...this._getCadElements({ source_component_id, pcb_component }, bc)
+    )
+
     return elements
   }
 }

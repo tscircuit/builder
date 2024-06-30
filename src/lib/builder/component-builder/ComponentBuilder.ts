@@ -24,6 +24,8 @@ import { isTruthy } from "lib/utils/is-truthy"
 import { removeNulls } from "lib/utils/remove-nulls"
 import { SupplierName } from "lib/soup/pcb/properties/supplier_name"
 import { remapProp } from "./remap-prop"
+import { CadComponent, PCBComponent } from "@tscircuit/soup"
+import { ComponentProps } from "@tscircuit/props"
 
 export interface BaseComponentBuilder<T> {
   project_builder: ProjectBuilder
@@ -102,7 +104,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
     this.schematic_symbol = createSchematicSymbolBuilder(project_builder)
     this.settable_source_properties = ["name", "part_numbers"]
     this.settable_schematic_properties = ["pin_spacing"]
-    this.settable_pcb_properties = []
+    this.settable_pcb_properties = ["cadModel"]
     // this.part_numbers = []
     this.supplier_part_numbers = {}
   }
@@ -411,6 +413,41 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
     pcb_element.height = pcb_size.h
   }
 
+  _getCadElements(
+    {
+      source_component_id,
+      pcb_component,
+    }: {
+      source_component_id: string
+      pcb_component: PCBComponent
+    },
+    bc: Type.BuildContext
+  ): Type.AnySoupElement[] {
+    const cadModel: ComponentProps["cadModel"] = this.pcb_properties.cadModel
+    if (cadModel) {
+      const cad_component: CadComponent = {
+        type: "cad_component",
+        cad_component_id: bc.getId("cad_component"),
+        source_component_id,
+        pcb_component_id: pcb_component.pcb_component_id,
+        position: { ...pcb_component.center, z: 0 }, // TODO set z based on layer?
+        layer: pcb_component.layer,
+      }
+
+      if ("stlUrl" in cadModel) {
+        cad_component.model_stl_url = cadModel.stlUrl
+      } else if ("objUrl" in cadModel) {
+        cad_component.model_obj_url = cadModel.objUrl
+        ;(cad_component as any).model_mtl_url = cadModel.mtlUrl
+      } else if ("jscad" in cadModel) {
+        cad_component.model_jscad = cadModel.jscad
+      }
+
+      return [cad_component]
+    }
+    return []
+  }
+
   async build(bc: Type.BuildContext) {
     const pb = this.project_builder
     const elements: Type.AnyElement[] = []
@@ -460,7 +497,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
     const built_ports = await this.ports.build(bc)
 
     // TODO schematic box of some kind
-    const pcb_element = this._createPcbComponent(
+    const pcb_component = this._createPcbComponent(
       {
         source_component_id,
         pcb_component_id,
@@ -521,8 +558,8 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
       }
     }
 
-    this._computeSizeOfPcbElement(pcb_element, footprint_elements as any)
-    elements.push(pcb_element, ...footprint_elements)
+    this._computeSizeOfPcbElement(pcb_component, footprint_elements as any)
+    elements.push(pcb_component, ...footprint_elements)
 
     // SPATIAL ADJUSTMENTS
     // 1. Transform and rotate according to the specified center and rotation
@@ -570,6 +607,10 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
       schematic_component.size.width = schematic_spatial_bounds.w
       schematic_component.size.height = schematic_spatial_bounds.h
     }
+
+    elements.push(
+      ...this._getCadElements({ source_component_id, pcb_component }, bc)
+    )
 
     return elements
   }

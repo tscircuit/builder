@@ -1,5 +1,6 @@
 import { z } from "zod"
 
+/** @deprecated use @tscircuit/soup module */
 export const all_layers = [
   "top",
   "bottom",
@@ -11,8 +12,10 @@ export const all_layers = [
   "inner6",
 ] as const
 
+/** @deprecated use @tscircuit/soup module */
 export const layer_string = z.enum(all_layers)
 
+/** @deprecated use @tscircuit/soup module */
 export const layer_ref = layer_string
   .or(
     z.object({
@@ -26,5 +29,8 @@ export const layer_ref = layer_string
     return layer.name
   })
 
+/** @deprecated use @tscircuit/soup module */
 export type LayerRefInput = z.input<typeof layer_ref>
+
+/** @deprecated use @tscircuit/soup module */
 export type LayerRef = z.output<typeof layer_ref>

@@ -141,6 +141,10 @@ export class CapacitorBuilderClass
     this._computeSizeOfPcbElement(pcb_component, footprint_elements as any)
     elements.push(pcb_component, ...footprint_elements)
 
+    elements.push(
+      ...this._getCadElements({ source_component_id, pcb_component }, bc)
+    )
+
     return elements
   }
 }
