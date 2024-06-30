@@ -143,7 +143,7 @@ export class ResistorBuilderClass
       )
     )
 
-    const pcb_element: Type.PCBComponent = {
+    const pcb_component: Type.PCBComponent = {
       type: "pcb_component",
       source_component_id,
       pcb_component_id,
@@ -154,7 +154,7 @@ export class ResistorBuilderClass
       height: 0,
     }
 
-    elements.push(pcb_element)
+    elements.push(pcb_component)
 
     const footprint_elements = await this.footprint.build(bc)
 
@@ -164,8 +164,12 @@ export class ResistorBuilderClass
       source_ports: elements.filter((elm) => elm.type === "source_port"),
     } as any)
 
-    this._computeSizeOfPcbElement(pcb_element, footprint_elements as any)
+    this._computeSizeOfPcbElement(pcb_component, footprint_elements as any)
     elements.push(...footprint_elements)
+
+    elements.push(
+      ...this._getCadElements({ source_component_id, pcb_component }, bc)
+    )
 
     return elements
   }
