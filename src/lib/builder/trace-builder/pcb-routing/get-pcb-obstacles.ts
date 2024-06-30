@@ -50,10 +50,21 @@ export const getPcbObstacles = (params: {
       // Exclude the holes that are connected to the trace
       .filter((elm) => !pcb_terminal_port_ids.includes(elm.pcb_port_id!))
       .map((hole) => {
+        let width: number = 0
+        let height: number = 0
+
+        if (hole.shape === "circle") {
+          width = hole.outer_diameter + obstacle_margin * 2
+          height = hole.outer_diameter + obstacle_margin * 2
+        } else if (hole.shape === "oval" || hole.shape === "pill") {
+          width = hole.outer_width + obstacle_margin * 2
+          height = hole.outer_height + obstacle_margin * 2
+        }
+
         return {
           center: { x: hole.x, y: hole.y },
-          width: hole.outer_diameter + obstacle_margin * 2,
-          height: hole.outer_diameter + obstacle_margin * 2,
+          width,
+          height,
           layers: hole.layers,
         }
       }),

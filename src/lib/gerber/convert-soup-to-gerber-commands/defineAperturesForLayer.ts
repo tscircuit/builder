@@ -1,9 +1,5 @@
-import type {
-  AnySoupElement,
-  LayerRef,
-  PCBPlatedHole,
-  PCBSMTPad,
-} from "lib/soup"
+import type { AnySoupElement, LayerRef, PCBSMTPad } from "lib/soup"
+import { PCBPlatedHole } from "@tscircuit/soup"
 import { gerberBuilder } from "../gerber-builder"
 import { GerberLayerName } from "./GerberLayerName"
 import { AnyGerberCommand } from "../any_gerber_command"
@@ -98,9 +94,14 @@ export const getApertureConfigFromPcbSmtpad = (
     throw new Error(`Unsupported shape ${(elm as any).shape}`)
   }
 }
-export const getApertureConfigFromPcbPlatedHole = (
+export const getApertureConfigFromCirclePcbPlatedHole = (
   elm: PCBPlatedHole
 ): ApertureTemplateConfig => {
+  if (!("outer_diameter" in elm && "hole_diameter" in elm)) {
+    throw new Error(
+      `Invalid shape called in getApertureConfigFromCirclePcbPlatedHole: ${elm.shape}`
+    )
+  }
   return {
     standard_template_code: "C",
     diameter: elm.outer_diameter,
@@ -130,7 +131,13 @@ function getAllApertureTemplateConfigsForLayer(
       }
     } else if (elm.type === "pcb_plated_hole") {
       if (elm.layers.includes(layer)) {
-        addConfigIfNew(getApertureConfigFromPcbPlatedHole(elm))
+        if (elm.shape === "circle") {
+          addConfigIfNew(getApertureConfigFromCirclePcbPlatedHole(elm))
+        } else if (elm.shape === "oval") {
+          console.warn("NOT IMPLEMENTED: drawing gerber for oval plated hole")
+        } else if (elm.shape === "pill") {
+          console.warn("NOT IMPLEMENTED: drawing gerber for oval plated pill")
+        }
       }
     }
   }

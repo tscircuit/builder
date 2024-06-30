@@ -1,3 +1,4 @@
+import { PCBPlatedHole, PCBSMTPad } from "@tscircuit/soup"
 import * as Type from "lib/types"
 
 export const matchPcbPortWithPad = ({
@@ -7,7 +8,7 @@ export const matchPcbPortWithPad = ({
 }: {
   pcb_port: Type.PCBPort
   source_port: Type.SourcePort
-  pads: (Type.PCBPlatedHole | Type.PCBSMTPad)[]
+  pads: (PCBPlatedHole | PCBSMTPad)[]
 }) => {
   for (const pad of pads) {
     const port_hints = pad.port_hints ?? []

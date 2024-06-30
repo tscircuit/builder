@@ -17,4 +17,5 @@ export const pcb_plated_hole = z
   .describe("Defines a plated hole on the PCB")
 
 export type PCBPlatedHoleInput = z.input<typeof pcb_plated_hole>
+/** @deprecated use @tscircuit/soup */
 export type PCBPlatedHole = z.infer<typeof pcb_plated_hole>

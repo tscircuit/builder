@@ -9,7 +9,7 @@ import { getCommandHeaders } from "./getCommandHeaders"
 import { findApertureNumber } from "./findApertureNumber"
 import {
   defineAperturesForLayer,
-  getApertureConfigFromPcbPlatedHole,
+  getApertureConfigFromCirclePcbPlatedHole,
   getApertureConfigFromPcbSmtpad,
 } from "./defineAperturesForLayer"
 import { defineCommonMacros } from "./define-common-macros"
@@ -125,12 +125,18 @@ export const convertSoupToGerberCommands = (
             glayers[getGerberLayerName(layer, "copper")],
             glayers[getGerberLayerName(layer, "soldermask")],
           ]) {
+            if (element.shape !== "circle") {
+              console.warn(
+                "NOT IMPLEMENTED: drawing gerber for non-circle plated hole"
+              )
+              continue
+            }
             glayer.push(
               ...gerberBuilder()
                 .add("select_aperture", {
                   aperture_number: findApertureNumber(
                     glayer,
-                    getApertureConfigFromPcbPlatedHole(element)
+                    getApertureConfigFromCirclePcbPlatedHole(element)
                   ),
                 })
                 .add("flash_operation", { x: element.x, y: mfy(element.y) })

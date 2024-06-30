@@ -3,6 +3,7 @@ import * as pcb from "./pcb"
 import * as sch from "./schematic"
 import * as src from "./source"
 
+/** @deprecated use @tscircuit/soup module */
 export const any_soup_element = z.union([
   // TODO source_group
   // TODO source_config

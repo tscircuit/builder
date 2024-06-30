@@ -1,6 +1,7 @@
 import * as Type from "lib/types"
 import { all_layers } from "lib/soup/pcb/properties/layer_ref"
 import { matchPcbPortWithPad } from "./match-pcb-port-with-pad"
+import { PCBPlatedHole, PCBSMTPad } from "@tscircuit/soup"
 
 export const associatePcbPortsWithPads = (elms: Type.AnyElement[]) => {
   const ports = elms
@@ -15,7 +16,7 @@ export const associatePcbPortsWithPads = (elms: Type.AnyElement[]) => {
     }))
 
   const pads = elms.filter(
-    (elm): elm is Type.PCBPlatedHole | Type.PCBSMTPad =>
+    (elm): elm is PCBPlatedHole | PCBSMTPad =>
       elm.type === "pcb_plated_hole" || elm.type === "pcb_smtpad"
   )
 
