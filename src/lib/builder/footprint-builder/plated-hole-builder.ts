@@ -10,7 +10,13 @@ export interface PlatedHoleBuilder {
     props: Partial<
       Omit<
         PCBPlatedHole,
-        "x" | "y" | "outer_width" | "outer_height" | "hole_width" | "hole_height" | "shape"
+        | "x"
+        | "y"
+        | "outer_width"
+        | "outer_height"
+        | "hole_width"
+        | "hole_height"
+        | "shape"
       > & {
         outer_diameter?: Type.Dimension
         outer_width?: Type.Dimension
@@ -67,7 +73,7 @@ export class PlatedHoleBuilderClass implements PlatedHoleBuilder {
           outer_diameter: bc.convert(Number(this.outer_diameter)),
           port_hints: this.port_hints,
         },
-      ];
+      ]
     } else {
       return [
         {
@@ -77,12 +83,12 @@ export class PlatedHoleBuilderClass implements PlatedHoleBuilder {
           layers: bc.all_copper_layers,
           outer_width: bc.convert(Number(this.outer_width)),
           outer_height: bc.convert(Number(this.outer_height)),
-          hole_width:  bc.convert(Number(this.hole_width)),
-          hole_height:  bc.convert(Number(this.hole_height)),
+          hole_width: bc.convert(Number(this.hole_width)),
+          hole_height: bc.convert(Number(this.hole_height)),
           shape: this.shape,
           port_hints: this.port_hints,
         },
-      ];
+      ]
     }
   }
 }
