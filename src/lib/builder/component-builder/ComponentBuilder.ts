@@ -430,7 +430,15 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
         cad_component_id: bc.getId("cad_component"),
         source_component_id,
         pcb_component_id: pcb_component.pcb_component_id,
-        position: { ...pcb_component.center, z: 0 }, // TODO set z based on layer?
+        position: {
+          ...pcb_component.center,
+          z:
+            pcb_component.layer === "top"
+              ? bc.board_thickness! / 2
+              : pcb_component.layer === "bottom"
+              ? bc.board_thickness! / -2
+              : 0,
+        }, // TODO set z based on layer?
         layer: pcb_component.layer,
       }
 
