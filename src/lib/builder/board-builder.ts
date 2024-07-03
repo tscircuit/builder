@@ -38,6 +38,7 @@ export interface BoardProps {
   center?: Type.Point
   center_x: number
   center_y: number
+  board_thickness?: number
 }
 
 export interface BoardBuilder {
@@ -83,6 +84,9 @@ export class BoardBuilderClass
         throw new Error(`<board /> "${prop}" is not set`)
       }
     }
+    bc.board_thickness = this.props.board_thickness
+      ? bc.convert(this.props.board_thickness)
+      : 1.2
 
     return [
       ...(await super.build(bc)),

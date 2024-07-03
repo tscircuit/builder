@@ -20,17 +20,34 @@ test("add cad_component when cadModel specified", async (t) => {
               resistance: 100,
               name: "R2",
               rotation: "90deg",
+              footprint: "0805",
               cadModel: {
-                stlUrl:
-                  "https://modelcdn.tscircuit.com/easyeda_models/download?uuid=84af7f0f6529479fb6b1c809c61d205f&pn=C95209",
+                objUrl:
+                  "https://modelcdn.tscircuit.com/easyeda_models/download?uuid=c7acac53bcbc44d68fbab8f60a747688&pn=C17414",
               },
             })
             .setSchematicCenter(0, 2)
         )
+        .add("resistor", (rb) =>
+          rb.setProps({
+            resistance: 1_000,
+            name: "R1",
+            pcb_x: 2,
+            pcb_y: 2,
+            footprint: "0805",
+            cadModel: {
+              objUrl:
+                "https://modelcdn.tscircuit.com/easyeda_models/download?uuid=c7acac53bcbc44d68fbab8f60a747688&pn=C17414",
+            },
+          })
+        )
+        .add("trace", (tb) =>
+          tb.setProps({ from: ".R1 > .left", to: ".R2 > .right" })
+        )
     )
     .build()
 
-  t.is(su(soup).cad_component.list().length, 1)
+  t.is(su(soup).cad_component.list().length, 2)
   t.is(su(soup).pcb_board.list().length, 1)
 
   await logSoup(soup)
