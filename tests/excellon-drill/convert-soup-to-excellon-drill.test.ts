@@ -12,6 +12,7 @@ test("generate excellon drill text from axial resistor", async (t) => {
         fb
           .add("platedhole", (phb) =>
             phb.setProps({
+              shape: "circle",
               hole_diameter: "0.0394in",
               outer_diameter: "0.05in",
               x: 0,
@@ -20,6 +21,7 @@ test("generate excellon drill text from axial resistor", async (t) => {
           )
           .add("platedhole", (phb) =>
             phb.setProps({
+              shape: "circle",
               hole_diameter: "0.0394in",
               outer_diameter: "0.05in",
               x: "0.3in",
