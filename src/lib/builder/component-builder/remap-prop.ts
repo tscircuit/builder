@@ -17,7 +17,14 @@ export const remapProp = (prop: string, val: any): [string, any] => {
           bottom_side: val.bottomSide,
         }),
       ]
+    case "pcbX":
+      return ["pcb_x", length.parse(val)]
+    case "pcbY":
+      return ["pcb_y", length.parse(val)]
+    case "pcbRotation":
+      return ["pcb_rotation", val]
     case "pinLabels":
+    case "schPinLabels":
       return ["port_labels", val]
     case "pinSpacing":
     case "schPinSpacing":
