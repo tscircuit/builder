@@ -425,6 +425,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
   ): Type.AnySoupElement[] {
     const cadModel: ComponentProps["cadModel"] = this.pcb_properties.cadModel
     if (cadModel) {
+      const board_thickness = bc.board_thickness ?? 0
       const cad_component: CadComponent = {
         type: "cad_component",
         cad_component_id: bc.getId("cad_component"),
@@ -434,9 +435,9 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
           ...pcb_component.center,
           z:
             pcb_component.layer === "top"
-              ? bc.board_thickness! / 2
+              ? board_thickness / 2
               : pcb_component.layer === "bottom"
-              ? bc.board_thickness! / -2
+              ? board_thickness / -2
               : 0,
         }, // TODO set z based on layer?
         layer: pcb_component.layer,
