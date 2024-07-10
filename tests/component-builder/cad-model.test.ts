@@ -2,7 +2,7 @@ import test from "ava"
 import { getTestFixture } from "tests/fixtures/get-test-fixture"
 import { su } from "@tscircuit/soup-util"
 
-test("add cad_component when cadModel specified", async (t) => {
+test("add cad_component when cadModel specified 2", async (t) => {
   const { pb, logSoup } = await getTestFixture(t)
 
   const soup = await pb
@@ -36,6 +36,7 @@ test("add cad_component when cadModel specified", async (t) => {
             pcb_x: 2,
             pcb_y: 2,
             footprint: "0805",
+            pcbRotation: "90deg",
             cadModel: {
               objUrl:
                 "https://modelcdn.tscircuit.com/easyeda_models/download?uuid=c7acac53bcbc44d68fbab8f60a747688&pn=C17414",
