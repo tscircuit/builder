@@ -26,6 +26,7 @@ import { SupplierName } from "lib/soup/pcb/properties/supplier_name"
 import { remapProp } from "./remap-prop"
 import { CadComponent, PCBComponent } from "@tscircuit/soup"
 import { ComponentProps } from "@tscircuit/props"
+import { convertToDegrees } from "lib/utils/convert-to-degrees"
 
 export interface BaseComponentBuilder<T> {
   project_builder: ProjectBuilder
@@ -426,6 +427,17 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
     const cadModel: ComponentProps["cadModel"] = this.pcb_properties.cadModel
     if (cadModel) {
       const board_thickness = bc.board_thickness ?? 0
+      const raw_rotation = cadModel.rotationOffset
+      const rotation =
+        typeof raw_rotation === "string" || typeof raw_rotation === "number"
+          ? { x: 0, y: 0, z: convertToDegrees(raw_rotation) }
+          : typeof raw_rotation === "object"
+          ? {
+              x: convertToDegrees(raw_rotation.x),
+              y: convertToDegrees(raw_rotation.y),
+              z: convertToDegrees(raw_rotation.z),
+            }
+          : undefined
       const cad_component: CadComponent = {
         type: "cad_component",
         cad_component_id: bc.getId("cad_component"),
@@ -439,7 +451,8 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
               : pcb_component.layer === "bottom"
               ? board_thickness / -2
               : 0,
-        }, // TODO set z based on layer?
+        },
+        rotation,
         layer: pcb_component.layer,
       }
 
