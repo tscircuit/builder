@@ -1,4 +1,4 @@
-import su from "@tscircuit/soup-util"
+import { su } from "@tscircuit/soup-util"
 import test from "ava"
 import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
