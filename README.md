@@ -8,6 +8,7 @@ TSCircuit TSX eventually renders to a builder. The builder will build
 TSCircuit Soup, a JSON output. Soup can be rendered to
 a webpage as either a schematic or PCB layout.
 
+> [!NOTE]
 > Why not go directly from TSX -> Schematic/PCB?
 >
 > If you think about how React works, there's a layer between React and
@@ -16,6 +17,12 @@ a webpage as either a schematic or PCB layout.
 > the Builder simplifies the amount of work that the TSCircuit TSX
 > have to do while providing a lot of flexibility for different renderers. It's
 > like the DOM for Circuits.
+
+> [!NOTE]
+> `@tscircuit/builder` is going to be replaced by `@tscircuit/core` eventually,
+> the API and types are a bit wrong because it's an old package. Try to use
+> React with tscircuit to avoid building on the builder API (tscircuit React
+> has a much more permanent API)
 
 ## Example
 
