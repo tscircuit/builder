@@ -1,4 +1,4 @@
-import su from "@tscircuit/soup-util"
+import { su } from "@tscircuit/soup-util"
 import { applySelector } from "lib/apply-selector"
 import { AnySoupElement, LayerRef, RouteHintPoint } from "lib/soup"
 import { PcbTraceHint } from "@tscircuit/soup"

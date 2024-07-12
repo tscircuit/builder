@@ -9,7 +9,7 @@ import type {
   PCBPort,
 } from "@tscircuit/soup"
 import { TracePcbRoutingContext } from "./pcb-routing/trace-pcb-routing-context"
-import su from "@tscircuit/soup-util"
+import { su } from "@tscircuit/soup-util"
 import { solveForRoute } from "./pcb-routing/solve-for-route"
 import { findPossibleTraceLayerCombinations } from "./pcb-routing/find-possible-trace-layer-combinations"
 import { createNoCommonLayersError } from "./pcb-errors"
