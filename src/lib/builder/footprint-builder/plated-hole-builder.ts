@@ -61,7 +61,7 @@ export class PlatedHoleBuilderClass implements PlatedHoleBuilder {
   }
 
   async build(bc: BuildContext): Promise<PCBPlatedHole[]> {
-    if (this.shape === "circle") {
+    if (this.shape === "circle" || (!this.shape && this.outer_diameter)) {
       return [
         {
           type: "pcb_plated_hole",
@@ -74,22 +74,21 @@ export class PlatedHoleBuilderClass implements PlatedHoleBuilder {
           port_hints: this.port_hints,
         },
       ]
-    } else {
-      return [
-        {
-          type: "pcb_plated_hole",
-          x: bc.convert(this.x),
-          y: bc.convert(this.y),
-          layers: bc.all_copper_layers,
-          outer_width: bc.convert(Number(this.outer_width)),
-          outer_height: bc.convert(Number(this.outer_height)),
-          hole_width: bc.convert(Number(this.hole_width)),
-          hole_height: bc.convert(Number(this.hole_height)),
-          shape: this.shape,
-          port_hints: this.port_hints,
-        },
-      ]
     }
+    return [
+      {
+        type: "pcb_plated_hole",
+        x: bc.convert(this.x),
+        y: bc.convert(this.y),
+        layers: bc.all_copper_layers,
+        outer_width: bc.convert(Number(this.outer_width)),
+        outer_height: bc.convert(Number(this.outer_height)),
+        hole_width: bc.convert(Number(this.hole_width ?? this.hole_diameter)),
+        hole_height: bc.convert(Number(this.hole_height ?? this.hole_diameter)),
+        shape: this.shape,
+        port_hints: this.port_hints,
+      },
+    ]
   }
 }
 
