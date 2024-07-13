@@ -19,6 +19,7 @@ a webpage as either a schematic or PCB layout.
 > like the DOM for Circuits.
 
 > [!NOTE]
+>
 > `@tscircuit/builder` is going to be replaced by `@tscircuit/core` eventually,
 > the API and types are a bit wrong because it's an old package. Try to use
 > React with tscircuit to avoid building on the builder API (tscircuit React
