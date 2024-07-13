@@ -2,7 +2,7 @@ import { InputPoint } from "./../../soup/common/point"
 import { extractIds } from "./../../utils/extract-ids"
 // TODO rename this to trace-builder
 
-import su from "@tscircuit/soup-util"
+import { su } from "@tscircuit/soup-util"
 import * as Type from "lib/types"
 import { Except, Simplify } from "type-fest"
 import { ProjectBuilder, GroupBuilder } from ".."
