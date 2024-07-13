@@ -1,6 +1,6 @@
 # @tscircuit/builder
 
-[main docs](https://docs.tscircuit.com) &middot; [Github](https://github.com/tscircuit/builder) &middot; [tscircuit](https://tscircuit.com) &middot; [discord](https://tscircuit.com/join) &middot; [builder reference docs](https://tscircuit.github.io/builder)
+[main docs](https://docs.tscircuit.com) &middot; [github](https://github.com/tscircuit/builder) &middot; [tscircuit](https://tscircuit.com) &middot; [discord](https://tscircuit.com/join) &middot; [builder reference docs](https://tscircuit.github.io/builder)
 
 TSCircuit Builder is a Typescript builder pattern for constructing schematic and PCB layouts. `@tscircuit/builder` is an internal module, [use tscircuit tsx instead](https://github.com/tscircuit/tscircuit). The builder is basically "the DOM for building circuits"
 
