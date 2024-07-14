@@ -41,5 +41,11 @@ test("net builder 5", async (t) => {
   // NOTE: there is a bug where there are two pcb traces created (starting at
   // each port that's in the net)
   // t.is(pcb_traces.length, 1, "should only have one pcb trace")
-  t.pass()
+  t.truthy(pcb_traces.length > 0)
+
+  const pcb_errors = su(soup).pcb_error.list()
+  // NOTE: since there is a bug where there are two pcb traces created, there
+  // are also two errors
+  // t.is(pcb_errors.length, 2, "should have two pcb errors")
+  t.truthy(pcb_errors.length > 0)
 })
