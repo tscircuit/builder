@@ -1,34 +1,38 @@
+import { PlatedHoleProps } from "@tscircuit/props"
 import { PCBPlatedHole } from "@tscircuit/soup"
 import { ProjectBuilder } from "lib/project"
 import * as Type from "lib/types"
 import { BuildContext } from "lib/types/build-context"
+import { remapProp } from "../component-builder/remap-prop"
 
 export interface PlatedHoleBuilder {
   builder_type: "plated_hole_builder"
   project_builder: ProjectBuilder
   setProps(
-    props: Partial<
-      Omit<
-        PCBPlatedHole,
-        | "x"
-        | "y"
-        | "outer_width"
-        | "outer_height"
-        | "hole_width"
-        | "hole_height"
-        | "shape"
-      > & {
-        outer_diameter?: Type.Dimension
-        outer_width?: Type.Dimension
-        outer_height?: Type.Dimension
-        hole_diameter?: Type.Dimension
-        hole_width?: Type.Dimension
-        hole_height?: Type.Dimension
-        x: Type.Dimension
-        y: Type.Dimension
-        shape: "circle" | "oval" | "pill"
-      }
-    >
+    props:
+      | Partial<
+          Omit<
+            PCBPlatedHole,
+            | "x"
+            | "y"
+            | "outer_width"
+            | "outer_height"
+            | "hole_width"
+            | "hole_height"
+            | "shape"
+          > & {
+            outer_diameter?: Type.Dimension
+            outer_width?: Type.Dimension
+            outer_height?: Type.Dimension
+            hole_diameter?: Type.Dimension
+            hole_width?: Type.Dimension
+            hole_height?: Type.Dimension
+            x: Type.Dimension
+            y: Type.Dimension
+            shape: "circle" | "oval" | "pill"
+          }
+        >
+      | Partial<PlatedHoleProps>
   ): PlatedHoleBuilder
   build(bc: BuildContext): Promise<PCBPlatedHole[]>
 }
@@ -55,7 +59,8 @@ export class PlatedHoleBuilderClass implements PlatedHoleBuilder {
 
   setProps(props: Partial<{}>): PlatedHoleBuilder {
     for (const k in props) {
-      this[k] = props[k]
+      const [new_key, new_val] = remapProp(k, props[k])
+      this[new_key] = new_val
     }
     return this
   }
