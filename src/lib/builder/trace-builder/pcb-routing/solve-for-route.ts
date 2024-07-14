@@ -13,6 +13,9 @@ import {
   createNoLayersSpecifiedError,
   createPcbTraceError,
 } from "../pcb-errors"
+import Debug from "debug"
+
+const debug = Debug("tscircuit:builder:trace-builder")
 
 export function solveForRoute(
   terminals: Array<PCBPort | PcbRouteHint>,
@@ -71,6 +74,9 @@ export function solveForRoute(
       return true
     })
   )
+
+  debug("common_layers", common_layers)
+  debug("candidate_layers", candidate_layers)
 
   if (candidate_layers.length === 0) {
     pcb_errors.push(createNoLayersSpecifiedError(ctx))

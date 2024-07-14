@@ -3,6 +3,9 @@ import type { LayerRef, PCBTrace, Point } from "@tscircuit/soup"
 import type { PcbObstacle } from "./get-pcb-obstacles"
 import { PcbSolverGrid, default_pcb_solver_grid } from "./pcb-solver-grid"
 import type { TracePcbRoutingContext } from "./trace-pcb-routing-context"
+import Debug from "debug"
+
+const debug = Debug("tscircuit:builder:trace-builder")
 
 export function solveForSingleLayerRoute(
   params: {
@@ -15,6 +18,7 @@ export function solveForSingleLayerRoute(
   const { terminals, layer, pcb_solver_grid = default_pcb_solver_grid } = params
   const { thickness_mm, pcb_obstacles } = ctx
   try {
+    debug("sending to @tscircuit/routing findRoute...")
     const solved_route = findRoute({
       grid: pcb_solver_grid,
       obstacles: pcb_obstacles.filter((obstacle) =>
@@ -22,6 +26,8 @@ export function solveForSingleLayerRoute(
       ),
       pointsToConnect: terminals,
     })
+
+    debug("route found?", solved_route.pathFound)
 
     if (solved_route.pathFound) {
       const route: PCBTrace["route"] = []
@@ -37,6 +43,18 @@ export function solveForSingleLayerRoute(
       }
       return route
     }
+
+    ctx.mutable_pcb_errors.push({
+      pcb_error_id: ctx.getId("pcb_error"),
+      type: "pcb_error",
+      error_type: "pcb_trace_error",
+      message: `No route found for pcb_trace_id ${ctx.pcb_trace_id}`,
+      pcb_trace_id: ctx.pcb_trace_id!,
+      source_trace_id: ctx.source_trace_id!,
+      pcb_component_ids: [], // TODO
+      pcb_port_ids: ctx.pcb_terminal_port_ids!,
+    })
+
     return []
   } catch (e) {
     ctx.mutable_pcb_errors.push({

@@ -27,6 +27,9 @@ import { solveForRoute } from "./pcb-routing/solve-for-route"
 import { createNoCommonLayersError } from "./pcb-errors"
 import { buildPcbTraceElements } from "./build-pcb-trace-elements"
 import { portOffsetWrapper } from "./route-solvers/port-offset-wrapper"
+import Debug from "debug"
+
+const debug = Debug("tscircuit:builder:trace-builder")
 
 type RouteSolverOrString = Type.RouteSolver | "rmst" | "straight" | "route1"
 
@@ -190,6 +193,7 @@ export const createTraceBuilder = (
       source_ports_in_route.length === 1 &&
       source_nets_in_route.length === 1
     ) {
+      debug("building trace for single port and net")
       return buildTraceForSinglePortAndNet(
         {
           source_net: source_nets_in_route[0],
