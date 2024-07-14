@@ -9,6 +9,7 @@ export type BuildContext = {
     x: number
     y: number
   }
+  convert(v: string): number
 
   getId: (prefix: string) => string
 
