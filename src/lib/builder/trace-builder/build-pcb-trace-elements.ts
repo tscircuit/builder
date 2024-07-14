@@ -16,6 +16,9 @@ import { createNoCommonLayersError } from "./pcb-errors"
 import { pairs } from "lib/utils/pairs"
 import { mergeRoutes } from "./pcb-routing/merge-routes"
 import { getPcbObstacles } from "./pcb-routing/get-pcb-obstacles"
+import Debug from "debug"
+
+const debug = Debug("tscircuit:builder:trace-builder")
 
 type BuildPcbTraceElementsParams = {
   elements: AnySoupElement[]
@@ -55,6 +58,7 @@ export const buildPcbTraceElements = (
     return pcb_port
   })
   const pcb_terminal_port_ids = pcb_terminals.map((t) => t.pcb_port_id)
+  debug("pcb_terminal_port_ids", pcb_terminal_port_ids)
 
   if (pcb_route_hints.length > 0 && pcb_terminals.length !== 2) {
     throw new Error(
@@ -103,6 +107,7 @@ export const buildPcbTraceElements = (
   }
 
   if (pcb_route_hints.length === 0) {
+    debug("no pcb route hints, solving for route")
     pcb_route.push(...solveForRoute(pcb_terminals, pcb_routing_ctx))
   } else {
     // TODO add support for more than 2 terminals w/ hints

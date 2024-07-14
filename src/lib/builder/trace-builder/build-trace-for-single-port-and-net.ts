@@ -12,6 +12,9 @@ import type { BuildContext } from "lib/types"
 import { directionToVec, oppositeSide } from "lib/utils"
 import { buildPcbTraceElements } from "./build-pcb-trace-elements"
 import { isTruthy } from "lib/utils/is-truthy"
+import Debug from "debug"
+
+const debug = Debug("tscircuit:builder:trace-builder")
 
 export const buildTraceForSinglePortAndNet = (
   params: {
@@ -107,6 +110,7 @@ export const buildTraceForSinglePortAndNet = (
   )
 
   let pcb_elements: AnySoupElement[] = []
+  debug("source_port_ids_in_route", source_port_ids_in_route)
   if (source_port_ids_in_route.length > 1) {
     const source_ports_in_route = source_port_ids_in_route
       .map((id) => su(params.parent_elements).source_port.get(id))
