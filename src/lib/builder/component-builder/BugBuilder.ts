@@ -107,6 +107,7 @@ export class BugBuilderClass
     const { total_ports } = port_arrangement_size
 
     if (!port_labels) {
+      // if (
       throw new Error("port_labels is required when building a <bug />")
     }
 
