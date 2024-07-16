@@ -170,10 +170,14 @@ export const createTraceBuilder = (
     parent_elements: AnySoupElement[] = [],
     bc: Type.BuildContext
   ) => {
+    debug("start: building trace")
     const { source_ports_in_route, source_nets_in_route, source_errors } =
       builder.getSourcePortsAndNetsInRoute(parent_elements)
 
-    if (source_errors?.length > 0) return source_errors
+    if (source_errors?.length > 0) {
+      debug("not routing due to source errors", source_errors)
+      return source_errors
+    }
 
     if (
       source_ports_in_route.length === 1 &&

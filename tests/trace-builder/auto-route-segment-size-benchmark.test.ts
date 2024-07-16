@@ -12,11 +12,9 @@ test("auto route segment size benchmark", async (t) => {
     .add("bug", (bb) =>
       bb.setProps({
         name: "U1",
-        footprint: "tssop12",
+        footprint: "tssop12_p0.65mm_pw0.35mm_pl2.05mm_w9.05mm",
         pcbX: -10,
         pcbY: 0,
-        schPortArrangement: { leftSize: 3, rightSize: 3 },
-        pinLabels: { 1: "A", 2: "B", 3: "C", 4: "D", 5: "E", 6: "F" },
       })
     )
     .add("bug", (bb) =>
@@ -25,33 +23,11 @@ test("auto route segment size benchmark", async (t) => {
         footprint: "bga16",
         pcbX: 10,
         pcbY: 0,
-        schPortArrangement: {
-          leftSize: 4,
-          rightSize: 4,
-          topSize: 4,
-          bottomSize: 4,
-        },
-        pinLabels: {
-          1: "A",
-          2: "B",
-          3: "C",
-          4: "D",
-          5: "E",
-          6: "F",
-          7: "G",
-          8: "H",
-          9: "I",
-          10: "J",
-          11: "K",
-          12: "L",
-          13: "M",
-          14: "N",
-          15: "O",
-          16: "P",
-        },
       })
     )
-    .add("trace", (tb) => tb.setProps({ from: ".U1 > port.5", to: ".U2 > .1" }))
+    .add("trace", (tb) =>
+      tb.setProps({ from: ".U1 > port.7", to: ".U2 > port.7" })
+    )
     .build()
 
   await logSoup(soup)
