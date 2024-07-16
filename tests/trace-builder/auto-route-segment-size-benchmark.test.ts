@@ -13,7 +13,7 @@ test("auto route segment size benchmark", async (t) => {
       bb.setProps({
         name: "U1",
         footprint: "tssop12_p0.65mm_pw0.35mm_pl2.05mm_w9.05mm",
-        pcbX: -10,
+        pcbX: -6,
         pcbY: 0,
       })
     )
@@ -21,12 +21,12 @@ test("auto route segment size benchmark", async (t) => {
       bb.setProps({
         name: "U2",
         footprint: "bga16",
-        pcbX: 10,
+        pcbX: 6,
         pcbY: 0,
       })
     )
     .add("trace", (tb) =>
-      tb.setProps({ from: ".U1 > port.7", to: ".U2 > port.7" })
+      tb.setProps({ from: ".U1 > port.10", to: ".U2 > port.B3" })
     )
     .build()
 
