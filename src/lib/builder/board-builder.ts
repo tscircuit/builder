@@ -10,36 +10,28 @@ import { createTraceBuilder } from "./trace-builder"
 import { ProjectBuilder } from "./project-builder"
 import { createTraceHintBuilder } from "./trace-hint-builder"
 import { createNetBuilder } from "./net-builder/net-builder"
+import type { BoardProps } from "@tscircuit/props"
 
 export const getBoardAddables = () =>
-  ({
-    generic_component: CB.createComponentBuilder,
-    component: CB.createComponentBuilder,
-    resistor: CB.createResistorBuilder,
-    net_alias: CB.createNetAliasBuilder,
-    capacitor: CB.createCapacitorBuilder,
-    diode: CB.createDiodeBuilder,
-    led: CB.createLedBuilder,
-    power_source: CB.createPowerSourceBuilder,
-    inductor: CB.createInductorBuilder,
-    ground: CB.createGroundBuilder,
-    bug: CB.createBugBuilder,
-    trace: createTraceBuilder,
-    via: CB.createViaBuilder,
-    group: createGroupBuilder,
-    trace_hint: createTraceHintBuilder,
-    net: createNetBuilder,
-  } as const)
+({
+  generic_component: CB.createComponentBuilder,
+  component: CB.createComponentBuilder,
+  resistor: CB.createResistorBuilder,
+  net_alias: CB.createNetAliasBuilder,
+  capacitor: CB.createCapacitorBuilder,
+  diode: CB.createDiodeBuilder,
+  led: CB.createLedBuilder,
+  power_source: CB.createPowerSourceBuilder,
+  inductor: CB.createInductorBuilder,
+  ground: CB.createGroundBuilder,
+  bug: CB.createBugBuilder,
+  trace: createTraceBuilder,
+  via: CB.createViaBuilder,
+  group: createGroupBuilder,
+  trace_hint: createTraceHintBuilder,
+  net: createNetBuilder,
+} as const)
 export type BoardBuilderAddables = ReturnType<typeof getBoardAddables>
-
-export interface BoardProps {
-  width: number
-  height: number
-  center?: Type.Point
-  center_x: number
-  center_y: number
-  board_thickness?: number
-}
 
 export interface BoardBuilder {
   project_builder: ProjectBuilder
@@ -59,8 +51,7 @@ export interface BoardBuilder {
 
 export class BoardBuilderClass
   extends GroupBuilderClass
-  implements BoardBuilder
-{
+  implements BoardBuilder {
   builder_type: "board_builder" = "board_builder"
   props: Partial<BoardProps>
   declare addables: BoardBuilderAddables
@@ -78,7 +69,7 @@ export class BoardBuilderClass
   }
 
   async build(bc: Type.BuildContext): Promise<Type.AnyElement[]> {
-    const required_props = ["width", "height", "center_x", "center_y"]
+    const required_props = ["width", "height", "pcbX", "pcbY"]
     for (const prop of required_props) {
       if (this.props[prop] === undefined) {
         throw new Error(`<board /> "${prop}" is not set`)
@@ -95,9 +86,9 @@ export class BoardBuilderClass
         center: this.props.center
           ? bc.convert(this.props.center)
           : {
-              x: bc.convert(this.props.center_x!),
-              y: bc.convert(this.props.center_y!),
-            },
+            x: bc.convert(this.props.pcbX),
+            y: bc.convert(this.props.pcbY),
+          },
         width: bc.convert(this.props.width!),
         height: bc.convert(this.props.height!),
       },

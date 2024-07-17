@@ -11,8 +11,8 @@ test("add cad_component when cadModel specified 2", async (t) => {
         .setProps({
           width: 10,
           height: 10,
-          center_x: 0,
-          center_y: 0,
+          pcbX: 0,
+          pcbY: 0,
         })
         .add("resistor", (rb) =>
           rb

@@ -1,12 +1,12 @@
 import test from "ava"
 import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
-test("[smoke] board builder", async (t) => {
+test("[smoke] new board test", async (t) => {
   const { pb, logSoup } = getTestFixture(t)
 
   const soup = await pb
     .add("board", (bb) => {
-      bb.setProps({ width: 100, height: 100, pcbX: 0, pcbY: 0 })
+      bb.setProps({ width: 10, height: 10, pcbX: 20, pcbY: 0 })
     })
     .build()
 

@@ -8,8 +8,8 @@ test("bug with footprint and cad with translation", async (t) => {
     .add("board", (board) =>
       board
         .setProps({
-          center_x: 0,
-          center_y: 0,
+          pcbX: 0,
+          pcbY: 0,
           width: 10,
           height: 10,
         })
