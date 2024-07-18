@@ -62,6 +62,9 @@ export class BoardBuilderClass
   }
 
   setProps(props: BoardProps): this {
+    if (props.center_x !== undefined) props.pcbX = props.center_x
+    if (props.center_y !== undefined) props.pcbY = props.center_y
+
     GroupBuilderClass.prototype.setProps.call(this, props)
     // have to manually set board props for now
     this.props = { ...this.props, ...props }
