@@ -1,11 +1,15 @@
-import type { AnySoupElement, LayerRef, PCBSMTPad } from "lib/soup"
-import { PCBPlatedHole } from "@tscircuit/soup"
-import { gerberBuilder } from "../gerber-builder"
-import { GerberLayerName } from "./GerberLayerName"
-import { AnyGerberCommand } from "../any_gerber_command"
-import { getAllTraceWidths } from "./getAllTraceWidths"
-import { ApertureTemplateConfig } from "../commands/define_aperture_template"
+import type {
+  AnySoupElement,
+  LayerRef,
+  PCBPlatedHole,
+  PCBSMTPad,
+} from "@tscircuit/soup"
 import stableStringify from "fast-json-stable-stringify"
+import type { AnyGerberCommand } from "../any_gerber_command"
+import type { ApertureTemplateConfig } from "../commands/define_aperture_template"
+import { gerberBuilder } from "../gerber-builder"
+import type { GerberLayerName } from "./GerberLayerName"
+import { getAllTraceWidths } from "./getAllTraceWidths"
 
 export function defineAperturesForLayer({
   glayer,

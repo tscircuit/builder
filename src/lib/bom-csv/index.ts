@@ -1,7 +1,7 @@
-import { AnySoupElement, PCBComponent } from "lib/soup"
+import { AnySoupElement, PCBComponent, SupplierName } from "@tscircuit/soup"
 import { SourceComponent } from "lib/types"
 import { formatSI } from "format-si-prefix"
-import { SupplierName } from "lib/soup/pcb/properties/supplier_name"
+
 import Papa from "papaparse"
 
 type SupplierPartNumberColumn = "JLCPCB Part#"

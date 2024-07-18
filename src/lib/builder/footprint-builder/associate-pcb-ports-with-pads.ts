@@ -1,5 +1,5 @@
 import * as Type from "lib/types"
-import { all_layers } from "lib/soup/pcb/properties/layer_ref"
+import { all_layers } from "@tscircuit/soup"
 import { matchPcbPortWithPad } from "./match-pcb-port-with-pad"
 import { PCBPlatedHole, PCBSMTPad } from "@tscircuit/soup"
 

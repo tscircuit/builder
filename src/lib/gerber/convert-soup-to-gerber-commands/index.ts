@@ -1,18 +1,15 @@
-import { AnySoupElement } from "lib/soup"
-import type { LayerRef } from "lib/soup"
-import { gerberBuilder } from "../gerber-builder"
+import type { AnySoupElement } from "@tscircuit/soup"
 import { pairs } from "lib/utils/pairs"
-import { LayerToGerberCommandsMap } from "./GerberLayerName"
-import { getAllTraceWidths } from "./getAllTraceWidths"
-import { getGerberLayerName } from "./getGerberLayerName"
-import { getCommandHeaders } from "./getCommandHeaders"
-import { findApertureNumber } from "./findApertureNumber"
+import { gerberBuilder } from "../gerber-builder"
+import type { LayerToGerberCommandsMap } from "./GerberLayerName"
 import {
   defineAperturesForLayer,
   getApertureConfigFromCirclePcbPlatedHole,
   getApertureConfigFromPcbSmtpad,
 } from "./defineAperturesForLayer"
-import { defineCommonMacros } from "./define-common-macros"
+import { findApertureNumber } from "./findApertureNumber"
+import { getCommandHeaders } from "./getCommandHeaders"
+import { getGerberLayerName } from "./getGerberLayerName"
 
 /**
  * Converts tscircuit soup to arrays of Gerber commands for each layer

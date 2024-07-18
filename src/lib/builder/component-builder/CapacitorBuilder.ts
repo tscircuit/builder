@@ -2,7 +2,7 @@ import { matchPCBPortsWithFootprintAndMutate } from "./../trace-builder/match-pc
 import { ProjectBuilder } from "../project-builder"
 import { BaseComponentBuilder, ComponentBuilderClass } from "./ComponentBuilder"
 import * as Type from "lib/types"
-import * as Soup from "lib/soup"
+import * as Soup from "@tscircuit/soup"
 import { transformSchematicElements } from "../transform-elements"
 import { compose, rotate, translate } from "transformation-matrix"
 import { PortsBuilder } from "../ports-builder/ports-builder"

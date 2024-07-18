@@ -1,5 +1,4 @@
-import { AnySoupElement } from "lib/soup"
-import type { LayerRef, PCBTrace } from "lib/soup"
+import type { AnySoupElement, LayerRef, PCBTrace } from "@tscircuit/soup"
 
 export function getAllTraceWidths(
   soup: AnySoupElement[]
