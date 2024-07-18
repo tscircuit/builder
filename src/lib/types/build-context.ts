@@ -1,5 +1,5 @@
-import { LayerRef } from "@tscircuit/soup"
-import { Dimension, NumberWithAnyUnit } from "./util"
+import type { LayerRef } from "@tscircuit/soup"
+import type { Dimension, NumberWithAnyUnit } from "./util"
 
 export type BuildContext = {
   distance_unit: "mm" | "in"

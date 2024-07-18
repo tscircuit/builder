@@ -1,6 +1,5 @@
 import type * as Soup from "@tscircuit/soup"
-import type { AnySoupElement } from "@tscircuit/soup"
-import type { LayerRef } from "@tscircuit/soup"
+import type { AnySoupElement, LayerRef } from "@tscircuit/soup"
 import type { SourceComponent } from "./source-component"
 
 export interface SchematicConfig {

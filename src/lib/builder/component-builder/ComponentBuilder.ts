@@ -1,5 +1,5 @@
 import type { ComponentProps } from "@tscircuit/props"
-import type { CadComponent, PCBComponent, SupplierName } from "@tscircuit/soup"
+import type { CadComponent, PCBComponent, SupplierName, SchematicComponent, SourcePort, AnySoupElement, Point } from "@tscircuit/soup"
 import {
   createPortsBuilder,
   type PortsBuilder,
@@ -50,7 +50,7 @@ export interface BaseComponentBuilder<T> {
     rotation: number | `${number}deg`
   ): BaseComponentBuilder<T>
   setSchematicProperties(
-    properties: Partial<Type.SchematicComponent>
+    properties: Partial<SchematicComponent>
   ): BaseComponentBuilder<T>
   setFootprintCenter(
     x: number | string,
@@ -91,7 +91,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
   pcb_properties: any = {}
   schematic_properties: any = {}
   schematic_rotation = 0
-  schematic_position: Type.Point = { x: 0, y: 0 }
+  schematic_position: Point = { x: 0, y: 0 }
   settable_source_properties: string[]
   settable_schematic_properties: string[]
   settable_pcb_properties: string[]
@@ -382,7 +382,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
       pcb_component_id: string
     },
     bc: Type.BuildContext
-  ): Type.PCBComponent {
+  ): PCBComponent {
     return {
       type: "pcb_component",
       source_component_id: opts.source_component_id,
@@ -396,8 +396,8 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
   }
 
   _computeSizeOfPcbElement(
-    pcb_element: Type.PCBComponent,
-    footprint_elements: Type.AnySoupElement[]
+    pcb_element: PCBComponent,
+    footprint_elements: AnySoupElement[]
   ) {
     const pcb_size = getSpatialBoundsFromSpatialElements(
       footprint_elements
@@ -423,7 +423,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
       pcb_component: PCBComponent
     },
     bc: Type.BuildContext
-  ): Type.AnySoupElement[] {
+  ): AnySoupElement[] {
     const cadModel: ComponentProps["cadModel"] = this.pcb_properties.cadModel
     if (cadModel) {
       const board_thickness = bc.board_thickness ?? 0
@@ -504,7 +504,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
 
     // Build schematic component
 
-    const schematic_component: Type.SchematicComponent = {
+    const schematic_component: SchematicComponent = {
       type: "schematic_component",
       schematic_component_id,
       source_component_id,
@@ -570,7 +570,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
           (elm) =>
             elm.type === "source_port" &&
             elm.source_port_id === pp.source_port_id
-        )! as Type.SourcePort
+        )! as SourcePort
         elements.push({
           pcb_error_id: pb.getId("pcb_error"),
           type: "pcb_error",

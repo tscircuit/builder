@@ -1,4 +1,4 @@
-import * as builder from "lib/builder"
+import type * as builder from "lib/builder"
 
 export type Builder =
   | builder.ComponentBuilder

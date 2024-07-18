@@ -1,3 +1,4 @@
+import type { SchematicComponent, SchematicText, SourceSimpleInductor } from "@tscircuit/soup"
 import type * as Type from "lib/types"
 import { compose, rotate, translate } from "transformation-matrix"
 import type { ProjectBuilder } from "../project-builder"
@@ -12,7 +13,7 @@ export type InductorBuilderCallback = (rb: InductorBuilder) => unknown
 export interface InductorBuilder extends BaseComponentBuilder<InductorBuilder> {
   builder_type: "inductor_builder"
   setSourceProperties(
-    properties: Type.SourceSimpleInductor & { name?: string }
+    properties: SourceSimpleInductor & { name?: string }
   ): InductorBuilder
 }
 
@@ -30,7 +31,7 @@ export class InductorBuilderClass
     }
   }
 
-  setSourceProperties(props: Type.SourceSimpleInductor) {
+  setSourceProperties(props: SourceSimpleInductor) {
     this.source_properties = {
       ...this.source_properties,
       ...props,
@@ -56,7 +57,7 @@ export class InductorBuilderClass
     elements.push(source_component)
 
     const port_arrangement = this.schematic_properties?.port_arrangement
-    const schematic_component: Type.SchematicComponent = {
+    const schematic_component: SchematicComponent = {
       type: "schematic_component",
       source_component_id,
       schematic_component_id,
@@ -70,7 +71,7 @@ export class InductorBuilderClass
     this.ports.setSchematicComponent(schematic_component_id)
     this.ports.setSourceComponent(source_component_id)
 
-    const textElements: Type.SchematicText[] = []
+    const textElements: SchematicText[] = []
 
     this.ports.addPort("left", { x: -0.5, y: 0 })
     this.ports.addPort("right", { x: 0.5, y: 0 })

@@ -1,4 +1,9 @@
 import type * as Soup from "@tscircuit/soup"
+import type {
+  SchematicComponent,
+  SchematicText,
+  SourceSimpleCapacitor,
+} from "@tscircuit/soup"
 import type * as Type from "lib/types"
 import { compose, rotate, translate } from "transformation-matrix"
 import type { Except } from "type-fest"
@@ -37,7 +42,7 @@ export class CapacitorBuilderClass
     this.settable_source_properties.push(...["capacitance"])
   }
 
-  setSourceProperties(props: Type.SourceSimpleCapacitor) {
+  setSourceProperties(props: SourceSimpleCapacitor) {
     this.source_properties = {
       ...this.source_properties,
       ...props,
@@ -68,7 +73,7 @@ export class CapacitorBuilderClass
     })
     elements.push(source_component)
 
-    const schematic_component: Type.SchematicComponent = {
+    const schematic_component: SchematicComponent = {
       type: "schematic_component",
       source_component_id,
       schematic_component_id,
@@ -83,7 +88,7 @@ export class CapacitorBuilderClass
     this.ports.setSourceComponent(source_component_id)
     this.ports.setPCBComponent(pcb_component_id)
 
-    const textElements: Type.SchematicText[] = []
+    const textElements: SchematicText[] = []
 
     this.ports.addPort({
       name: "left",
