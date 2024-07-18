@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { point } from "../soup/common/point"
+import { point } from "@tscircuit/soup"
 
 export const manual_pcb_position = z.object({
   selector: z.string(),

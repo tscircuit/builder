@@ -1,4 +1,4 @@
-import type { InputPoint } from "./../../soup/common/point"
+import type { InputPoint } from "@tscircuit/soup"
 import { extractIds } from "./../../utils/extract-ids"
 
 import type * as Type from "lib/types"

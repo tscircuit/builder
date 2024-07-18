@@ -1,4 +1,4 @@
-import { LayerRef } from "../soup/pcb/properties/layer_ref"
+import { LayerRef } from "@tscircuit/soup"
 import { Dimension, NumberWithAnyUnit } from "./util"
 
 export type BuildContext = {
