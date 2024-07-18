@@ -19,13 +19,18 @@ export function solveForSingleLayerRoute(
   const { thickness_mm, pcb_obstacles } = ctx
   try {
     debug("sending to @tscircuit/routing findRoute...")
-    const solved_route = findRoute({
+    const findRouteArgs = {
       grid: pcb_solver_grid,
       obstacles: pcb_obstacles.filter((obstacle) =>
         obstacle.layers.includes(layer)
       ),
       pointsToConnect: terminals,
-    })
+    }
+
+    if (debug.enabled && globalThis.logTmpFile) {
+      globalThis.logTmpFile("findRouteArgs", findRouteArgs)
+    }
+    const solved_route = findRoute(findRouteArgs)
 
     debug("route found?", solved_route.pathFound)
 

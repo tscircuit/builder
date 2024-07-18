@@ -7,5 +7,5 @@ export type PcbSolverGrid = {
 export const default_pcb_solver_grid: PcbSolverGrid = {
   marginSegments: 20,
   maxGranularSearchSegments: 50,
-  segmentSize: 0.2, // mm
+  segmentSize: 0.1, // mm
 }
