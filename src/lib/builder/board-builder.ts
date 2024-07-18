@@ -12,6 +12,11 @@ import { createTraceHintBuilder } from "./trace-hint-builder"
 import { createNetBuilder } from "./net-builder/net-builder"
 import type { BoardProps } from "@tscircuit/props"
 
+export interface LegacyBoardProps extends BoardProps {
+  center_x?: number
+  center_y?: number
+}
+
 export const getBoardAddables = () =>
 ({
   generic_component: CB.createComponentBuilder,
@@ -45,7 +50,7 @@ export interface BoardBuilder {
     builder_type: T,
     callback: (builder: ReturnType<BoardBuilderAddables[T]>) => unknown
   ): BoardBuilder
-  setProps(props: BoardProps): BoardBuilder
+  setProps(props: LegacyBoardProps): BoardBuilder
   build(build_context: Type.BuildContext): Promise<Type.AnyElement[]>
 }
 
@@ -61,7 +66,7 @@ export class BoardBuilderClass
     this.props = {}
   }
 
-  setProps(props: BoardProps): this {
+  setProps(props: LegacyBoardProps): this {
     if (props.center_x !== undefined) props.pcbX = props.center_x
     if (props.center_y !== undefined) props.pcbY = props.center_y
 
