@@ -1,5 +1,5 @@
-import { BuildContext, Dimension } from "lib/types"
-import { ProjectBuilder } from "../project-builder"
+import type { BuildContext, Dimension } from "lib/types"
+import type { ProjectBuilder } from "../project-builder"
 import { createSimpleDataBuilderClass } from "../simple-data-builder"
 
 export interface SchematicLineBuilderFields {

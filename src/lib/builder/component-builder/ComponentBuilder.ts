@@ -1,31 +1,32 @@
-import * as Type from "lib/types"
-import { Except, Simplify } from "type-fest"
-import { ProjectBuilder } from "lib/builder/project-builder"
+import type { ComponentProps } from "@tscircuit/props"
+import type { CadComponent, PCBComponent, SupplierName } from "@tscircuit/soup"
 import {
-  PortsBuilder,
   createPortsBuilder,
+  type PortsBuilder,
 } from "lib/builder/ports-builder/ports-builder"
-import { compose, rotate, transform, translate } from "transformation-matrix"
+import type { ProjectBuilder } from "lib/builder/project-builder"
 import { transformSchematicElements } from "lib/builder/transform-elements"
-import getPortPosition from "../../utils/get-port-position"
-import { createFootprintBuilder, FootprintBuilder } from "../footprint-builder"
-import {
-  createSchematicSymbolBuilder,
-  SchematicSymbolBuilder,
-} from "../schematic-symbol-builder"
+import type * as Type from "lib/types"
+import { convertToDegrees } from "lib/utils/convert-to-degrees"
+import { isTruthy } from "lib/utils/is-truthy"
+import { maybeConvertToPoint } from "lib/utils/maybe-convert-to-point"
+import { removeNulls } from "lib/utils/remove-nulls"
+import { compose, rotate, translate } from "transformation-matrix"
+import type { Except, Simplify } from "type-fest"
 import {
   getSpatialBoundsFromSpatialElements,
   toCenteredSpatialObj,
 } from "../constrained-layout-builder/spatial-util"
+import {
+  createFootprintBuilder,
+  type FootprintBuilder,
+} from "../footprint-builder"
+import {
+  createSchematicSymbolBuilder,
+  type SchematicSymbolBuilder,
+} from "../schematic-symbol-builder"
 import { matchPCBPortsWithFootprintAndMutate } from "../trace-builder/match-pcb-ports-with-footprint"
-import _ from "lodash"
-import { maybeConvertToPoint } from "lib/utils/maybe-convert-to-point"
-import { isTruthy } from "lib/utils/is-truthy"
-import { removeNulls } from "lib/utils/remove-nulls"
 import { remapProp } from "./remap-prop"
-import { CadComponent, PCBComponent, SupplierName } from "@tscircuit/soup"
-import { ComponentProps } from "@tscircuit/props"
-import { convertToDegrees } from "lib/utils/convert-to-degrees"
 
 export interface BaseComponentBuilder<T> {
   project_builder: ProjectBuilder
@@ -89,7 +90,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
   source_properties: any = {}
   pcb_properties: any = {}
   schematic_properties: any = {}
-  schematic_rotation: number = 0
+  schematic_rotation = 0
   schematic_position: Type.Point = { x: 0, y: 0 }
   settable_source_properties: string[]
   settable_schematic_properties: string[]
@@ -297,7 +298,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
       this.schematic_rotation = rotation
     } else {
       this.schematic_rotation =
-        (parseFloat(rotation.split("deg")[0]) / 180) * Math.PI
+        (Number.parseFloat(rotation.split("deg")[0]) / 180) * Math.PI
     }
     return this
   }

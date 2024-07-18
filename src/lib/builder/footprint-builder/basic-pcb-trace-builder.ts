@@ -1,12 +1,7 @@
-import { BuildContext } from "lib/types"
-import {
-  AnySoupElement,
-  PcbSilkscreenCircle,
-  PcbSilkscreenPath,
-  PCBTrace,
-} from "@tscircuit/soup"
-import type { BuilderInterface } from "../builder-interface"
 import type { PcbTraceProps } from "@tscircuit/props"
+import type { AnySoupElement, PCBTrace } from "@tscircuit/soup"
+import type { BuildContext } from "lib/types"
+import type { BuilderInterface } from "../builder-interface"
 
 export interface BasicPcbTraceBuilder extends BuilderInterface {
   builder_type: "basic_pcb_trace_builder"

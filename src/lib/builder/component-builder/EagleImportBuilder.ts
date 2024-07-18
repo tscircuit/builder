@@ -1,6 +1,9 @@
-import { ProjectBuilder } from "../project-builder"
-import { BaseComponentBuilder, ComponentBuilderClass } from "./ComponentBuilder"
-import * as Type from "lib/types"
+import type * as Type from "lib/types"
+import type { ProjectBuilder } from "../project-builder"
+import {
+  ComponentBuilderClass,
+  type BaseComponentBuilder,
+} from "./ComponentBuilder"
 
 export type EagleImportBuilderCallback = (rb: EagleImportBuilder) => unknown
 export interface EagleImportBuilder

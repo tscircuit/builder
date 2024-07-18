@@ -1,11 +1,11 @@
-import { BuildContext } from "lib/types"
+import type { SilkscreenPathProps } from "@tscircuit/props"
 import {
-  AnySoupElement,
   pcb_route_hints,
-  PcbSilkscreenPath,
+  type AnySoupElement,
+  type PcbSilkscreenPath,
 } from "@tscircuit/soup"
-import { BuilderInterface } from "../builder-interface"
-import { SilkscreenPathProps } from "@tscircuit/props"
+import type { BuildContext } from "lib/types"
+import type { BuilderInterface } from "../builder-interface"
 
 export interface SilkscreenPathBuilder extends BuilderInterface {
   builder_type: "silkscreen_path_builder"

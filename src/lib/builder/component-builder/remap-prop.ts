@@ -1,5 +1,5 @@
-import { removeNulls } from "lib/utils/remove-nulls"
 import { length } from "@tscircuit/soup"
+import { removeNulls } from "lib/utils/remove-nulls"
 
 export const remapProp = (prop: string, val: any): [string, any] => {
   switch (prop) {

@@ -1,7 +1,6 @@
-import * as Type from "lib/types"
-import { all_layers } from "@tscircuit/soup"
+import type { PCBPlatedHole, PCBSMTPad } from "@tscircuit/soup"
+import type * as Type from "lib/types"
 import { matchPcbPortWithPad } from "./match-pcb-port-with-pad"
-import { PCBPlatedHole, PCBSMTPad } from "@tscircuit/soup"
 
 export const associatePcbPortsWithPads = (elms: Type.AnyElement[]) => {
   const ports = elms

@@ -1,7 +1,7 @@
-import { BuildContext } from "lib/types"
-import { AnySoupElement, PcbFabricationNoteText } from "@tscircuit/soup"
-import { BuilderInterface } from "../builder-interface"
-import { FabricationNoteTextProps } from "@tscircuit/props"
+import type { FabricationNoteTextProps } from "@tscircuit/props"
+import type { AnySoupElement, PcbFabricationNoteText } from "@tscircuit/soup"
+import type { BuildContext } from "lib/types"
+import type { BuilderInterface } from "../builder-interface"
 
 export interface FabricationNoteTextBuilder extends BuilderInterface {
   builder_type: "fabrication_note_text_builder"

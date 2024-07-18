@@ -1,6 +1,6 @@
 export {
   transformPCBElement,
+  transformPCBElements,
   transformSchematicElement,
   transformSchematicElements,
-  transformPCBElements,
 } from "@tscircuit/soup-util"

@@ -1,13 +1,14 @@
-import { matchPCBPortsWithFootprintAndMutate } from "./../trace-builder/match-pcb-ports-with-footprint"
-import { ProjectBuilder } from "../project-builder"
-import { BaseComponentBuilder, ComponentBuilderClass } from "./ComponentBuilder"
-import * as Type from "lib/types"
-import * as Soup from "@tscircuit/soup"
-import { transformSchematicElements } from "../transform-elements"
+import type * as Soup from "@tscircuit/soup"
+import type * as Type from "lib/types"
 import { compose, rotate, translate } from "transformation-matrix"
-import { PortsBuilder } from "../ports-builder/ports-builder"
-import { Except } from "type-fest"
-import getPortPosition from "../../utils/get-port-position"
+import type { Except } from "type-fest"
+import type { ProjectBuilder } from "../project-builder"
+import { transformSchematicElements } from "../transform-elements"
+import { matchPCBPortsWithFootprintAndMutate } from "./../trace-builder/match-pcb-ports-with-footprint"
+import {
+  ComponentBuilderClass,
+  type BaseComponentBuilder,
+} from "./ComponentBuilder"
 
 export type CapacitorBuilderCallback = (rb: CapacitorBuilder) => unknown
 export interface CapacitorBuilder

@@ -1,7 +1,7 @@
-import { BuildContext } from "lib/types"
-import { AnySoupElement, PcbSilkscreenText } from "@tscircuit/soup"
-import { BuilderInterface } from "../builder-interface"
-import { SilkscreenTextProps } from "@tscircuit/props"
+import type { SilkscreenTextProps } from "@tscircuit/props"
+import type { AnySoupElement, PcbSilkscreenText } from "@tscircuit/soup"
+import type { BuildContext } from "lib/types"
+import type { BuilderInterface } from "../builder-interface"
 
 export interface SilkscreenTextBuilder extends BuilderInterface {
   builder_type: "silkscreen_text_builder"

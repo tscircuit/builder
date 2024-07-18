@@ -1,5 +1,5 @@
-import * as Type from "lib/types"
-import { ProjectBuilder } from "lib/project"
+import type { ProjectBuilder } from "lib/project"
+import type * as Type from "lib/types"
 
 export interface HoleBuilder {
   builder_type: "hole_builder"

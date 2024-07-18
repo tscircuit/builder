@@ -1,9 +1,8 @@
-import * as Type from "lib/types"
-import { Builder } from "lib/types"
-import { Except, Simplify } from "type-fest"
-import { ProjectBuilder } from "../project-builder"
-import { createPortBuilder, PortBuilder } from "./port-builder"
+import type * as Type from "lib/types"
+import type { Builder } from "lib/types"
 import { directionToVec, multPoint, rotatePoint, sumPoints } from "lib/utils"
+import type { ProjectBuilder } from "../project-builder"
+import { createPortBuilder, type PortBuilder } from "./port-builder"
 
 export const ports_builder_addables = {
   port: createPortBuilder,

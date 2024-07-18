@@ -1,11 +1,12 @@
-import { ProjectBuilder } from "../project-builder"
-import { BaseComponentBuilder, ComponentBuilderClass } from "./ComponentBuilder"
-import * as Type from "lib/types"
-import { transformSchematicElements } from "../transform-elements"
+import type * as Type from "lib/types"
 import { compose, rotate, translate } from "transformation-matrix"
-import { PortsBuilder } from "../ports-builder/ports-builder"
-import getPortPosition from "../../utils/get-port-position"
+import type { ProjectBuilder } from "../project-builder"
 import { matchPCBPortsWithFootprintAndMutate } from "../trace-builder/match-pcb-ports-with-footprint"
+import { transformSchematicElements } from "../transform-elements"
+import {
+  ComponentBuilderClass,
+  type BaseComponentBuilder,
+} from "./ComponentBuilder"
 
 export type InductorBuilderCallback = (rb: InductorBuilder) => unknown
 export interface InductorBuilder extends BaseComponentBuilder<InductorBuilder> {

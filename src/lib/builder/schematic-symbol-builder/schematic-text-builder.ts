@@ -1,5 +1,5 @@
-import { Dimension, SchematicText } from "lib/types"
-import { ProjectBuilder } from "../project-builder"
+import type { Dimension, SchematicText } from "lib/types"
+import type { ProjectBuilder } from "../project-builder"
 import { createSimpleDataBuilderClass } from "../simple-data-builder"
 
 export type SchematicTextBuilderFields = Partial<

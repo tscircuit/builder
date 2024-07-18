@@ -1,6 +1,6 @@
-import * as Type from "lib/types"
-import { Dimension } from "lib/types"
-import { ProjectBuilder } from "../project-builder"
+import type * as Type from "lib/types"
+import type { Dimension } from "lib/types"
+import type { ProjectBuilder } from "../project-builder"
 
 export interface PortBuilder {
   builder_type: "port_builder"
@@ -40,7 +40,7 @@ const settable_props = [
 export class PortBuilderClass implements PortBuilder {
   builder_type = "port_builder" as const
   project_builder: ProjectBuilder
-  name: string = ""
+  name = ""
 
   schematic_position: Type.Point
   schematic_direction: "up" | "down" | "left" | "right"
@@ -108,7 +108,6 @@ export class PortBuilderClass implements PortBuilder {
 
   build() {
     throw new Error(`"port_builder" must be built via "ports_builder"`)
-    return []
   }
 }
 

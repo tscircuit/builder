@@ -1,20 +1,16 @@
-import * as Type from "lib/types"
-import * as CB from "./component-builder"
+import type { LayoutBuilder } from "@tscircuit/layout"
+import type * as Type from "lib/types"
 import _ from "lodash"
-import { ProjectBuilder } from "./project-builder"
-import { TraceBuilder, TraceBuilderCallback } from "./trace-builder"
-import { createTraceBuilder } from "./trace-builder"
-import { TraceHintBuilder, createTraceHintBuilder } from "./trace-hint-builder"
-import { createConstraintBuilder } from "./constrained-layout-builder"
+import * as CB from "./component-builder"
 import { createViaBuilder } from "./component-builder/ViaBuilder"
-import * as AutoSch from "@tscircuit/schematic-autolayout"
-import { pairs } from "lib/utils/pairs"
-import { applySelector } from "lib/apply-selector"
-import { transformPCBElement, transformPCBElements } from "./transform-elements"
-import { Matrix, compose, identity, translate } from "transformation-matrix"
-import { LayoutBuilder } from "@tscircuit/layout"
-import { createNetBuilder, NetBuilder } from "./net-builder/net-builder"
-import { AnySoupElement } from "@tscircuit/soup"
+import { createNetBuilder, type NetBuilder } from "./net-builder/net-builder"
+import type { ProjectBuilder } from "./project-builder"
+import type { TraceBuilder, TraceBuilderCallback } from "./trace-builder"
+import { createTraceBuilder } from "./trace-builder"
+import {
+  createTraceHintBuilder,
+  type TraceHintBuilder,
+} from "./trace-hint-builder"
 
 export const getGroupAddables = () =>
   ({

@@ -1,6 +1,6 @@
-import * as Type from "lib/types"
-import { ProjectBuilder } from "lib/project"
-import { Dimension } from "lib/types"
+import type { ProjectBuilder } from "lib/project"
+import type * as Type from "lib/types"
+import type { Dimension } from "lib/types"
 
 type RectProps = Extract<Type.PCBSMTPad, { shape: "rect" }>
 type CircleProps = Extract<Type.PCBSMTPad, { shape: "circle" }>

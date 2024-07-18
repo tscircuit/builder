@@ -1,31 +1,28 @@
+import * as kiwi from "@lume/kiwi"
 /**
  * A constrained layout builder is used to apply constraints to any set of
  * of elements that implement either { x, y } or { x, y, w, h } (w/ align and
  * other aliases)
  */
-import * as Type from "lib/types"
-import * as kiwi from "@lume/kiwi"
+import type * as Type from "lib/types"
 
-import {
-  createGroupBuilder,
-  GroupBuilder,
-  GroupBuilderCallback,
-  GroupBuilderClass,
-  GroupBuilderAddables,
-  getGroupAddables,
-} from "../group-builder"
-import { ProjectBuilder } from "../project-builder"
-import {
-  ConstraintBuilder,
-  ConstraintBuilderFields,
-  createConstraintBuilder,
-} from "./constraint-builder"
 import { applySelector } from "lib/apply-selector"
+import { combined } from "lib/utils/combined"
+import {
+  GroupBuilderClass,
+  getGroupAddables,
+  type GroupBuilder,
+} from "../group-builder"
+import type { ProjectBuilder } from "../project-builder"
+import {
+  createConstraintBuilder,
+  type ConstraintBuilder,
+  type ConstraintBuilderFields,
+} from "./constraint-builder"
 import {
   getElementChildren,
   getSpatialElementIncludingChildren,
 } from "./spatial-util"
-import { combined } from "lib/utils/combined"
 
 const constraint_builder_addables = {
   ...getGroupAddables(),

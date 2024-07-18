@@ -1,6 +1,6 @@
-import * as Type from "lib/types"
-import { ProjectBuilder } from "lib/project"
-import { BuildContext } from "lib/types/build-context"
+import type { ProjectBuilder } from "lib/project"
+import type * as Type from "lib/types"
+import type { BuildContext } from "lib/types/build-context"
 
 export interface PcbViaBuilder {
   builder_type: "pcb_via_builder"

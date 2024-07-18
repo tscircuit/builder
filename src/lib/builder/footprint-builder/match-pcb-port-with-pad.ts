@@ -1,5 +1,5 @@
-import { PCBPlatedHole, PCBSMTPad } from "@tscircuit/soup"
-import * as Type from "lib/types"
+import type { PCBPlatedHole, PCBSMTPad } from "@tscircuit/soup"
+import type * as Type from "lib/types"
 
 export const matchPcbPortWithPad = ({
   pcb_port,

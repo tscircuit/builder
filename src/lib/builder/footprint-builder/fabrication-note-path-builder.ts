@@ -1,11 +1,11 @@
-import { BuildContext } from "lib/types"
+import type { FabricationNotePathProps } from "@tscircuit/props"
 import {
-  AnySoupElement,
-  PcbFabricationNotePath,
   pcb_route_hints,
+  type AnySoupElement,
+  type PcbFabricationNotePath,
 } from "@tscircuit/soup"
+import type { BuildContext } from "lib/types"
 import type { BuilderInterface } from "../builder-interface"
-import { FabricationNotePathProps } from "@tscircuit/props"
 
 export interface FabricationNotePathBuilder extends BuilderInterface {
   builder_type: "fabrication_note_path_builder"

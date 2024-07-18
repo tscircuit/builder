@@ -1,15 +1,15 @@
+import type * as Type from "lib/types"
+import * as CB from "./component-builder"
 import {
   GroupBuilderClass,
   createGroupBuilder,
   type GroupBuilder,
 } from "./group-builder"
-import * as Type from "lib/types"
-import * as CB from "./component-builder"
-import { TraceBuilder } from "./trace-builder"
-import { createTraceBuilder } from "./trace-builder"
-import { ProjectBuilder } from "./project-builder"
-import { createTraceHintBuilder } from "./trace-hint-builder"
 import { createNetBuilder } from "./net-builder/net-builder"
+import type { ProjectBuilder } from "./project-builder"
+import type { TraceBuilder } from "./trace-builder"
+import { createTraceBuilder } from "./trace-builder"
+import { createTraceHintBuilder } from "./trace-hint-builder"
 
 export const getBoardAddables = () =>
   ({
@@ -61,7 +61,7 @@ export class BoardBuilderClass
   extends GroupBuilderClass
   implements BoardBuilder
 {
-  builder_type: "board_builder" = "board_builder"
+  builder_type = "board_builder" as const
   props: Partial<BoardProps>
   declare addables: BoardBuilderAddables
 
