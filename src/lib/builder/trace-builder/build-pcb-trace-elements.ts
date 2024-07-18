@@ -68,12 +68,12 @@ export const buildPcbTraceElements = (
 
   const thickness_mm =
     thickness === "inherit"
-      ? 0.2 // TODO derive from net/context
+      ? 0.05 // TODO derive from net/context
       : bc.convert(thickness as any)
   const pcb_obstacles = getPcbObstacles({
     elements: parent_elements,
     pcb_terminal_port_ids,
-    obstacle_margin: thickness_mm * 2,
+    obstacle_margin: thickness_mm * 1.5,
   })
   const pcb_routing_ctx: TracePcbRoutingContext = {
     ...bc,

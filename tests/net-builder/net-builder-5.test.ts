@@ -28,7 +28,7 @@ test("net builder 5", async (t) => {
         pcbY: 0,
       })
     )
-    .add("component", (cb) => cb.setName("Obstacle").setFootprint("dip32_p1"))
+    .add("component", (cb) => cb.setName("Obstacle").setFootprint("dip64_p1"))
     .add("net", (nb) => nb.setProps({ name: "N1" }))
     .add("trace", (tb) => tb.setProps({ from: ".R1 > .right", to: "net.N1" }))
     .add("trace", (tb) => tb.setProps({ from: ".R2 > .left", to: "net.N1" }))

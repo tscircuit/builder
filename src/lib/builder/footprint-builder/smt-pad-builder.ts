@@ -18,6 +18,7 @@ type InputProps =
 export interface SMTPadBuilder {
   builder_type: "smtpad_builder"
   project_builder: ProjectBuilder
+  port_hints: string[]
   setShape(shape: Type.PCBSMTPad["shape"]): SMTPadBuilder
   setSize(width: number, height: number): SMTPadBuilder
   setRadius(radius: number): SMTPadBuilder

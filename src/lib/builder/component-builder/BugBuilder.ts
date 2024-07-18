@@ -10,10 +10,14 @@ import getPortPosition, {
   DEFAULT_PIN_SPACING,
   getPortArrangementSize,
   getPortIndices,
+  PortArrangement,
 } from "../../utils/get-port-position"
 import { convertSideToDirection } from "lib/utils/convert-side-to-direction"
 import { associatePcbPortsWithPads } from "../footprint-builder/associate-pcb-ports-with-pads"
 import { matchPCBPortsWithFootprintAndMutate } from "../trace-builder/match-pcb-ports-with-footprint"
+import Debug from "debug"
+
+const debug = Debug("tscircuit:builder:bug-builder")
 
 export type BugBuilderCallback = (rb: BugBuilder) => unknown
 export interface BugBuilder extends BaseComponentBuilder<BugBuilder> {
@@ -67,10 +71,23 @@ export class BugBuilderClass
     }
     elements.push(source_component)
 
-    const port_arrangement = this.schematic_properties?.port_arrangement
+    let port_arrangement: PortArrangement =
+      this.schematic_properties?.port_arrangement
+
+    /** This can be used as a fallback if pinLabels or a port arrangement aren't explicitly given */
+    const footprintPinLabels = this.footprint.getFootprintPinLabels()
+    const footprintPinCount = Object.entries(footprintPinLabels).length
 
     if (!port_arrangement) {
-      throw new Error("port_arrangement is required when building a <bug />")
+      if (footprintPinCount === 0) {
+        throw new Error(
+          "port_arrangement/schPortArrangement is required when building a <bug /> without a footprint (footprint has no pins)"
+        )
+      }
+      port_arrangement = {
+        left_size: Math.floor(footprintPinCount / 2 + 0.500001),
+        right_size: Math.floor(footprintPinCount / 2),
+      }
     }
 
     const pin_spacing =
@@ -103,11 +120,17 @@ export class BugBuilderClass
     const textElements: Type.SchematicText[] = []
 
     // add ports based on port arrangement and give appropriate labels
-    const { port_labels } = this.schematic_properties
-    const { total_ports } = port_arrangement_size
+    let { port_labels } = this.schematic_properties
 
     if (!port_labels) {
-      throw new Error("port_labels is required when building a <bug />")
+      if (footprintPinCount === 0) {
+        throw new Error(
+          "port_labels/pinLabels is required when building a <bug /> without a footprint (footprint has no pins)"
+        )
+      }
+
+      port_labels = footprintPinLabels
+      debug("inferring port_labels from footprint pin labels")
     }
 
     const port_indices = getPortIndices(port_arrangement)

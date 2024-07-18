@@ -79,6 +79,7 @@ export interface FootprintBuilder {
   setStandardFootprint(footprint_name: string): FootprintBuilder
   loadStandardFootprint(footprint_name: string): FootprintBuilder
   loadFootprintFromSoup(soup: Type.AnySoupElement[]): FootprintBuilder
+  getFootprintPinLabels(): Record<string, string>
   setRotation: (rotation: number | `${number}deg`) => FootprintBuilder
   setLayer: (layer: Type.LayerRef) => FootprintBuilder
   build(bc: Type.BuildContext): Promise<Type.AnyElement[]>
@@ -201,6 +202,26 @@ export class FootprintBuilderClass implements FootprintBuilder {
       }
     }
     return this
+  }
+
+  getFootprintPinLabels(): Record<string, string> {
+    return Object.fromEntries(
+      this.children
+        .map((child) => {
+          // search through port_hints for the first number (or number string)
+          const port_hints = child.port_hints ?? []
+          const pin_number = port_hints.find((pn) => pn.match(/^\d+$/))
+          const port_name = port_hints.find((pn) => !pn.match(/^\d+$/))
+          if (pin_number !== undefined && pin_number !== null) {
+            return [
+              Number.parseInt(pin_number).toString(),
+              port_name ?? pin_number.toString(),
+            ]
+          }
+          return null
+        })
+        .filter((v) => v !== null)
+    )
   }
 
   loadStandardFootprint(footprint_name: string) {

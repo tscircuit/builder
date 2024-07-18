@@ -14,3 +14,4 @@ docs
 *.artifact.*
 gerber-output
 gerber-output.zip
+tmp-debug-logs
