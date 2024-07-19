@@ -1,10 +1,6 @@
+import type { PCBSMTPad } from "@tscircuit/soup"
 import test from "ava"
-import {
-  createConstrainedLayoutBuilder,
-  createProjectBuilder,
-  SchematicComponent,
-  PCBSMTPad,
-} from "../../src"
+import { createConstrainedLayoutBuilder, createProjectBuilder } from "../../src"
 import { logLayout } from "../utils/log-layout"
 
 test("basic pcb constraint builder test", async (t) => {

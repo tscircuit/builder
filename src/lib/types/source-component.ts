@@ -1,11 +1,4 @@
-import { NumberWithUnit } from "./util"
-import {
-  source_component_base,
-  SourceComponentBase,
-} from "lib/soup/source/base/source_component_base"
-import { z } from "zod"
-import { resistance, inductance } from "lib/soup/units"
-import { AnySourceComponent } from "lib/soup/source/any_source_component"
+import type { AnySourceComponent } from "@tscircuit/soup"
 
 // export interface SourceComponentBase {
 //   type: "source_component"

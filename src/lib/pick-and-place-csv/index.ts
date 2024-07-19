@@ -1,4 +1,4 @@
-import { AnySoupElement, LayerRef } from "lib/soup"
+import type { AnySoupElement, LayerRef } from "@tscircuit/soup"
 import Papa from "papaparse"
 
 interface PickAndPlaceRow {

@@ -1,13 +1,19 @@
-import { matchPCBPortsWithFootprintAndMutate } from "./../trace-builder/match-pcb-ports-with-footprint"
-import { ProjectBuilder } from "../project-builder"
-import { BaseComponentBuilder, ComponentBuilderClass } from "./ComponentBuilder"
-import * as Type from "lib/types"
-import * as Soup from "lib/soup"
-import { transformSchematicElements } from "../transform-elements"
+import type * as Soup from "@tscircuit/soup"
+import type {
+  SchematicComponent,
+  SchematicText,
+  SourceSimpleCapacitor,
+} from "@tscircuit/soup"
+import type * as Type from "lib/types"
 import { compose, rotate, translate } from "transformation-matrix"
-import { PortsBuilder } from "../ports-builder/ports-builder"
-import { Except } from "type-fest"
-import getPortPosition from "../../utils/get-port-position"
+import type { Except } from "type-fest"
+import type { ProjectBuilder } from "../project-builder"
+import { transformSchematicElements } from "../transform-elements"
+import { matchPCBPortsWithFootprintAndMutate } from "./../trace-builder/match-pcb-ports-with-footprint"
+import {
+  ComponentBuilderClass,
+  type BaseComponentBuilder,
+} from "./ComponentBuilder"
 
 export type CapacitorBuilderCallback = (rb: CapacitorBuilder) => unknown
 export interface CapacitorBuilder
@@ -36,7 +42,7 @@ export class CapacitorBuilderClass
     this.settable_source_properties.push(...["capacitance"])
   }
 
-  setSourceProperties(props: Type.SourceSimpleCapacitor) {
+  setSourceProperties(props: SourceSimpleCapacitor) {
     this.source_properties = {
       ...this.source_properties,
       ...props,
@@ -67,7 +73,7 @@ export class CapacitorBuilderClass
     })
     elements.push(source_component)
 
-    const schematic_component: Type.SchematicComponent = {
+    const schematic_component: SchematicComponent = {
       type: "schematic_component",
       source_component_id,
       schematic_component_id,
@@ -82,7 +88,7 @@ export class CapacitorBuilderClass
     this.ports.setSourceComponent(source_component_id)
     this.ports.setPCBComponent(pcb_component_id)
 
-    const textElements: Type.SchematicText[] = []
+    const textElements: SchematicText[] = []
 
     this.ports.addPort({
       name: "left",

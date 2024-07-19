@@ -1,7 +1,6 @@
-import { layer_ref } from "lib/soup"
-import { defineNewComponent } from "../define-new-component"
+import { layer_ref, length } from "@tscircuit/soup"
 import { z } from "zod"
-import { length } from "lib/soup/units"
+import { defineNewComponent } from "../define-new-component"
 
 export const { ViaBuilderClass, createViaBuilder } = defineNewComponent({
   pascal_name: "Via",

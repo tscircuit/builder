@@ -1,4 +1,4 @@
-import { AnyElement } from "lib/types"
+import type { AnyElement } from "lib/types"
 
 export type SpatialElement = { x: number; y: number; w: number; h: number }
 
@@ -31,7 +31,7 @@ export const toCenteredSpatialObj = (obj: any): SpatialElement => {
   let y = obj.y ?? obj.center?.y
   let w = obj.w ?? obj.width ?? obj.size?.width ?? obj.outer_diameter ?? 0
   let h = obj.h ?? obj.height ?? obj.size?.height ?? obj.outer_diameter ?? 0
-  let align = obj.align ?? "center"
+  const align = obj.align ?? "center"
 
   if (
     obj.x1 !== undefined &&

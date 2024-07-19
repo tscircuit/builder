@@ -1,7 +1,7 @@
-import { AnySoupElement } from "@tscircuit/soup"
-import { BuilderInterface } from "../builder-interface"
-import { ProjectBuilder } from "../project-builder"
-import { BuildContext } from "lib/types"
+import type { AnySoupElement } from "@tscircuit/soup"
+import type { BuildContext } from "lib/types"
+import type { BuilderInterface } from "../builder-interface"
+import type { ProjectBuilder } from "../project-builder"
 
 export type Props = {
   name: string

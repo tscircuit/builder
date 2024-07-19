@@ -1,9 +1,10 @@
-import * as Type from "lib/types"
-import { ProjectBuilder } from "lib/project"
-import { Dimension } from "lib/types"
+import type { LayerRef, PCBSMTPad } from "@tscircuit/soup"
+import type { ProjectBuilder } from "lib/project"
+import type * as Type from "lib/types"
+import type { Dimension } from "lib/types"
 
-type RectProps = Extract<Type.PCBSMTPad, { shape: "rect" }>
-type CircleProps = Extract<Type.PCBSMTPad, { shape: "circle" }>
+type RectProps = Extract<PCBSMTPad, { shape: "rect" }>
+type CircleProps = Extract<PCBSMTPad, { shape: "circle" }>
 
 type InputProps =
   | Omit<
@@ -19,15 +20,15 @@ export interface SMTPadBuilder {
   builder_type: "smtpad_builder"
   project_builder: ProjectBuilder
   port_hints: string[]
-  setShape(shape: Type.PCBSMTPad["shape"]): SMTPadBuilder
+  setShape(shape: PCBSMTPad["shape"]): SMTPadBuilder
   setSize(width: number, height: number): SMTPadBuilder
   setRadius(radius: number): SMTPadBuilder
-  setLayer(layer: Type.PCBSMTPad["layer"] | string): SMTPadBuilder
+  setLayer(layer: PCBSMTPad["layer"] | string): SMTPadBuilder
   setPosition(x: number, y: number): SMTPadBuilder
   setProps(props: InputProps): SMTPadBuilder
   addPortHints(port_hints: string[]): SMTPadBuilder
   setPortHints(port_hints: string[]): SMTPadBuilder
-  build(bc: Type.BuildContext): Promise<Type.PCBSMTPad[]>
+  build(bc: Type.BuildContext): Promise<PCBSMTPad[]>
 }
 
 export class SMTPadBuilderClass implements SMTPadBuilder {
@@ -41,8 +42,8 @@ export class SMTPadBuilderClass implements SMTPadBuilder {
   y: Dimension
   port_hints: string[]
 
-  layer: Type.LayerRef
-  shape: Type.PCBSMTPad["shape"]
+  layer: LayerRef
+  shape: PCBSMTPad["shape"]
 
   constructor(project_builder: ProjectBuilder) {
     this.project_builder = project_builder
@@ -56,7 +57,7 @@ export class SMTPadBuilderClass implements SMTPadBuilder {
     return this
   }
 
-  setShape(shape: Type.PCBSMTPad["shape"]) {
+  setShape(shape: PCBSMTPad["shape"]) {
     if ((this.width || this.height) && shape === "circle") {
       this.radius = this.width || this.height
       this.width = null
@@ -115,7 +116,7 @@ export class SMTPadBuilderClass implements SMTPadBuilder {
     return this
   }
 
-  async build(bc: Type.BuildContext): Promise<Type.PCBSMTPad[]> {
+  async build(bc: Type.BuildContext): Promise<PCBSMTPad[]> {
     const pcb_smtpad_id = this.project_builder.getId("pcb_smtpad")
     if (this.shape === "rect") {
       return [
@@ -132,7 +133,8 @@ export class SMTPadBuilderClass implements SMTPadBuilder {
           port_hints: this.port_hints,
         },
       ]
-    } else if (this.shape === "circle") {
+    }
+    if (this.shape === "circle") {
       return [
         {
           type: "pcb_smtpad",

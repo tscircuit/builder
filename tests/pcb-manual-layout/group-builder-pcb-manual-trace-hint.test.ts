@@ -1,8 +1,7 @@
-import { getTestFixture } from "tests/fixtures/get-test-fixture"
-import test from "ava"
 import { layout } from "@tscircuit/layout"
-import { PCBComponent, manual_layout } from "index"
 import { su } from "@tscircuit/soup-util"
+import test from "ava"
+import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
 test("pcb trace hint in group builder", async (t) => {
   const { logSoup, pb } = getTestFixture(t)

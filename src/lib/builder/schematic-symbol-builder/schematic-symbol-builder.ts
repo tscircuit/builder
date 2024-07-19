@@ -1,19 +1,16 @@
-import * as Type from "lib/types"
-import { Builder, SchematicDrawing } from "lib/types"
-import { ProjectBuilder } from "../project-builder"
+import type * as Type from "lib/types"
+import type { SchematicDrawing } from "lib/types"
+import type { ProjectBuilder } from "../project-builder"
 import {
-  SchematicBoxBuilder,
   createSchematicBoxBuilder,
+  type SchematicBoxBuilder,
 } from "./schematic-box-builder"
 import {
-  SchematicLineBuilder,
   createSchematicLineBuilder,
+  type SchematicLineBuilder,
 } from "./schematic-line-builder"
-import {
-  SchematicTextBuilder,
-  createSchematicTextBuilder,
-} from "./schematic-text-builder"
 import { createSchematicPathBuilder } from "./schematic-path-builder"
+import { createSchematicTextBuilder } from "./schematic-text-builder"
 
 const schematic_symbol_addables = {
   schematic_box: createSchematicBoxBuilder,
@@ -40,7 +37,7 @@ export interface SchematicSymbolBuilder {
 
 export class SchematicSymbolBuilderClass implements SchematicSymbolBuilder {
   project_builder: ProjectBuilder
-  builder_type: "schematic_symbol_builder" = "schematic_symbol_builder"
+  builder_type = "schematic_symbol_builder" as const
   children: ChildBuilder[]
 
   constructor(project_builder: ProjectBuilder) {
@@ -58,7 +55,7 @@ export class SchematicSymbolBuilderClass implements SchematicSymbolBuilder {
       ].includes(child.builder_type)
     ) {
       if ((child as any).builder_type === "schematic_symbol_builder") {
-        throw new Error(`Schematic symbol builder nesting not yet supported!`)
+        throw new Error("Schematic symbol builder nesting not yet supported!")
       }
       throw new Error(
         `Unsupported child type for inside of schematic symbol builder: ${child.builder_type}`

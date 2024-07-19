@@ -1,11 +1,11 @@
-import * as Type from "lib/types"
-import { ProjectBuilder } from "lib/project"
+import type { PCBHole } from "@tscircuit/soup"
+import type { ProjectBuilder } from "lib/project"
 
 export interface HoleBuilder {
   builder_type: "hole_builder"
   project_builder: ProjectBuilder
-  setProps(props: Partial<Type.PCBHole>): HoleBuilder
-  build(): Promise<Type.PCBHole[]>
+  setProps(props: Partial<PCBHole>): HoleBuilder
+  build(): Promise<PCBHole[]>
 }
 
 export class HoleBuilderClass implements HoleBuilder {
@@ -20,20 +20,21 @@ export class HoleBuilderClass implements HoleBuilder {
     this.project_builder = project_builder
   }
 
-  setProps(props: Partial<Type.PCBHole>): HoleBuilder {
+  setProps(props: Partial<PCBHole>): HoleBuilder {
     for (const k in props) {
       this[k] = props[k]
     }
     return this
   }
 
-  async build(): Promise<Type.PCBHole[]> {
+  async build(): Promise<PCBHole[]> {
     return [
       {
         type: "pcb_hole",
         x: this.x,
         y: this.y,
         hole_diameter: this.hole_diameter,
+        hole_shape: "round",
       },
     ]
   }

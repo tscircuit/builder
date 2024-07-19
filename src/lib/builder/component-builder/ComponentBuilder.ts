@@ -1,32 +1,40 @@
-import * as Type from "lib/types"
-import { Except, Simplify } from "type-fest"
-import { ProjectBuilder } from "lib/builder/project-builder"
+import type { ComponentProps } from "@tscircuit/props"
+import type {
+  CadComponent,
+  PCBComponent,
+  SupplierName,
+  SchematicComponent,
+  SourcePort,
+  AnySoupElement,
+  Point,
+} from "@tscircuit/soup"
 import {
-  PortsBuilder,
   createPortsBuilder,
+  type PortsBuilder,
 } from "lib/builder/ports-builder/ports-builder"
-import { compose, rotate, transform, translate } from "transformation-matrix"
+import type { ProjectBuilder } from "lib/builder/project-builder"
 import { transformSchematicElements } from "lib/builder/transform-elements"
-import getPortPosition from "../../utils/get-port-position"
-import { createFootprintBuilder, FootprintBuilder } from "../footprint-builder"
-import {
-  createSchematicSymbolBuilder,
-  SchematicSymbolBuilder,
-} from "../schematic-symbol-builder"
+import type * as Type from "lib/types"
+import { convertToDegrees } from "lib/utils/convert-to-degrees"
+import { isTruthy } from "lib/utils/is-truthy"
+import { maybeConvertToPoint } from "lib/utils/maybe-convert-to-point"
+import { removeNulls } from "lib/utils/remove-nulls"
+import { compose, rotate, translate } from "transformation-matrix"
+import type { Except, Simplify } from "type-fest"
 import {
   getSpatialBoundsFromSpatialElements,
   toCenteredSpatialObj,
 } from "../constrained-layout-builder/spatial-util"
+import {
+  createFootprintBuilder,
+  type FootprintBuilder,
+} from "../footprint-builder"
+import {
+  createSchematicSymbolBuilder,
+  type SchematicSymbolBuilder,
+} from "../schematic-symbol-builder"
 import { matchPCBPortsWithFootprintAndMutate } from "../trace-builder/match-pcb-ports-with-footprint"
-import _ from "lodash"
-import { maybeConvertToPoint } from "lib/utils/maybe-convert-to-point"
-import { isTruthy } from "lib/utils/is-truthy"
-import { removeNulls } from "lib/utils/remove-nulls"
-import { SupplierName } from "lib/soup/pcb/properties/supplier_name"
 import { remapProp } from "./remap-prop"
-import { CadComponent, PCBComponent } from "@tscircuit/soup"
-import { ComponentProps } from "@tscircuit/props"
-import { convertToDegrees } from "lib/utils/convert-to-degrees"
 
 export interface BaseComponentBuilder<T> {
   project_builder: ProjectBuilder
@@ -50,7 +58,7 @@ export interface BaseComponentBuilder<T> {
     rotation: number | `${number}deg`
   ): BaseComponentBuilder<T>
   setSchematicProperties(
-    properties: Partial<Type.SchematicComponent>
+    properties: Partial<SchematicComponent>
   ): BaseComponentBuilder<T>
   setFootprintCenter(
     x: number | string,
@@ -90,8 +98,8 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
   source_properties: any = {}
   pcb_properties: any = {}
   schematic_properties: any = {}
-  schematic_rotation: number = 0
-  schematic_position: Type.Point = { x: 0, y: 0 }
+  schematic_rotation = 0
+  schematic_position: Point = { x: 0, y: 0 }
   settable_source_properties: string[]
   settable_schematic_properties: string[]
   settable_pcb_properties: string[]
@@ -298,7 +306,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
       this.schematic_rotation = rotation
     } else {
       this.schematic_rotation =
-        (parseFloat(rotation.split("deg")[0]) / 180) * Math.PI
+        (Number.parseFloat(rotation.split("deg")[0]) / 180) * Math.PI
     }
     return this
   }
@@ -382,13 +390,13 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
       pcb_component_id: string
     },
     bc: Type.BuildContext
-  ): Type.PCBComponent {
+  ): PCBComponent {
     return {
       type: "pcb_component",
       source_component_id: opts.source_component_id,
       pcb_component_id: opts.pcb_component_id,
       layer: this.footprint.layer,
-      center: bc.convert(this.footprint.position),
+      center: this.footprint.position,
       rotation: this.footprint.rotation,
       width: 0,
       height: 0,
@@ -396,8 +404,8 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
   }
 
   _computeSizeOfPcbElement(
-    pcb_element: Type.PCBComponent,
-    footprint_elements: Type.AnySoupElement[]
+    pcb_element: PCBComponent,
+    footprint_elements: AnySoupElement[]
   ) {
     const pcb_size = getSpatialBoundsFromSpatialElements(
       footprint_elements
@@ -423,7 +431,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
       pcb_component: PCBComponent
     },
     bc: Type.BuildContext
-  ): Type.AnySoupElement[] {
+  ): AnySoupElement[] {
     const cadModel: ComponentProps["cadModel"] = this.pcb_properties.cadModel
     if (cadModel) {
       const board_thickness = bc.board_thickness ?? 0
@@ -504,7 +512,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
 
     // Build schematic component
 
-    const schematic_component: Type.SchematicComponent = {
+    const schematic_component: SchematicComponent = {
       type: "schematic_component",
       schematic_component_id,
       source_component_id,
@@ -570,7 +578,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
           (elm) =>
             elm.type === "source_port" &&
             elm.source_port_id === pp.source_port_id
-        )! as Type.SourcePort
+        )! as SourcePort
         elements.push({
           pcb_error_id: pb.getId("pcb_error"),
           type: "pcb_error",

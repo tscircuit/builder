@@ -1,5 +1,5 @@
-import type { LayerRef } from "lib/soup"
-import { GerberLayerName } from "./GerberLayerName"
+import type { LayerRef } from "@tscircuit/soup"
+import type { GerberLayerName } from "./GerberLayerName"
 
 const layerRefToGerberPrefix = {
   top: "F_",

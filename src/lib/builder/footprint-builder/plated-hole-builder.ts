@@ -1,8 +1,8 @@
-import { PlatedHoleProps } from "@tscircuit/props"
-import { PCBPlatedHole } from "@tscircuit/soup"
-import { ProjectBuilder } from "lib/project"
-import * as Type from "lib/types"
-import { BuildContext } from "lib/types/build-context"
+import type { PlatedHoleProps } from "@tscircuit/props"
+import type { PCBPlatedHole } from "@tscircuit/soup"
+import type { ProjectBuilder } from "lib/project"
+import type * as Type from "lib/types"
+import type { BuildContext } from "lib/types/build-context"
 import { remapProp } from "../component-builder/remap-prop"
 
 export interface PlatedHoleBuilder {

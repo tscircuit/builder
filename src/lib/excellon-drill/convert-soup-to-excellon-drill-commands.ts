@@ -1,5 +1,5 @@
-import { AnySoupElement } from "lib/soup"
-import { AnyExcellonDrillCommand } from "./any-excellon-drill-command-map"
+import type { AnySoupElement } from "@tscircuit/soup"
+import type { AnyExcellonDrillCommand } from "./any-excellon-drill-command-map"
 import { excellonDrill } from "./excellon-drill-builder"
 
 export const mmToInch = (mm: number) => {

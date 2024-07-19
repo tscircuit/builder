@@ -1,19 +1,27 @@
-import { ProjectBuilder } from "../project-builder"
-import { BaseComponentBuilder, ComponentBuilderClass } from "./ComponentBuilder"
-import * as Type from "lib/types"
-import { transformSchematicElements } from "../transform-elements"
+import type {
+  PCBComponent,
+  SchematicComponent,
+  SchematicText,
+  SourceSimpleResistor,
+  SourceSimpleResistorInput,
+} from "@tscircuit/soup"
+import type * as Type from "lib/types"
 import { compose, rotate, translate } from "transformation-matrix"
-import { PortsBuilder } from "../ports-builder/ports-builder"
-import { Except } from "type-fest"
+import type { Except } from "type-fest"
+import type { ProjectBuilder } from "../project-builder"
 import { matchPCBPortsWithFootprintAndMutate } from "../trace-builder/match-pcb-ports-with-footprint"
-import { resistorProps, type ResistorProps } from "@tscircuit/props"
+import { transformSchematicElements } from "../transform-elements"
+import {
+  ComponentBuilderClass,
+  type BaseComponentBuilder,
+} from "./ComponentBuilder"
 
 export type ResistorBuilderCallback = (rb: ResistorBuilder) => unknown
 export interface ResistorBuilder extends BaseComponentBuilder<ResistorBuilder> {
   builder_type: "resistor_builder"
   setSourceProperties(
     properties: Except<
-      Type.SourceSimpleResistorInput,
+      SourceSimpleResistorInput,
       "type" | "source_component_id" | "ftype"
     > & { name?: string }
   ): ResistorBuilder
@@ -37,7 +45,7 @@ export class ResistorBuilderClass
     this.settable_source_properties.push(...["resistance"])
   }
 
-  setSourceProperties(props: Type.SourceSimpleResistor) {
+  setSourceProperties(props: SourceSimpleResistor) {
     this.source_properties = {
       ...this.source_properties,
       ...props,
@@ -72,7 +80,7 @@ export class ResistorBuilderClass
     elements.push(source_component)
 
     const port_arrangement = this.schematic_properties?.port_arrangement
-    const schematic_component: Type.SchematicComponent = {
+    const schematic_component: SchematicComponent = {
       type: "schematic_component",
       source_component_id,
       schematic_component_id,
@@ -90,7 +98,7 @@ export class ResistorBuilderClass
     this.ports.setSourceComponent(source_component_id)
     this.ports.setPCBComponent(pcb_component_id)
 
-    const textElements: Type.SchematicText[] = []
+    const textElements: SchematicText[] = []
 
     this.ports.addPort({
       name: "left",
@@ -143,12 +151,12 @@ export class ResistorBuilderClass
       )
     )
 
-    const pcb_component: Type.PCBComponent = {
+    const pcb_component: PCBComponent = {
       type: "pcb_component",
       source_component_id,
       pcb_component_id,
       layer: this.footprint.layer,
-      center: bc.convert(this.footprint.position),
+      center: this.footprint.position,
       rotation: this.footprint.rotation,
       width: 0,
       height: 0,

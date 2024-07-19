@@ -1,8 +1,6 @@
-import { LayerRef } from "lib/soup/pcb/properties/layer_ref"
-import { SourceComponent } from "./source-component"
-import { Dimension } from "./util"
-import * as Soup from "lib/soup"
-import { AnySoupElement } from "@tscircuit/soup"
+import type * as Soup from "@tscircuit/soup"
+import type { AnySoupElement, LayerRef } from "@tscircuit/soup"
+import type { SourceComponent } from "./source-component"
 
 export interface SchematicConfig {
   type: "schematic_config"

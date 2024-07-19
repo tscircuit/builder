@@ -1,12 +1,15 @@
+import {
+  route_hint_point,
+  type AnySoupElement,
+  type PcbTraceHint,
+  type RouteHintPoint,
+} from "@tscircuit/soup"
 import { su } from "@tscircuit/soup-util"
 import { applySelector } from "lib/apply-selector"
-import { AnySoupElement, LayerRef, RouteHintPoint } from "lib/soup"
-import { PcbTraceHint } from "@tscircuit/soup"
-import { BuildContext, Dimension } from "lib/types"
-import { ProjectBuilder } from "../project-builder"
+import type { BuildContext } from "lib/types"
 import { z } from "zod"
-import { route_hint_point } from "@tscircuit/soup"
-import { BuilderInterface } from "../builder-interface"
+import type { BuilderInterface } from "../builder-interface"
+import type { ProjectBuilder } from "../project-builder"
 
 const trace_hints_props = z.object({
   for: z.string(),
@@ -24,7 +27,7 @@ export interface TraceHintBuilder extends BuilderInterface {
 }
 
 class TraceHintBuilderClass {
-  builder_type: "trace_hint_builder" = "trace_hint_builder"
+  builder_type = "trace_hint_builder" as const
   props: Partial<TraceHintPropsInput>
 
   constructor() {

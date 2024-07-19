@@ -1,14 +1,14 @@
-import * as Type from "lib/types"
+import type { AnySoupElement } from "@tscircuit/soup"
+import convertUnits from "convert-units"
+import type * as Type from "lib/types"
+import { createProjectFromElements } from "../project/create-project-from-elements"
+import { createBoardBuilder } from "./board-builder"
 import {
   createGroupBuilder,
-  GroupBuilder,
-  GroupBuilderCallback,
-  GroupBuilderAddables,
+  type GroupBuilder,
+  type GroupBuilderAddables,
+  type GroupBuilderCallback,
 } from "./group-builder"
-import { createProjectFromElements } from "../project/create-project-from-elements"
-import convertUnits from "convert-units"
-import { createBoardBuilder } from "./board-builder"
-import { AnySoupElement } from "@tscircuit/soup"
 
 export type ProjectBuilder = Omit<GroupBuilder, "add" | "setProps"> & {
   build_context: Type.BuildContext
@@ -64,7 +64,9 @@ export const createProjectBuilder = (): ProjectBuilder => {
       }
       const unit = unit_reversed.split("").reverse().join("")
       const value = v.slice(0, -unit.length)
-      return convertUnits(parseFloat(value)).from(unit).to(this.distance_unit)
+      return convertUnits(Number.parseFloat(value))
+        .from(unit)
+        .to(this.distance_unit)
     },
     fork(mutation) {
       return { ...this, ...mutation, parent: this }

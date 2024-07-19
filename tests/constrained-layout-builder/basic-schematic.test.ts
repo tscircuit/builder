@@ -1,9 +1,6 @@
+import type { SchematicComponent } from "@tscircuit/soup"
 import test from "ava"
-import {
-  createConstrainedLayoutBuilder,
-  createProjectBuilder,
-  SchematicComponent,
-} from "../../src"
+import { createConstrainedLayoutBuilder, createProjectBuilder } from "../../src"
 import { logLayout } from "../utils/log-layout"
 
 test("basic schematic constraint builder test", async (t) => {

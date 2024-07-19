@@ -2,8 +2,8 @@
  * A simple data builder is a builder that constructs a JSON object
  */
 
-import { BuildContext } from "lib/types"
-import { ProjectBuilder } from "./project-builder"
+import type { BuildContext } from "lib/types"
+import type { ProjectBuilder } from "./project-builder"
 
 export interface SimpleDataBuilder<
   BuilderType extends string,

@@ -1,17 +1,24 @@
-import { ProjectBuilder } from "../project-builder"
-import { BaseComponentBuilder, ComponentBuilderClass } from "./ComponentBuilder"
-import * as Type from "lib/types"
-import { transformSchematicElements } from "../transform-elements"
+import type {
+  SchematicComponent,
+  SourceSimpleGround,
+  SourceSimpleGroundInput,
+} from "@tscircuit/soup"
+import type * as Type from "lib/types"
 import { compose, rotate, translate } from "transformation-matrix"
-import { PortsBuilder } from "../ports-builder/ports-builder"
-import { Except } from "type-fest"
+import type { Except } from "type-fest"
+import type { ProjectBuilder } from "../project-builder"
+import { transformSchematicElements } from "../transform-elements"
+import {
+  ComponentBuilderClass,
+  type BaseComponentBuilder,
+} from "./ComponentBuilder"
 
 export type GroundBuilderCallback = (rb: GroundBuilder) => unknown
 export interface GroundBuilder extends BaseComponentBuilder<GroundBuilder> {
   builder_type: "ground_builder"
   setSourceProperties(
     properties: Except<
-      Type.SourceSimpleGroundInput,
+      SourceSimpleGroundInput,
       "type" | "source_component_id" | "ftype" | "name"
     > & { name?: string }
   ): GroundBuilder
@@ -31,7 +38,7 @@ export class GroundBuilderClass
     }
   }
 
-  setSourceProperties(props: Type.SourceSimpleGround) {
+  setSourceProperties(props: SourceSimpleGround) {
     this.source_properties = {
       ...this.source_properties,
       ...props,
@@ -57,7 +64,7 @@ export class GroundBuilderClass
     elements.push(source_component)
 
     const port_arrangement = this.schematic_properties?.port_arrangement
-    const schematic_component: Type.SchematicComponent = {
+    const schematic_component: SchematicComponent = {
       type: "schematic_component",
       source_component_id,
       schematic_component_id,

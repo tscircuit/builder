@@ -1,7 +1,7 @@
-import { Dimension } from "lib/types"
-import { ProjectBuilder } from "../project-builder"
+import type * as Soup from "@tscircuit/soup"
+import type { Dimension } from "lib/types"
+import type { ProjectBuilder } from "../project-builder"
 import { createSimpleDataBuilderClass } from "../simple-data-builder"
-import * as Soup from "lib/soup"
 
 export type SchematicPathBuilderFields = Partial<
   Omit<Soup.SchematicPath, "position" | "points"> & {

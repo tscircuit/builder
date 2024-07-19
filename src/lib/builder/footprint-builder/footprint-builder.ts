@@ -1,26 +1,22 @@
-import { type ProjectBuilder } from "lib/project"
-import { createPlatedHoleBuilder } from "./plated-hole-builder"
-import { createHoleBuilder } from "./hole-builder"
-import { createPcbViaBuilder } from "./pcb-via-builder"
-import * as Type from "lib/types"
-import { Builder } from "lib/types/builders"
+import { fp } from "@tscircuit/footprinter"
+import type { AnySoupElement, LayerRef, Point } from "@tscircuit/soup"
+import type { ProjectBuilder } from "lib/project"
+import type * as Type from "lib/types"
+import type { Builder } from "lib/types/builders"
 import { compose, rotate, translate } from "transformation-matrix"
-import {
-  transformPCBElement,
-  transformPCBElements,
-  transformSchematicElement,
-} from "../transform-elements"
-import { SMTPadBuilder, createSMTPadBuilder } from "./smt-pad-builder"
-import { associatePcbPortsWithPads } from "./associate-pcb-ports-with-pads"
-import { createSilkscreenPathBuilder } from "./silkscreen-path-builder"
-import { createSilkscreenTextBuilder } from "./silkscreen-text-builder"
-import { createSilkscreenLineBuilder } from "./silkscreen-line-builder"
-import { createSilkscreenRectBuilder } from "./silkscreen-rect-builder"
-import { createSilkscreenCircleBuilder } from "./silkscreen-circle-builder"
+import { transformPCBElements } from "../transform-elements"
 import { createBasicPcbTraceBuilder } from "./basic-pcb-trace-builder"
 import { createFabricationNotePathBuilder } from "./fabrication-note-path-builder"
 import { createFabricationNoteTextBuilder } from "./fabrication-note-text-builder"
-import { fp } from "@tscircuit/footprinter"
+import { createHoleBuilder } from "./hole-builder"
+import { createPcbViaBuilder } from "./pcb-via-builder"
+import { createPlatedHoleBuilder } from "./plated-hole-builder"
+import { createSilkscreenCircleBuilder } from "./silkscreen-circle-builder"
+import { createSilkscreenLineBuilder } from "./silkscreen-line-builder"
+import { createSilkscreenPathBuilder } from "./silkscreen-path-builder"
+import { createSilkscreenRectBuilder } from "./silkscreen-rect-builder"
+import { createSilkscreenTextBuilder } from "./silkscreen-text-builder"
+import { createSMTPadBuilder, type SMTPadBuilder } from "./smt-pad-builder"
 
 export type FootprintBuilderCallback = (rb: FootprintBuilder) => unknown
 
@@ -66,9 +62,9 @@ export interface FootprintBuilder {
   builder_type: "footprint_builder"
   project_builder: ProjectBuilder
   addables: FootprintBuilderAddables
-  position: Type.Point
+  position: Point
   rotation: number
-  layer: Type.LayerRef
+  layer: LayerRef
   setPosition: (x: number | string, y: number | string) => FootprintBuilder
   appendChild: (child: Builder) => FootprintBuilder
   addPad(cb: (smtpadbuilder: SMTPadBuilder) => unknown): FootprintBuilder
@@ -78,10 +74,10 @@ export interface FootprintBuilder {
   ): FootprintBuilder
   setStandardFootprint(footprint_name: string): FootprintBuilder
   loadStandardFootprint(footprint_name: string): FootprintBuilder
-  loadFootprintFromSoup(soup: Type.AnySoupElement[]): FootprintBuilder
+  loadFootprintFromSoup(soup: AnySoupElement[]): FootprintBuilder
   getFootprintPinLabels(): Record<string, string>
   setRotation: (rotation: number | `${number}deg`) => FootprintBuilder
-  setLayer: (layer: Type.LayerRef) => FootprintBuilder
+  setLayer: (layer: LayerRef) => FootprintBuilder
   build(bc: Type.BuildContext): Promise<Type.AnyElement[]>
 }
 
@@ -89,9 +85,9 @@ export class FootprintBuilderClass implements FootprintBuilder {
   builder_type = "footprint_builder" as const
   project_builder: ProjectBuilder
   addables: FootprintBuilderAddables
-  position: Type.Point
+  position: Point
   rotation = 0
-  layer: Type.LayerRef = "top"
+  layer: LayerRef = "top"
 
   children: SMTPadBuilder[] = []
 
@@ -105,7 +101,8 @@ export class FootprintBuilderClass implements FootprintBuilder {
     if (allowed_childen_builder_types.includes(child.builder_type)) {
       this.children.push(child)
       return this
-    } else if (child.builder_type === "footprint_builder") {
+    }
+    if (child.builder_type === "footprint_builder") {
       if (this.children.length > 0) {
         throw new Error(
           "Footprint builder cannot be replaced by child footprint builder because the parent footprint builder has children. In the future we may support merging footprint builders"
@@ -135,7 +132,7 @@ export class FootprintBuilderClass implements FootprintBuilder {
     return this
   }
 
-  setLayer(layer: Type.LayerRef) {
+  setLayer(layer: LayerRef) {
     this.layer = layer
 
     for (const child of this.children) {
@@ -147,17 +144,16 @@ export class FootprintBuilderClass implements FootprintBuilder {
     return this
   }
 
-  loadFootprintFromSoup(soup: Type.AnySoupElement[]) {
-    const fb: FootprintBuilder = this
+  loadFootprintFromSoup(soup: AnySoupElement[]) {
     for (const elm of soup) {
       if (elm.type === "pcb_smtpad") {
-        fb.add("smtpad", (pb) => pb.setProps(elm))
+        this.add("smtpad", (pb) => pb.setProps(elm))
       } else if (elm.type === "pcb_plated_hole") {
-        fb.add("platedhole", (pb) => pb.setProps(elm))
+        this.add("platedhole", (pb) => pb.setProps(elm))
       } else if (elm.type === "pcb_hole") {
-        fb.add("hole", (pb) => pb.setProps(elm))
+        this.add("hole", (pb) => pb.setProps(elm))
       } else if (elm.type === "pcb_silkscreen_circle") {
-        fb.add("silkscreencircle", (pb) =>
+        this.add("silkscreencircle", (pb) =>
           pb.setProps({
             ...elm,
             pcbX: elm.center.x,
@@ -165,21 +161,21 @@ export class FootprintBuilderClass implements FootprintBuilder {
           })
         )
       } else if (elm.type === "pcb_silkscreen_line") {
-        fb.add("silkscreenline", (pb) =>
+        this.add("silkscreenline", (pb) =>
           pb.setProps({
             ...elm,
             strokeWidth: elm.stroke_width,
           })
         )
       } else if (elm.type === "pcb_silkscreen_path") {
-        fb.add("silkscreenpath", (pb) =>
+        this.add("silkscreenpath", (pb) =>
           pb.setProps({
             ...elm,
             strokeWidth: elm.stroke_width,
           })
         )
       } else if (elm.type === "pcb_silkscreen_rect") {
-        fb.add("silkscreenrect", (pb) =>
+        this.add("silkscreenrect", (pb) =>
           pb.setProps({
             ...elm,
             pcbX: elm.center.x,
@@ -188,9 +184,9 @@ export class FootprintBuilderClass implements FootprintBuilder {
           })
         )
       } else if (elm.type === "pcb_fabrication_note_path") {
-        fb.add("fabricationnotepath", (pb) => pb.setProps(elm))
+        this.add("fabricationnotepath", (pb) => pb.setProps(elm))
       } else if (elm.type === "pcb_fabrication_note_text") {
-        fb.add("fabricationnotetext", (pb) =>
+        this.add("fabricationnotetext", (pb) =>
           pb.setProps({
             ...elm,
             pcbX: elm.anchor_position.x,
@@ -216,11 +212,11 @@ export class FootprintBuilderClass implements FootprintBuilder {
             return [
               Number.parseInt(pin_number).toString(),
               port_name ?? pin_number.toString(),
-            ]
+            ] as [string, string]
           }
           return null
         })
-        .filter((v) => v !== null)
+        .filter((v): v is [string, string] => v !== null)
     )
   }
 
@@ -250,7 +246,8 @@ export class FootprintBuilderClass implements FootprintBuilder {
     if (typeof rotation === "number") {
       this.rotation = rotation
     } else {
-      this.rotation = (parseFloat(rotation.split("deg")[0]) / 180) * Math.PI
+      this.rotation =
+        (Number.parseFloat(rotation.split("deg")[0]) / 180) * Math.PI
     }
     return this
   }

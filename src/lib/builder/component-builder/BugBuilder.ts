@@ -1,21 +1,23 @@
-import { ProjectBuilder } from "../project-builder"
-import { BaseComponentBuilder, ComponentBuilderClass } from "./ComponentBuilder"
-import * as Type from "lib/types"
-import * as Soup from "lib/soup"
-import { transformSchematicElements } from "../transform-elements"
+import type * as Soup from "@tscircuit/soup"
+import type { SchematicText, SourceSimpleBugInput } from "@tscircuit/soup"
+import Debug from "debug"
+import type * as Type from "lib/types"
+import { convertSideToDirection } from "lib/utils/convert-side-to-direction"
 import { compose, rotate, translate } from "transformation-matrix"
-import { PortsBuilder } from "../ports-builder"
-import { Except } from "type-fest"
+import type { Except } from "type-fest"
 import getPortPosition, {
   DEFAULT_PIN_SPACING,
   getPortArrangementSize,
   getPortIndices,
-  PortArrangement,
+  type PortArrangement,
 } from "../../utils/get-port-position"
-import { convertSideToDirection } from "lib/utils/convert-side-to-direction"
 import { associatePcbPortsWithPads } from "../footprint-builder/associate-pcb-ports-with-pads"
-import { matchPCBPortsWithFootprintAndMutate } from "../trace-builder/match-pcb-ports-with-footprint"
-import Debug from "debug"
+import type { ProjectBuilder } from "../project-builder"
+import { transformSchematicElements } from "../transform-elements"
+import {
+  ComponentBuilderClass,
+  type BaseComponentBuilder,
+} from "./ComponentBuilder"
 
 const debug = Debug("tscircuit:builder:bug-builder")
 
@@ -24,7 +26,7 @@ export interface BugBuilder extends BaseComponentBuilder<BugBuilder> {
   builder_type: "bug_builder"
   setSourceProperties(
     properties: Except<
-      Type.SourceSimpleBugInput,
+      SourceSimpleBugInput,
       "type" | "source_component_id" | "ftype" | "name"
     > & { name?: string }
   ): BugBuilder
@@ -117,7 +119,7 @@ export class BugBuilderClass
     this.ports.setSourceComponent(source_component_id)
     this.ports.setPCBComponent(pcb_component_id)
 
-    const textElements: Type.SchematicText[] = []
+    const textElements: SchematicText[] = []
 
     // add ports based on port arrangement and give appropriate labels
     let { port_labels } = this.schematic_properties
@@ -147,7 +149,7 @@ export class BugBuilderClass
 
       if (["left", "right"].includes(portPosition.side)) {
         const is_left = portPosition.side === "left"
-        const portText: Type.SchematicText = {
+        const portText: SchematicText = {
           type: "schematic_text",
           schematic_text_id,
           schematic_component_id,
@@ -164,7 +166,7 @@ export class BugBuilderClass
         textElements.push(portText)
       }
       if (portPosition.side === "bottom") {
-        const portText: Type.SchematicText = {
+        const portText: SchematicText = {
           type: "schematic_text",
           schematic_text_id,
           schematic_component_id,
@@ -180,7 +182,7 @@ export class BugBuilderClass
         textElements.push(portText)
       }
       if (portPosition.side === "top") {
-        const portText: Type.SchematicText = {
+        const portText: SchematicText = {
           type: "schematic_text",
           schematic_text_id,
           schematic_component_id,

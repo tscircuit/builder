@@ -1,5 +1,5 @@
-import { defineNewComponent } from "../define-new-component"
 import { z } from "zod"
+import { defineNewComponent } from "../define-new-component"
 
 export const { DiodeBuilderClass, createDiodeBuilder } = defineNewComponent({
   pascal_name: "Diode",

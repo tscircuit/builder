@@ -1,19 +1,26 @@
-import type { InputPoint } from "./../../soup/common/point"
+import type {
+  InputPoint,
+  PcbRouteHintInput,
+  SchematicPort,
+  SchematicTrace,
+  SourcePort,
+  SourceTrace,
+} from "@tscircuit/soup"
 import { extractIds } from "./../../utils/extract-ids"
 
-import type * as Type from "lib/types"
-import type { ProjectBuilder, GroupBuilder } from ".."
-import { applySelector } from "lib/apply-selector"
-export { convertToReadableTraceTree } from "./convert-to-readable-route-tree"
-import { straightRouteSolver } from "./route-solvers/straight-route-solver"
-import { route1Solver } from "./route-solvers/route1-solver"
-import { getSchematicObstaclesFromElements } from "./schematic-routing/get-schematic-obstacles-from-elements"
-import { pairs } from "lib/utils/pairs"
 import type { AnySoupElement, SourceNet } from "@tscircuit/soup"
-import { buildTraceForSinglePortAndNet } from "./build-trace-for-single-port-and-net"
-import { buildPcbTraceElements } from "./build-pcb-trace-elements"
-import { portOffsetWrapper } from "./route-solvers/port-offset-wrapper"
 import Debug from "debug"
+import { applySelector } from "lib/apply-selector"
+import type * as Type from "lib/types"
+import { pairs } from "lib/utils/pairs"
+import type { GroupBuilder, ProjectBuilder } from ".."
+import { buildPcbTraceElements } from "./build-pcb-trace-elements"
+import { buildTraceForSinglePortAndNet } from "./build-trace-for-single-port-and-net"
+import { portOffsetWrapper } from "./route-solvers/port-offset-wrapper"
+import { route1Solver } from "./route-solvers/route1-solver"
+import { straightRouteSolver } from "./route-solvers/straight-route-solver"
+import { getSchematicObstaclesFromElements } from "./schematic-routing/get-schematic-obstacles-from-elements"
+export { convertToReadableTraceTree } from "./convert-to-readable-route-tree"
 
 const debug = Debug("tscircuit:builder:trace-builder")
 
@@ -29,7 +36,7 @@ export interface TraceBuilder {
     from?: string
     to?: string
     schematic_route_hints?: InputPoint[]
-    pcb_route_hints?: Type.PcbRouteHintInput[]
+    pcb_route_hints?: PcbRouteHintInput[]
     thickness?: string | number
   }) => TraceBuilder
   getConnections: () => string[]
@@ -37,7 +44,7 @@ export interface TraceBuilder {
   setRouteSolver: (routeSolver: RouteSolverOrString) => TraceBuilder
   addConnections: (portSelectors: Array<string>) => TraceBuilder
   getSourcePortsAndNetsInRoute: (parent_elements: Type.AnyElement[]) => {
-    source_ports_in_route: Type.SourcePort[]
+    source_ports_in_route: SourcePort[]
     source_nets_in_route: SourceNet[]
     source_errors: any[]
   }
@@ -118,7 +125,7 @@ export const createTraceBuilder = (
   builder.getSourcePortsAndNetsInRoute = (
     parent_elements: Type.AnyElement[]
   ) => {
-    const source_ports_in_route: Type.SourcePort[] = []
+    const source_ports_in_route: SourcePort[] = []
     const source_nets_in_route: SourceNet[] = []
     for (const portSelector of internal.portSelectors) {
       const selectedElms = applySelector(parent_elements, portSelector)
@@ -167,7 +174,7 @@ export const createTraceBuilder = (
   }
 
   builder.build = async (
-    parent_elements: AnySoupElement[] = [],
+    parent_elements: AnySoupElement[],
     bc: Type.BuildContext
   ) => {
     debug("start: building trace")
@@ -197,12 +204,13 @@ export const createTraceBuilder = (
     }
 
     const source_trace_id = builder.project_builder.getId("source_trace")
-    const source_trace: Type.SourceTrace = {
+    const source_trace: SourceTrace = {
       type: "source_trace",
       source_trace_id,
       connected_source_port_ids: source_ports_in_route.map(
         (sp) => sp.source_port_id
       ),
+      connected_source_net_ids: [],
     }
 
     // ----------------------------
@@ -216,7 +224,7 @@ export const createTraceBuilder = (
         (elm) =>
           elm.type === "schematic_port" &&
           elm.source_port_id === sp.source_port_id
-      ) as Type.SchematicPort | null
+      ) as SchematicPort | null
       if (!schematic_port)
         throw new Error(
           `Missing schematic_port for source_port "${sp.source_port_id}"`
@@ -280,7 +288,7 @@ export const createTraceBuilder = (
       ).reduce((all_edges, edges_arr) => all_edges.concat(edges_arr), [])
     }
 
-    const schematic_trace: Type.SchematicTrace = {
+    const schematic_trace: SchematicTrace = {
       type: "schematic_trace",
       source_trace_id: source_trace_id,
       schematic_trace_id,

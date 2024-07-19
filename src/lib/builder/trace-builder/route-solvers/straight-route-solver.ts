@@ -1,4 +1,4 @@
-import * as Type from "lib/types"
+import type * as Type from "lib/types"
 
 /**
  * Straight Route Solver

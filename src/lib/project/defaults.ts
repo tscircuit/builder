@@ -1,22 +1,4 @@
-import {
-  PCBComponent,
-  PCBPort,
-  PCBTrace,
-  PCBGroup,
-  SchematicGroup,
-  SchematicPort,
-  SchematicTrace,
-  SourceComponent,
-  SourceGroup,
-  SourcePort,
-  SourceTrace,
-  AnyElement,
-  Project,
-  SchematicConfig,
-  PCBConfig,
-  SourceConfig,
-  SchematicComponent,
-} from "lib/types/index"
+import type { PCBConfig, SchematicConfig, SourceConfig } from "lib/types/index"
 
 export const defaultSchematicConfig: SchematicConfig = {
   type: "schematic_config",

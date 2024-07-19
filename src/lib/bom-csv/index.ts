@@ -1,7 +1,11 @@
-import { AnySoupElement, PCBComponent } from "lib/soup"
-import { SourceComponent } from "lib/types"
+import type {
+  AnySoupElement,
+  PCBComponent,
+  SupplierName,
+} from "@tscircuit/soup"
 import { formatSI } from "format-si-prefix"
-import { SupplierName } from "lib/soup/pcb/properties/supplier_name"
+import type { SourceComponent } from "lib/types"
+
 import Papa from "papaparse"
 
 type SupplierPartNumberColumn = "JLCPCB Part#"
@@ -60,7 +64,7 @@ export const convertSoupToBomRows = async ({
     const part_info: Partial<ResolvedPart> =
       (await resolvePart?.({ pcb_component: elm, source_component })) ?? {}
 
-    let comment: string = ""
+    let comment = ""
 
     if (source_component.ftype === "simple_resistor")
       comment = si(source_component.resistance)
