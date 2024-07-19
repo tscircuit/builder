@@ -1,4 +1,8 @@
-import type { SchematicComponent, SchematicText, SourceSimpleInductor } from "@tscircuit/soup"
+import type {
+  SchematicComponent,
+  SchematicText,
+  SourceSimpleInductor,
+} from "@tscircuit/soup"
 import type * as Type from "lib/types"
 import { compose, rotate, translate } from "transformation-matrix"
 import type { ProjectBuilder } from "../project-builder"

@@ -1,5 +1,13 @@
 import type { ComponentProps } from "@tscircuit/props"
-import type { CadComponent, PCBComponent, SupplierName, SchematicComponent, SourcePort, AnySoupElement, Point } from "@tscircuit/soup"
+import type {
+  CadComponent,
+  PCBComponent,
+  SupplierName,
+  SchematicComponent,
+  SourcePort,
+  AnySoupElement,
+  Point,
+} from "@tscircuit/soup"
 import {
   createPortsBuilder,
   type PortsBuilder,
@@ -388,7 +396,7 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
       source_component_id: opts.source_component_id,
       pcb_component_id: opts.pcb_component_id,
       layer: this.footprint.layer,
-      center: bc.convert(this.footprint.position),
+      center: this.footprint.position,
       rotation: this.footprint.rotation,
       width: 0,
       height: 0,

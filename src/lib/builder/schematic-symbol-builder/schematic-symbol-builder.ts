@@ -55,7 +55,7 @@ export class SchematicSymbolBuilderClass implements SchematicSymbolBuilder {
       ].includes(child.builder_type)
     ) {
       if ((child as any).builder_type === "schematic_symbol_builder") {
-        throw new Error(`Schematic symbol builder nesting not yet supported!`)
+        throw new Error("Schematic symbol builder nesting not yet supported!")
       }
       throw new Error(
         `Unsupported child type for inside of schematic symbol builder: ${child.builder_type}`

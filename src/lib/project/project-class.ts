@@ -1,4 +1,5 @@
-import * as Type from "lib/types"
+import type { SourcePort, SourceTrace } from "@tscircuit/soup"
+import type * as Type from "lib/types"
 
 const elementArrayKeys = [
   "schematic_components",
@@ -34,7 +35,7 @@ export class ProjectClass {
   ): Array<Type.ElementOfType<T>> {
     const mainElm = this.get(id)
     if (!mainElm) return []
-    const joiningId = mainElm.type + "_id"
+    const joiningId = `${mainElm.type}_id`
     return this.getElements().filter(
       (e) => e.type === type && e[joiningId] === id
     ) as any
@@ -46,12 +47,12 @@ export class ProjectClass {
       ) ?? null
     )
   }
-  getSourcePort(id: string): Type.SourcePort | null {
+  getSourcePort(id: string): SourcePort | null {
     return (
       this.project.source_ports.find((c) => c.source_port_id === id) ?? null
     )
   }
-  getSourceTrace(id: string): Type.SourceTrace | null {
+  getSourceTrace(id: string): SourceTrace | null {
     return (
       this.project.source_traces.find((c) => c.source_trace_id === id) ?? null
     )

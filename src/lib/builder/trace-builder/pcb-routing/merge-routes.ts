@@ -1,4 +1,4 @@
-import * as Type from "lib/types"
+import type { PCBTrace } from "@tscircuit/soup"
 
 function pdist(a, b) {
   return Math.hypot(a.x - b.x, a.y - b.y)
@@ -10,15 +10,15 @@ function pdist(a, b) {
  * If the end of the next route is closer to the end of the previous route,
  * reverse the next route and append it to the previous route.
  */
-export const mergeRoutes = (routes: Type.PCBTrace["route"][]) => {
+export const mergeRoutes = (routes: PCBTrace["route"][]) => {
   // routes = routes.filter((route) => route.length > 0)
   if (routes.some((r) => r.length === 0)) {
-    throw new Error(`Cannot merge routes with zero length`)
+    throw new Error("Cannot merge routes with zero length")
   }
   // for (const route of routes) {
   //   console.table(route)
   // }
-  const merged: Type.PCBTrace["route"] = []
+  const merged: PCBTrace["route"] = []
   // const reverse_log: boolean[] = []
 
   // Determine if the first route should be reversed

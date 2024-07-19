@@ -1,7 +1,7 @@
-import { createProjectBuilder } from "lib/builder"
 import test from "ava"
+import type { SchematicComponent } from "@tscircuit/soup"
+import { createProjectBuilder } from "lib/builder"
 import { logLayout } from "../utils/log-layout"
-import { SchematicComponent } from "index"
 
 test("[smoke] netalias", async (t) => {
   const projectBuilder = await createProjectBuilder().add("net_alias", (nab) =>

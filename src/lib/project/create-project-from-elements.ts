@@ -1,4 +1,14 @@
-import { PCBComponent, PCBPort, PCBTrace, SchematicComponent, SchematicPort, SchematicText, SchematicTrace, SourcePort, SourceTrace } from "@tscircuit/soup"
+import type {
+  PCBComponent,
+  PCBPort,
+  PCBTrace,
+  SchematicComponent,
+  SchematicPort,
+  SchematicText,
+  SchematicTrace,
+  SourcePort,
+  SourceTrace,
+} from "@tscircuit/soup"
 import type * as Type from "lib/types/index"
 
 export const createProjectFromElements = (
@@ -34,9 +44,7 @@ export const createProjectFromElements = (
     pcb_components: objects.filter(
       (o) => o.type === "pcb_component"
     ) as PCBComponent[],
-    pcb_traces: objects.filter(
-      (o) => o.type === "pcb_trace"
-    ) as PCBTrace[],
+    pcb_traces: objects.filter((o) => o.type === "pcb_trace") as PCBTrace[],
     pcb_ports: objects.filter((o) => o.type === "pcb_port") as PCBPort[],
     // source_config:
     //   (objects.find((o) => o.type === "source_config") as SourceConfig) ||

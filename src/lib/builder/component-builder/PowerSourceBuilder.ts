@@ -1,3 +1,8 @@
+import type {
+  SchematicComponent,
+  SourceSimplePowerSource,
+  SourceSimplePowerSourceInput,
+} from "@tscircuit/soup"
 import type * as Type from "lib/types"
 import { compose, rotate, translate } from "transformation-matrix"
 import type { Except } from "type-fest"
@@ -15,7 +20,7 @@ export interface PowerSourceBuilder
   builder_type: "power_source_builder"
   setSourceProperties(
     properties: Except<
-      Type.SourceSimplePowerSourceInput,
+      SourceSimplePowerSourceInput,
       "type" | "source_component_id" | "ftype"
     > & { name?: string }
   ): PowerSourceBuilder
@@ -35,7 +40,7 @@ export class PowerSourceBuilderClass
     this.settable_source_properties.push(...["voltage"])
   }
 
-  setSourceProperties(props: Type.SourceSimplePowerSource) {
+  setSourceProperties(props: SourceSimplePowerSource) {
     this.source_properties = {
       ...this.source_properties,
       ...props,
@@ -61,7 +66,7 @@ export class PowerSourceBuilderClass
     elements.push(source_component)
 
     const port_arrangement = this.schematic_properties?.port_arrangement
-    const schematic_component: Type.SchematicComponent = {
+    const schematic_component: SchematicComponent = {
       type: "schematic_component",
       source_component_id,
       schematic_component_id,

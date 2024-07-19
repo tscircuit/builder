@@ -1,5 +1,4 @@
 import test from "ava"
-import { SourceComponent, SourceComponentBase } from "lib/types"
 import { convertBomRowsToCsv, convertSoupToBomRows } from "lib/bom-csv"
 import { getTestFixture } from "tests/fixtures/get-test-fixture"
 

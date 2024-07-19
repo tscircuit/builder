@@ -1,3 +1,10 @@
+import type {
+  PCBPort,
+  Point,
+  SchematicPort,
+  SchematicText,
+  SourcePort,
+} from "@tscircuit/soup"
 import type * as Type from "lib/types"
 import type { Builder } from "lib/types"
 import { directionToVec, multPoint, rotatePoint, sumPoints } from "lib/utils"
@@ -19,7 +26,7 @@ export interface PortsBuilder {
    * @deprecated this add function doesn't match the other "add" patterns, will
    * be refactored and the method signature will change/will be renamed
    */
-  addPort: ((portName: string, schematicPosition: Type.Point) => PortsBuilder) &
+  addPort: ((portName: string, schematicPosition: Point) => PortsBuilder) &
     ((params: {
       name: string
       pin_number?: number
@@ -123,7 +130,7 @@ export class PortsBuilderClass implements PortsBuilder {
           source_component_id: this.source_component_id,
           pin_number,
           port_hints: port.port_hints,
-        } as Type.SourcePort,
+        } as SourcePort,
         {
           type: "schematic_port",
           schematic_port_id,
@@ -131,7 +138,7 @@ export class PortsBuilderClass implements PortsBuilder {
           center: bc.convert(port.schematic_position),
           facing_direction: port.schematic_direction,
           schematic_component_id: this.schematic_component_id,
-        } as Type.SchematicPort,
+        } as SchematicPort,
         // add schematic port pin_number text if pin_number is set
         ...(!pin_number || !port.schematic_pin_number_visible
           ? []
@@ -160,7 +167,7 @@ export class PortsBuilderClass implements PortsBuilder {
                   }),
                 ]),
                 schematic_component_id: this.schematic_component_id,
-              } as Type.SchematicText,
+              } as SchematicText,
             ]),
         {
           type: "pcb_port",
@@ -169,7 +176,7 @@ export class PortsBuilderClass implements PortsBuilder {
           pcb_component_id: this.pcb_component_id,
           x: 0,
           y: 0,
-        } as Type.PCBPort,
+        } as PCBPort,
       ] as Type.AnyElement[]
     }) as Type.AnyElement[]
   }

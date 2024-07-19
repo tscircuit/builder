@@ -1,7 +1,7 @@
-import * as Type from "lib/types"
-import { directionToVec, vecToDirection } from "lib/utils/direction-to-vec"
+import type * as Type from "lib/types"
+import { directionToVec } from "lib/utils/direction-to-vec"
 // import findRectilinearRoute from "rectilinear-router"
-import { sub, componentSum, mult, norm } from "lib/utils/point-math"
+import { componentSum, mult, norm, sub } from "lib/utils/point-math"
 
 type Edge = {
   from: { x: number; y: number; ti?: number }
@@ -20,10 +20,10 @@ function samePoint(p1: { x: number; y: number }, p2: { x: number; y: number }) {
 function getNonCornerPoints(e1: Edge, e2: Edge) {
   const [p1, p2, p3, p4] = [e1.from, e1.to, e2.from, e2.to]
   if (samePoint(p1, p3)) return { p1: p2, p2: p4, corner: p1 }
-  else if (samePoint(p1, p4)) return { p1: p2, p2: p3, corner: p1 }
-  else if (samePoint(p2, p3)) return { p1, p2: p4, corner: p2 }
-  else if (samePoint(p2, p4)) return { p1, p2: p3, corner: p2 }
-  else throw new Error("Not a Corner")
+  if (samePoint(p1, p4)) return { p1: p2, p2: p3, corner: p1 }
+  if (samePoint(p2, p3)) return { p1, p2: p4, corner: p2 }
+  if (samePoint(p2, p4)) return { p1, p2: p3, corner: p2 }
+  throw new Error("Not a Corner")
 }
 
 function flipEdges(e1: Edge, e2: Edge) {
@@ -73,8 +73,8 @@ export const rmstSolver: Type.RouteSolver = async ({
       const p2Dir = terminals[p2.ti!]?.facing_direction
 
       // Score measures alignment of the port and the edge it's connected to
-      let score1 = 0,
-        score2 = 0
+      let score1 = 0
+      let score2 = 0
 
       if (p1Dir) {
         const p1Vec = directionToVec(p1Dir)

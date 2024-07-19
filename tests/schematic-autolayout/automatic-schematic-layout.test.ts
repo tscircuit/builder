@@ -1,7 +1,7 @@
-import { getTestFixture } from "tests/fixtures/get-test-fixture"
-import test from "ava"
-import { SchematicComponent } from "lib/types"
 import { layout } from "@tscircuit/layout"
+import type { SchematicComponent } from "@tscircuit/soup"
+import test from "ava"
+import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
 test("automatic schematic layout 1", async (t) => {
   const { logSoup, pb } = getTestFixture(t)

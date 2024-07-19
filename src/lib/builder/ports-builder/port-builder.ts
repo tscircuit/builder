@@ -1,3 +1,4 @@
+import type { Point } from "@tscircuit/soup"
 import type * as Type from "lib/types"
 import type { Dimension } from "lib/types"
 import type { ProjectBuilder } from "../project-builder"
@@ -42,7 +43,7 @@ export class PortBuilderClass implements PortBuilder {
   project_builder: ProjectBuilder
   name = ""
 
-  schematic_position: Type.Point
+  schematic_position: Point
   schematic_direction: "up" | "down" | "left" | "right"
   pin_number?: number
   schematic_pin_number_visible: boolean
@@ -54,12 +55,21 @@ export class PortBuilderClass implements PortBuilder {
     this.schematic_pin_number_visible = true
   }
 
-  setProps(props) {
-    if (props.x) this.schematic_position.x = props.x
-    if (props.y) this.schematic_position.y = props.y
-    if (props.dir) this.schematic_direction = props.dir
+  setProps(
+    props: Partial<{
+      name: string
+      x: number
+      y: number
+      direction: "up" | "down" | "left" | "right"
+      pin_number: number
+      port_hints: string[]
+      schematic_pin_number_visible: boolean
+    }>
+  ): PortBuilder {
+    if (props.x !== undefined) this.schematic_position.x = props.x
+    if (props.y !== undefined) this.schematic_position.y = props.y
     if (props.direction) this.schematic_direction = props.direction
-    if (props.schematic_pin_number_visible)
+    if (props.schematic_pin_number_visible !== undefined)
       this.schematic_pin_number_visible = props.schematic_pin_number_visible
     if (props.port_hints)
       this.port_hints = props.port_hints
@@ -70,43 +80,70 @@ export class PortBuilderClass implements PortBuilder {
     for (const key of Object.keys(props).filter((k) =>
       settable_props.includes(k)
     )) {
-      if (key === "port_hints") continue // handled above
-      this[key] = props[key]
+      if (key === "port_hints")
+        continue // handled above
+      ;(this as any)[key] = props[key]
     }
-    return this
+    return this as unknown as PortBuilder
   }
 
-  setName(name) {
+  setName(name: string): PortBuilder {
     this.name = name
-    return this
+    return this as unknown as PortBuilder
   }
 
-  setPinNumber(pin_number: number) {
+  setPinNumber(pin_number: number): PortBuilder {
     this.pin_number = pin_number
-    return this
+    return this as unknown as PortBuilder
   }
 
   setPortHints(port_hints: string[]): PortBuilder {
     this.port_hints = port_hints.filter(Boolean).map((ph) => ph.toString())
-    return this
+    return this as unknown as PortBuilder
   }
 
   setSchematicPosition(point) {
     this.schematic_position = point
-    return this
+    return this as unknown as PortBuilder
   }
 
   setSchematicDirection(direction) {
     this.schematic_direction = direction
-    return this
+    return this as unknown as PortBuilder
   }
 
   setSchematicPinNumberVisible(visible: boolean) {
     this.schematic_pin_number_visible = visible
-    return this
+    return this as unknown as PortBuilder
   }
 
-  build() {
+  build(): (
+    | {
+        type: "source_trace"
+        source_trace_id: string
+        connected_source_port_ids: string[]
+        connected_source_net_ids: string[]
+      }
+    | {
+        type: "source_port"
+        source_component_id: string
+        name: string
+        source_port_id: string
+        pin_number?: number
+        port_hints?: string[]
+      }
+    | {
+        type: "source_net"
+        name: string
+        source_net_id: string
+        member_source_group_ids: string[]
+        is_power?: boolean
+        is_ground?: boolean
+        is_digital_signal?: boolean
+        is_analog_signal?: boolean
+        connected_source_trace_ids: string[]
+      }
+  )[] {
     throw new Error(`"port_builder" must be built via "ports_builder"`)
   }
 }

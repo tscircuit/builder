@@ -1,3 +1,4 @@
+import type { LayerRef, PCBVia, PCBViaInput } from "@tscircuit/soup"
 import type { ProjectBuilder } from "lib/project"
 import type * as Type from "lib/types"
 import type { BuildContext } from "lib/types/build-context"
@@ -5,8 +6,8 @@ import type { BuildContext } from "lib/types/build-context"
 export interface PcbViaBuilder {
   builder_type: "pcb_via_builder"
   project_builder: ProjectBuilder
-  setProps(props: Omit<Type.PCBViaInput, "type">): PcbViaBuilder
-  build(bc: BuildContext): Promise<Type.PCBVia[]>
+  setProps(props: Omit<PCBViaInput, "type">): PcbViaBuilder
+  build(bc: BuildContext): Promise<PCBVia[]>
 }
 
 export class PcbViaBuilderClass implements PcbViaBuilder {
@@ -17,7 +18,7 @@ export class PcbViaBuilderClass implements PcbViaBuilder {
   hole_diameter: Type.Dimension
   pcb_x: Type.Dimension
   pcb_y: Type.Dimension
-  layers?: Type.LayerRef[]
+  layers?: LayerRef[]
   port_hints: string[]
 
   constructor(project_builder: ProjectBuilder) {
@@ -25,7 +26,7 @@ export class PcbViaBuilderClass implements PcbViaBuilder {
     this.port_hints = []
   }
 
-  setProps(props: Partial<Type.PCBViaInput>): PcbViaBuilder {
+  setProps(props: Partial<PCBViaInput>): PcbViaBuilder {
     const remap = {
       x: "pcb_x",
       y: "pcb_y",
@@ -36,7 +37,7 @@ export class PcbViaBuilderClass implements PcbViaBuilder {
     return this
   }
 
-  async build(bc: BuildContext): Promise<Type.PCBVia[]> {
+  async build(bc: BuildContext): Promise<PCBVia[]> {
     return [
       {
         type: "pcb_via",

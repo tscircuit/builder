@@ -1,7 +1,7 @@
-import { getTestFixture } from "tests/fixtures/get-test-fixture"
-import test from "ava"
-import { PCBComponent, manual_layout } from "index"
 import { layout } from "@tscircuit/layout"
+import type { PCBComponent } from "@tscircuit/soup"
+import test from "ava"
+import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
 test("pcb manual layout in group builder", async (t) => {
   const { logSoup, pb } = getTestFixture(t)

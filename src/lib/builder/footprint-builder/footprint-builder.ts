@@ -1,4 +1,5 @@
 import { fp } from "@tscircuit/footprinter"
+import type { AnySoupElement, LayerRef, Point } from "@tscircuit/soup"
 import type { ProjectBuilder } from "lib/project"
 import type * as Type from "lib/types"
 import type { Builder } from "lib/types/builders"
@@ -61,9 +62,9 @@ export interface FootprintBuilder {
   builder_type: "footprint_builder"
   project_builder: ProjectBuilder
   addables: FootprintBuilderAddables
-  position: Type.Point
+  position: Point
   rotation: number
-  layer: Type.LayerRef
+  layer: LayerRef
   setPosition: (x: number | string, y: number | string) => FootprintBuilder
   appendChild: (child: Builder) => FootprintBuilder
   addPad(cb: (smtpadbuilder: SMTPadBuilder) => unknown): FootprintBuilder
@@ -73,10 +74,10 @@ export interface FootprintBuilder {
   ): FootprintBuilder
   setStandardFootprint(footprint_name: string): FootprintBuilder
   loadStandardFootprint(footprint_name: string): FootprintBuilder
-  loadFootprintFromSoup(soup: Type.AnySoupElement[]): FootprintBuilder
+  loadFootprintFromSoup(soup: AnySoupElement[]): FootprintBuilder
   getFootprintPinLabels(): Record<string, string>
   setRotation: (rotation: number | `${number}deg`) => FootprintBuilder
-  setLayer: (layer: Type.LayerRef) => FootprintBuilder
+  setLayer: (layer: LayerRef) => FootprintBuilder
   build(bc: Type.BuildContext): Promise<Type.AnyElement[]>
 }
 
@@ -84,9 +85,9 @@ export class FootprintBuilderClass implements FootprintBuilder {
   builder_type = "footprint_builder" as const
   project_builder: ProjectBuilder
   addables: FootprintBuilderAddables
-  position: Type.Point
+  position: Point
   rotation = 0
-  layer: Type.LayerRef = "top"
+  layer: LayerRef = "top"
 
   children: SMTPadBuilder[] = []
 
@@ -100,7 +101,8 @@ export class FootprintBuilderClass implements FootprintBuilder {
     if (allowed_childen_builder_types.includes(child.builder_type)) {
       this.children.push(child)
       return this
-    } else if (child.builder_type === "footprint_builder") {
+    }
+    if (child.builder_type === "footprint_builder") {
       if (this.children.length > 0) {
         throw new Error(
           "Footprint builder cannot be replaced by child footprint builder because the parent footprint builder has children. In the future we may support merging footprint builders"
@@ -130,7 +132,7 @@ export class FootprintBuilderClass implements FootprintBuilder {
     return this
   }
 
-  setLayer(layer: Type.LayerRef) {
+  setLayer(layer: LayerRef) {
     this.layer = layer
 
     for (const child of this.children) {
@@ -142,7 +144,7 @@ export class FootprintBuilderClass implements FootprintBuilder {
     return this
   }
 
-  loadFootprintFromSoup(soup: Type.AnySoupElement[]) {
+  loadFootprintFromSoup(soup: AnySoupElement[]) {
     for (const elm of soup) {
       if (elm.type === "pcb_smtpad") {
         this.add("smtpad", (pb) => pb.setProps(elm))
@@ -210,11 +212,11 @@ export class FootprintBuilderClass implements FootprintBuilder {
             return [
               Number.parseInt(pin_number).toString(),
               port_name ?? pin_number.toString(),
-            ]
+            ] as [string, string]
           }
           return null
         })
-        .filter((v) => v !== null)
+        .filter((v): v is [string, string] => v !== null)
     )
   }
 
