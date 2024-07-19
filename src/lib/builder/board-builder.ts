@@ -3,11 +3,11 @@ import {
   createGroupBuilder,
   type GroupBuilder,
 } from "./group-builder"
-import * as Type from "lib/types"
+import type * as Type from "lib/types"
 import * as CB from "./component-builder"
-import { TraceBuilder } from "./trace-builder"
+import type { TraceBuilder } from "./trace-builder"
 import { createTraceBuilder } from "./trace-builder"
-import { ProjectBuilder } from "./project-builder"
+import type { ProjectBuilder } from "./project-builder"
 import { createTraceHintBuilder } from "./trace-hint-builder"
 import { createNetBuilder } from "./net-builder/net-builder"
 import type { BoardProps as OriginalBoardProps } from "@tscircuit/props"
@@ -15,31 +15,36 @@ import type { BoardProps as OriginalBoardProps } from "@tscircuit/props"
 interface ExtendedBoardProps extends OriginalBoardProps {
   board_thickness?: number | string
   center?: Type.Point
+  pcbX?: number | string
+  pcbY?: number | string
 }
 
 export interface LegacyBoardProps extends ExtendedBoardProps {
   center_x?: number | string
   center_y?: number | string
+  pcbX?: number | string
+  pcbY?: number | string
 }
 
-export const getBoardAddables = () => ({
-  generic_component: CB.createComponentBuilder,
-  component: CB.createComponentBuilder,
-  resistor: CB.createResistorBuilder,
-  net_alias: CB.createNetAliasBuilder,
-  capacitor: CB.createCapacitorBuilder,
-  diode: CB.createDiodeBuilder,
-  led: CB.createLedBuilder,
-  power_source: CB.createPowerSourceBuilder,
-  inductor: CB.createInductorBuilder,
-  ground: CB.createGroundBuilder,
-  bug: CB.createBugBuilder,
-  trace: createTraceBuilder,
-  via: CB.createViaBuilder,
-  group: createGroupBuilder,
-  trace_hint: createTraceHintBuilder,
-  net: createNetBuilder,
-} as const)
+export const getBoardAddables = () =>
+  ({
+    generic_component: CB.createComponentBuilder,
+    component: CB.createComponentBuilder,
+    resistor: CB.createResistorBuilder,
+    net_alias: CB.createNetAliasBuilder,
+    capacitor: CB.createCapacitorBuilder,
+    diode: CB.createDiodeBuilder,
+    led: CB.createLedBuilder,
+    power_source: CB.createPowerSourceBuilder,
+    inductor: CB.createInductorBuilder,
+    ground: CB.createGroundBuilder,
+    bug: CB.createBugBuilder,
+    trace: createTraceBuilder,
+    via: CB.createViaBuilder,
+    group: createGroupBuilder,
+    trace_hint: createTraceHintBuilder,
+    net: createNetBuilder,
+  } as const)
 
 export type BoardBuilderAddables = ReturnType<typeof getBoardAddables>
 
@@ -61,8 +66,9 @@ export interface BoardBuilder {
 
 export class BoardBuilderClass
   extends GroupBuilderClass
-  implements BoardBuilder {
-  builder_type: "board_builder" = "board_builder"
+  implements BoardBuilder
+{
+  builder_type = "board_builder" as const
   props: Partial<ExtendedBoardProps>
   declare addables: BoardBuilderAddables
 
@@ -94,7 +100,7 @@ export class BoardBuilderClass
 
     const convertProp = (prop: string | number | undefined): number => {
       if (prop === undefined) {
-        throw new Error(`Property is undefined`)
+        throw new Error("Property is undefined")
       }
       return bc.convert(this.addUnitIfNeeded(prop)) as number
     }
@@ -106,9 +112,9 @@ export class BoardBuilderClass
         center: this.props.center
           ? bc.convert(this.props.center)
           : {
-            x: convertProp(this.props.pcbX),
-            y: convertProp(this.props.pcbY),
-          },
+              x: convertProp(this.props.pcbX),
+              y: convertProp(this.props.pcbY),
+            },
         width: convertProp(this.props.width),
         height: convertProp(this.props.height),
       },
@@ -116,7 +122,7 @@ export class BoardBuilderClass
   }
 
   private addUnitIfNeeded(value: string | number): string {
-    if (typeof value === 'number' || !isNaN(Number(value))) {
+    if (typeof value === "number" || !Number.isNaN(Number(value))) {
       return `${value}mm`
     }
     return value.toString()
