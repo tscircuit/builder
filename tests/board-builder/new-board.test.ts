@@ -7,7 +7,7 @@ test("[smoke] new board test", async (t) => {
 
   const soup = await pb
     .add("board", (bb) => {
-      bb.setProps({ width: 10, height: 10, pcbX: 20, pcbY: 5 })
+      bb.setProps({ width: "10mm", height: "10mm", pcbX: "20mm", pcbY: "5mm" })
     })
     .build()
 

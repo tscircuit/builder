@@ -10,15 +10,19 @@ import { createTraceBuilder } from "./trace-builder"
 import { ProjectBuilder } from "./project-builder"
 import { createTraceHintBuilder } from "./trace-hint-builder"
 import { createNetBuilder } from "./net-builder/net-builder"
-import type { BoardProps } from "@tscircuit/props"
+import type { BoardProps as OriginalBoardProps } from "@tscircuit/props"
 
-export interface LegacyBoardProps extends BoardProps {
-  center_x?: number
-  center_y?: number
+interface ExtendedBoardProps extends OriginalBoardProps {
+  board_thickness?: number | string
+  center?: Type.Point
 }
 
-export const getBoardAddables = () =>
-({
+export interface LegacyBoardProps extends ExtendedBoardProps {
+  center_x?: number | string
+  center_y?: number | string
+}
+
+export const getBoardAddables = () => ({
   generic_component: CB.createComponentBuilder,
   component: CB.createComponentBuilder,
   resistor: CB.createResistorBuilder,
@@ -36,6 +40,7 @@ export const getBoardAddables = () =>
   trace_hint: createTraceHintBuilder,
   net: createNetBuilder,
 } as const)
+
 export type BoardBuilderAddables = ReturnType<typeof getBoardAddables>
 
 export interface BoardBuilder {
@@ -58,7 +63,7 @@ export class BoardBuilderClass
   extends GroupBuilderClass
   implements BoardBuilder {
   builder_type: "board_builder" = "board_builder"
-  props: Partial<BoardProps>
+  props: Partial<ExtendedBoardProps>
   declare addables: BoardBuilderAddables
 
   constructor(project_builder?: ProjectBuilder) {
@@ -84,8 +89,15 @@ export class BoardBuilderClass
       }
     }
     bc.board_thickness = this.props.board_thickness
-      ? bc.convert(this.props.board_thickness)
+      ? bc.convert(this.addUnitIfNeeded(this.props.board_thickness))
       : 1.2
+
+    const convertProp = (prop: string | number | undefined): number => {
+      if (prop === undefined) {
+        throw new Error(`Property is undefined`)
+      }
+      return bc.convert(this.addUnitIfNeeded(prop)) as number
+    }
 
     return [
       ...(await super.build(bc)),
@@ -94,13 +106,20 @@ export class BoardBuilderClass
         center: this.props.center
           ? bc.convert(this.props.center)
           : {
-            x: bc.convert(this.props.pcbX),
-            y: bc.convert(this.props.pcbY),
+            x: convertProp(this.props.pcbX),
+            y: convertProp(this.props.pcbY),
           },
-        width: bc.convert(this.props.width!),
-        height: bc.convert(this.props.height!),
+        width: convertProp(this.props.width),
+        height: convertProp(this.props.height),
       },
     ]
+  }
+
+  private addUnitIfNeeded(value: string | number): string {
+    if (typeof value === 'number' || !isNaN(Number(value))) {
+      return `${value}mm`
+    }
+    return value.toString()
   }
 }
 
