@@ -25,7 +25,7 @@ test("something i want to test", async (t) => {
   // The syntax sucks but it's similar to the react code
   const soup = await pb
     .add("resistor", (rb) =>
-      rb.setProps({ resistance: "10k", footprint: "0402" }),
+      rb.setProps({ resistance: "10k", footprint: "0402" })
     )
     .build()
 
