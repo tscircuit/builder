@@ -18,12 +18,16 @@ test. Every test looks the same:
 import test from "ava"
 import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
-test("something i want to test", async t => {
+test("something i want to test", async (t) => {
   const { logSoup, pb } = await getTestServer(t)
 
   // Customize this part, use the builder to make some soup!
   // The syntax sucks but it's similar to the react code
-  const soup = await pb.add("resistor", rb => rb.setProps({ resistance: "10k", footprint: "0402" })).build()
+  const soup = await pb
+    .add("resistor", (rb) =>
+      rb.setProps({ resistance: "10k", footprint: "0402" }),
+    )
+    .build()
 
   // OPTIONAL: It's usually a good idea to have some kind of regression test, you can use
   // "su" from "@tscircuit/soup-util" to quickly check the soup for elements
