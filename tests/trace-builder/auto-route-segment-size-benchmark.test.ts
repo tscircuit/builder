@@ -14,8 +14,6 @@ test("auto route segment size benchmark", async (t) => {
         .setProps({
           width: 10,
           height: 10,
-          center_x: 0,
-          center_y: 0,
         })
         .add("bug", (bb) =>
           bb.setProps({

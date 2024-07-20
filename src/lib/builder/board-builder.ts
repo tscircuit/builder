@@ -11,6 +11,18 @@ import type { ProjectBuilder } from "./project-builder"
 import type { TraceBuilder } from "./trace-builder"
 import { createTraceBuilder } from "./trace-builder"
 import { createTraceHintBuilder } from "./trace-hint-builder"
+import type { BoardProps } from "@tscircuit/props"
+
+type LegacyBoardProps = {
+  /** @deprecated */
+  center_x?: number
+  /** @deprecated */
+  center_y?: number
+  /** @deprecated */
+  center?: Point
+  /** @deprecated */
+  board_thickness?: number
+}
 
 export const getBoardAddables = () =>
   ({
@@ -33,15 +45,6 @@ export const getBoardAddables = () =>
   } as const)
 export type BoardBuilderAddables = ReturnType<typeof getBoardAddables>
 
-export interface BoardProps {
-  width: number
-  height: number
-  center?: Point
-  center_x: number
-  center_y: number
-  board_thickness?: number
-}
-
 export interface BoardBuilder {
   project_builder: ProjectBuilder
   builder_type: "board_builder"
@@ -63,7 +66,7 @@ export class BoardBuilderClass
   implements BoardBuilder
 {
   builder_type = "board_builder" as const
-  props: Partial<BoardProps>
+  props: Partial<BoardProps & LegacyBoardProps>
   declare addables: BoardBuilderAddables
 
   constructor(project_builder?: ProjectBuilder) {
@@ -71,15 +74,21 @@ export class BoardBuilderClass
     this.props = {}
   }
 
-  setProps(props: BoardProps): this {
+  setProps(props: BoardProps & LegacyBoardProps): this {
     GroupBuilderClass.prototype.setProps.call(this, props)
+    if (props.center_x !== undefined) props.pcbX = props.center_x
+    if (props.center_y !== undefined) props.pcbY = props.center_y
+    if (props.center !== undefined) {
+      props.pcbX = props.center.x
+      props.pcbY = props.center.y
+    }
     // have to manually set board props for now
     this.props = { ...this.props, ...props }
     return this
   }
 
   async build(bc: Type.BuildContext): Promise<Type.AnyElement[]> {
-    const required_props = ["width", "height", "center_x", "center_y"]
+    const required_props = ["width", "height"]
     for (const prop of required_props) {
       if (this.props[prop] === undefined) {
         throw new Error(`<board /> "${prop}" is not set`)
@@ -89,18 +98,18 @@ export class BoardBuilderClass
       ? bc.convert(this.props.board_thickness)
       : 1.2
 
+    const { pcbX, pcbY, width, height } = this.props
+
     return [
       ...(await super.build(bc)),
       {
         type: "pcb_board",
-        center: this.props.center
-          ? bc.convert(this.props.center)
-          : {
-              x: bc.convert(this.props.center_x!),
-              y: bc.convert(this.props.center_y!),
-            },
-        width: bc.convert(this.props.width!),
-        height: bc.convert(this.props.height!),
+        center: {
+          x: bc.convert(pcbX ?? 0),
+          y: bc.convert(pcbY ?? 0),
+        },
+        width: bc.convert(width!),
+        height: bc.convert(height!),
       },
     ]
   }
