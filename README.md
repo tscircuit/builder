@@ -29,7 +29,7 @@ a webpage as either a schematic or PCB layout.
 
 ```ts
 const projectBuilder = await createProjectBuilder()
-  .addResistor((rb) =>
+  .add("resistor", (rb) =>
     rb
       .setProps({
         resistance: "10 ohm",
