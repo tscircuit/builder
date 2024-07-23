@@ -31,11 +31,12 @@ a webpage as either a schematic or PCB layout.
 const projectBuilder = await createProjectBuilder()
   .addResistor((rb) =>
     rb
-      .setSourceProperties({
+      .setProps({
         resistance: "10 ohm",
         name: "R1",
+        schX: 2,
+        schY: 1
       })
-      .setSchematicCenter(2, 1)
   )
 
 const projectBuilderOutput = await projectBuilder.build()
