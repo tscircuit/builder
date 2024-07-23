@@ -1,4 +1,4 @@
-import { AnyElement } from "lib/types/core"
+import type { AnyElement } from "lib/types/core"
 import { getDebugLayoutObject } from "./get-layout-debug-object"
 import { isTruthy } from "./is-truthy"
 
@@ -6,8 +6,17 @@ export const findBoundsAndCenter = (
   elms: AnyElement[]
 ): { center: { x: number; y: number }; width: number; height: number } => {
   const debugObjects = elms
+    .concat(
+      elms
+        .filter((elm) => elm.type === "pcb_trace")
+        // add each point on a route to the bounds consideration
+        .flatMap((elm) => elm.route as any)
+    )
     .map((elm) => getDebugLayoutObject(elm))
     .filter(isTruthy)
+
+  if (debugObjects.length === 0)
+    return { center: { x: 0, y: 0 }, width: 0, height: 0 }
 
   let minX = debugObjects[0].x - debugObjects[0].width / 2
   let maxX = debugObjects[0].x + debugObjects[0].width / 2
