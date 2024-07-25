@@ -447,6 +447,11 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
             }
           : { x: 0, y: 0, z: 0 }
       rotation.z += ((pcb_component.rotation ?? 0) / Math.PI) * 180 // TODO HACK until pcb_component.rotation is in degrees
+
+      if (pcb_component.layer === "bottom") {
+        rotation.y = 180
+      }
+
       const cad_component: CadComponent = {
         type: "cad_component",
         cad_component_id: bc.getId("cad_component"),
