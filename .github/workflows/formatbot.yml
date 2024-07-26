@@ -21,11 +21,10 @@ jobs:
       with:
         node-version: '20'
 
-    - name: Install @biomejs/biome
-      run: npm install
+    - run: npm install
 
     - name: Run formatter
-      run: npx prettier -w
+      run: npx prettier -w .
 
     - name: Commit changes
       uses: stefanzweifel/git-auto-commit-action@v4
