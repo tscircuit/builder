@@ -16,7 +16,7 @@ test("group builder with routingDisabled", async () => {
     })
 
     g.addTrace((t) => {
-      t.addConnections(["R1.p1", "C1.p1"])
+      t.addConnections([".R1 > .left", ".C1 > .left"])
     })
   })
 
