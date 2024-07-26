@@ -1,7 +1,7 @@
 import { createProjectBuilder } from "../../src/lib/builder/project-builder"
-import { expect, test } from "vitest"
+import test from "ava"
 
-test("group builder with routingDisabled", async () => {
+test("group builder with routingDisabled", async (t) => {
   const project = createProjectBuilder()
 
   const group = project.addGroup((g) => {
@@ -24,16 +24,16 @@ test("group builder with routingDisabled", async () => {
 
   // Check that schematic traces are present
   const schematicTraces = elements.filter((el) => el.type === "schematic_trace")
-  expect(schematicTraces.length).toBeGreaterThan(0)
+  t.true(schematicTraces.length > 0)
 
   // Check that source traces are present
   const sourceTraces = elements.filter((el) => el.type === "source_trace")
-  expect(sourceTraces.length).toBeGreaterThan(0)
+  t.true(sourceTraces.length > 0)
 
   // Check that PCB traces and vias are not present
   const pcbTraces = elements.filter((el) => el.type === "pcb_trace")
-  expect(pcbTraces.length).toBe(0)
+  t.is(pcbTraces.length, 0)
 
   const pcbVias = elements.filter((el) => el.type === "pcb_via")
-  expect(pcbVias.length).toBe(0)
+  t.is(pcbVias.length, 0)
 })
