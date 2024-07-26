@@ -87,6 +87,7 @@ export class GroupBuilderClass implements GroupBuilder {
   auto_layout?: { schematic: true }
   manual_layout?: Type.ManualLayout
   layout_builder?: LayoutBuilder
+  routingDisabled?: boolean
 
   constructor(project_builder?: ProjectBuilder) {
     this.project_builder = project_builder!
@@ -136,6 +137,9 @@ export class GroupBuilderClass implements GroupBuilder {
     }
     if (props.layout) {
       this.layout_builder = props.layout
+    }
+    if (props.routingDisabled !== undefined) {
+      this.routingDisabled = props.routingDisabled
     }
     return this
   }
@@ -223,6 +227,8 @@ export class GroupBuilderClass implements GroupBuilder {
       ..._.flatten(await Promise.all(this.components.map((c) => c.build(bc))))
     )
 
+    const routingDisabled = this.routingDisabled || false
+
     if (this.layout_builder) {
       elements = this.layout_builder.applyToSoup(elements as any, bc) as any
     }
@@ -284,7 +290,14 @@ export class GroupBuilderClass implements GroupBuilder {
     bc.source_ports_for_nets_in_group = net_name_to_source_port_ids
 
     for (const trace of this.traces) {
-      elements.push(...(await trace.build(elements, bc)))
+      const traceElements = await trace.build(elements, bc)
+      elements.push(
+        ...traceElements.filter(
+          (el) =>
+            !routingDisabled ||
+            (el.type !== "pcb_trace" && el.type !== "pcb_via")
+        )
+      )
     }
 
     return elements
