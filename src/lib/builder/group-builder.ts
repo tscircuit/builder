@@ -291,9 +291,13 @@ export class GroupBuilderClass implements GroupBuilder {
 
     for (const trace of this.traces) {
       const traceElements = await trace.build(elements, bc)
-      elements.push(...traceElements.filter(el => 
-        !routingDisabled || (el.type !== 'pcb_trace' && el.type !== 'pcb_via')
-      ))
+      elements.push(
+        ...traceElements.filter(
+          (el) =>
+            !routingDisabled ||
+            (el.type !== "pcb_trace" && el.type !== "pcb_via")
+        )
+      )
     }
 
     return elements

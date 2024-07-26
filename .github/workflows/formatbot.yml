@@ -11,26 +11,26 @@ jobs:
     if: github.event.pull_request.draft == false
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-      with:
-        token: ${{ secrets.TSCIRCUIT_BOT_GITHUB_TOKEN }}
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.TSCIRCUIT_BOT_GITHUB_TOKEN }}
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '20'
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
 
-    - run: npm install
+      - run: npm install
 
-    - name: Run formatter
-      run: npx prettier -w .
+      - name: Run formatter
+        run: npx prettier -w .
 
-    - name: Commit changes
-      uses: stefanzweifel/git-auto-commit-action@v4
-      with:
-        commit_message: "formatbot: Automatically format code"
-        branch: ${{ github.head_ref }}
-        commit_user_name: tscircuitbot
-        commit_user_email: tscircuitbot@users.noreply.github.com
-        commit_author: tscircuitbot <tscircuitbot@users.noreply.github.com>
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "formatbot: Automatically format code"
+          branch: ${{ github.head_ref }}
+          commit_user_name: tscircuitbot
+          commit_user_email: tscircuitbot@users.noreply.github.com
+          commit_author: tscircuitbot <tscircuitbot@users.noreply.github.com>
