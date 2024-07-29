@@ -1,3 +1,4 @@
+import { su } from "@tscircuit/soup-util"
 import test from "ava"
 import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
@@ -30,6 +31,23 @@ test("simple trace test", async (t) => {
       })
     )
     .build()
+
+  const traces = su(soup).pcb_trace.list()
+  const startTrace = traces[0]
+  t.is(
+    startTrace.route.some(
+      (r) => r.route_type === "wire" && r.start_pcb_port_id !== undefined
+    ),
+    true
+  )
+
+  const endTrace = traces[traces.length - 1]
+  t.is(
+    endTrace.route.some(
+      (r) => r.route_type === "wire" && r.start_pcb_port_id !== undefined
+    ),
+    true
+  )
 
   await logSoup(soup)
   t.pass()

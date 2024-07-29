@@ -35,15 +35,20 @@ export function solveForSingleLayerRoute(
 
     if (solved_route.pathFound) {
       const route: PCBTrace["route"] = []
-      for (const point of solved_route.points) {
+      for (let i = 0; i < solved_route.points.length; i++) {
+        const point = solved_route.points[i]
         route.push({
           route_type: "wire",
           layer,
           width: thickness_mm,
           x: point.x,
           y: point.y,
-          start_pcb_port_id: ctx.pcb_terminal_port_ids[0],
-          end_pcb_port_id: ctx.pcb_terminal_port_ids[1],
+          start_pcb_port_id:
+            i === 0
+              ? ctx.pcb_terminal_port_ids[0]
+              : i === solved_route.points.length - 1
+              ? ctx.pcb_terminal_port_ids[1]
+              : undefined,
         })
       }
       return route
