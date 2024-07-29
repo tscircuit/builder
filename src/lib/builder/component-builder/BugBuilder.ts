@@ -9,14 +9,13 @@ import getPortPosition, {
   DEFAULT_PIN_SPACING,
   getPortArrangementSize,
   getPortIndices,
-  type PortArrangement,
 } from "../../utils/get-port-position"
 import { associatePcbPortsWithPads } from "../footprint-builder/associate-pcb-ports-with-pads"
 import type { ProjectBuilder } from "../project-builder"
 import { transformSchematicElements } from "../transform-elements"
 import {
-  ComponentBuilderClass,
   type BaseComponentBuilder,
+  ComponentBuilderClass,
 } from "./ComponentBuilder"
 
 const debug = Debug("tscircuit:builder:bug-builder")
@@ -28,7 +27,7 @@ export interface BugBuilder extends BaseComponentBuilder<BugBuilder> {
     properties: Except<
       SourceSimpleBugInput,
       "type" | "source_component_id" | "ftype" | "name"
-    > & { name?: string }
+    > & { name?: string; schWidth?: number }
   ): BugBuilder
 }
 
@@ -44,12 +43,25 @@ export class BugBuilderClass
       ...this.source_properties,
       ftype: "simple_bug",
     }
-    this.settable_schematic_properties.push("port_labels", "port_arrangement")
+    this.settable_schematic_properties.push(
+      "port_labels",
+      "port_arrangement",
+      "pin_spacing",
+      "schWidth"
+    )
   }
 
   setSourceProperties(props) {
     this.source_properties = {
       ...this.source_properties,
+      ...props,
+    }
+    return this
+  }
+
+  setSchematicProperties(props) {
+    this.schematic_properties = {
+      ...this.schematic_properties,
       ...props,
     }
     return this
@@ -73,42 +85,33 @@ export class BugBuilderClass
     }
     elements.push(source_component)
 
-    let port_arrangement: PortArrangement =
-      this.schematic_properties?.port_arrangement
-
-    /** This can be used as a fallback if pinLabels or a port arrangement aren't explicitly given */
-    const footprintPinLabels = this.footprint.getFootprintPinLabels()
-    const footprintPinCount = Object.entries(footprintPinLabels).length
+    const port_arrangement = this.schematic_properties?.port_arrangement
 
     if (!port_arrangement) {
-      if (footprintPinCount === 0) {
-        throw new Error(
-          "port_arrangement/schPortArrangement is required when building a <bug /> without a footprint (footprint has no pins)"
-        )
-      }
-      port_arrangement = {
-        left_size: Math.floor(footprintPinCount / 2 + 0.500001),
-        right_size: Math.floor(footprintPinCount / 2),
-      }
+      throw new Error("port_arrangement is required when building a <bug />")
     }
 
     const pin_spacing =
       this.schematic_properties?.pin_spacing ?? DEFAULT_PIN_SPACING
+
     const extended_port_arrangement = {
       ...port_arrangement,
       pin_spacing: this.schematic_properties.pin_spacing,
+      schWidth: this.source_properties.schPortArrangement.schWidth,
     }
+
     const port_arrangement_size = getPortArrangementSize(
       extended_port_arrangement
     )
+
     const schematic_component: Soup.SchematicComponent = {
       type: "schematic_component",
       source_component_id,
       schematic_component_id,
       rotation: this.schematic_rotation ?? 0,
       size: {
-        width: port_arrangement_size.width - pin_spacing,
-        height: port_arrangement_size.height - pin_spacing,
+        width: port_arrangement_size.width,
+        height: port_arrangement_size.height,
       },
       center: this.schematic_position || { x: 0, y: 0 },
       ...this.schematic_properties,
@@ -122,20 +125,14 @@ export class BugBuilderClass
     const textElements: SchematicText[] = []
 
     // add ports based on port arrangement and give appropriate labels
-    let { port_labels } = this.schematic_properties
+    const { port_labels } = this.schematic_properties
+    const { total_ports } = port_arrangement_size
 
     if (!port_labels) {
-      if (footprintPinCount === 0) {
-        throw new Error(
-          "port_labels/pinLabels is required when building a <bug /> without a footprint (footprint has no pins)"
-        )
-      }
-
-      port_labels = footprintPinLabels
-      debug("inferring port_labels from footprint pin labels")
+      throw new Error("port_labels is required when building a <bug />")
     }
 
-    const port_indices = getPortIndices(port_arrangement)
+    const port_indices = getPortIndices(extended_port_arrangement)
     for (const pn of port_indices) {
       const portPosition = getPortPosition(extended_port_arrangement, pn)
       this.ports.addPort({
@@ -155,9 +152,7 @@ export class BugBuilderClass
           schematic_component_id,
           text: port_labels[pn],
           anchor: is_left ? "left" : "right",
-
           rotation: 0,
-
           position: {
             x: portPosition.x + (is_left ? 0.8 : -0.8) * pin_spacing,
             y: portPosition.y,
@@ -173,7 +168,6 @@ export class BugBuilderClass
           text: port_labels[pn],
           anchor: "right",
           rotation: Math.PI / 2,
-
           position: {
             x: portPosition.x,
             y: portPosition.y - 0.4,
@@ -189,7 +183,6 @@ export class BugBuilderClass
           text: port_labels[pn],
           anchor: "left",
           rotation: Math.PI / 2,
-
           position: {
             x: portPosition.x,
             y: portPosition.y + 0.4,
@@ -228,13 +221,6 @@ export class BugBuilderClass
     elements.push(pcb_component, ...footprint_elements)
 
     associatePcbPortsWithPads(elements)
-
-    // TODO use this standard method:
-    // matchPCBPortsWithFootprintAndMutate({
-    //   footprint_elements,
-    //   pcb_ports: elements.filter((elm) => elm.type === "pcb_port"),
-    //   source_ports: elements.filter((elm) => elm.type === "source_port"),
-    // } as any)
 
     elements.push(
       ...this._getCadElements({ source_component_id, pcb_component }, bc)

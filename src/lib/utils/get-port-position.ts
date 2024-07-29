@@ -26,6 +26,7 @@ export type PortArrangement = SideSizes | ExplicitPinMappingArrangement
 
 export type ExtendedPortArrangement = PortArrangement & {
   pin_spacing?: number
+  schWidth?: number
 }
 
 export const hasExplicitPinMapping = (
@@ -162,18 +163,22 @@ export const getPortArrangementSize = (
 
   const total_ports = top_size + right_size + bottom_size + left_size
 
-  const width = Math.max(
-    // MIN_SIDE_DIST is multiplied by the ratio of pin spacing to create more
-    // square-like bugs
+  const calculatedWidth = Math.max(
     MIN_SIDE_DIST * (pinSpacing / DEFAULT_PIN_SPACING),
     (top_size + 1) * pinSpacing,
     (bottom_size + 1) * pinSpacing
   )
+
+  const width =
+    port_arrangement.schWidth !== undefined
+      ? port_arrangement.schWidth
+      : calculatedWidth
   const height = Math.max(
     MIN_SIDE_DIST,
     (left_size + 1) * pinSpacing,
     (right_size + 1) * pinSpacing
   )
+
   return { width, height, total_ports }
 }
 
