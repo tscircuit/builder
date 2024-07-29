@@ -8,7 +8,7 @@ import type { Except } from "type-fest"
 import getPortPosition, {
   DEFAULT_PIN_SPACING,
   getPortArrangementSize,
-  getPortIndices
+  getPortIndices,
 } from "../../utils/get-port-position"
 import { associatePcbPortsWithPads } from "../footprint-builder/associate-pcb-ports-with-pads"
 import type { ProjectBuilder } from "../project-builder"
@@ -27,13 +27,14 @@ export interface BugBuilder extends BaseComponentBuilder<BugBuilder> {
     properties: Except<
       SourceSimpleBugInput,
       "type" | "source_component_id" | "ftype" | "name"
-    > & { name?: string, schWidth?: number }
+    > & { name?: string; schWidth?: number }
   ): BugBuilder
 }
 
 export class BugBuilderClass
   extends ComponentBuilderClass
-  implements BugBuilder {
+  implements BugBuilder
+{
   builder_type = "bug_builder" as const
 
   constructor(project_builder: ProjectBuilder) {
@@ -42,7 +43,12 @@ export class BugBuilderClass
       ...this.source_properties,
       ftype: "simple_bug",
     }
-    this.settable_schematic_properties.push("port_labels", "port_arrangement", "pin_spacing", "schWidth")
+    this.settable_schematic_properties.push(
+      "port_labels",
+      "port_arrangement",
+      "pin_spacing",
+      "schWidth"
+    )
   }
 
   setSourceProperties(props) {
@@ -94,7 +100,9 @@ export class BugBuilderClass
       schWidth: this.source_properties.schPortArrangement.schWidth,
     }
 
-    const port_arrangement_size = getPortArrangementSize(extended_port_arrangement)
+    const port_arrangement_size = getPortArrangementSize(
+      extended_port_arrangement
+    )
 
     const schematic_component: Soup.SchematicComponent = {
       type: "schematic_component",
@@ -206,7 +214,7 @@ export class BugBuilderClass
 
     const footprint_elements = await this.footprint.build(bc)
     for (const fe of footprint_elements) {
-      ; (fe as any).pcb_component_id = pcb_component_id
+      ;(fe as any).pcb_component_id = pcb_component_id
     }
 
     this._computeSizeOfPcbElement(pcb_component, footprint_elements as any)
