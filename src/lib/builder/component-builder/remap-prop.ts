@@ -15,6 +15,7 @@ export const remapProp = (prop: string, val: any): [string, any] => {
           right_side: val.rightSide,
           top_side: val.topSide,
           bottom_side: val.bottomSide,
+          schWidth: val.schWidth,
         }),
       ]
     case "pcbX":

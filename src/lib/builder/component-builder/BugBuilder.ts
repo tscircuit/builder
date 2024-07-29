@@ -8,15 +8,14 @@ import type { Except } from "type-fest"
 import getPortPosition, {
   DEFAULT_PIN_SPACING,
   getPortArrangementSize,
-  getPortIndices,
-  type PortArrangement,
+  getPortIndices
 } from "../../utils/get-port-position"
 import { associatePcbPortsWithPads } from "../footprint-builder/associate-pcb-ports-with-pads"
 import type { ProjectBuilder } from "../project-builder"
 import { transformSchematicElements } from "../transform-elements"
 import {
-  ComponentBuilderClass,
   type BaseComponentBuilder,
+  ComponentBuilderClass,
 } from "./ComponentBuilder"
 
 const debug = Debug("tscircuit:builder:bug-builder")
@@ -28,14 +27,13 @@ export interface BugBuilder extends BaseComponentBuilder<BugBuilder> {
     properties: Except<
       SourceSimpleBugInput,
       "type" | "source_component_id" | "ftype" | "name"
-    > & { name?: string; schWidth?: number }
+    > & { name?: string, schWidth?: number }
   ): BugBuilder
 }
 
 export class BugBuilderClass
   extends ComponentBuilderClass
-  implements BugBuilder
-{
+  implements BugBuilder {
   builder_type = "bug_builder" as const
 
   constructor(project_builder: ProjectBuilder) {
@@ -44,7 +42,7 @@ export class BugBuilderClass
       ...this.source_properties,
       ftype: "simple_bug",
     }
-    this.settable_schematic_properties.push("port_labels", "port_arrangement")
+    this.settable_schematic_properties.push("port_labels", "port_arrangement", "pin_spacing", "schWidth")
   }
 
   setSourceProperties(props) {
@@ -55,23 +53,12 @@ export class BugBuilderClass
     return this
   }
 
-  private adjustPortPositions(
-    portArrangement: any,
-    schWidth: number,
-    originalWidth: number
-  ) {
-    const scaleFactor = schWidth / originalWidth
-    const adjustedArrangement = { ...portArrangement }
-
-    for (const side in adjustedArrangement) {
-      if (side === "left" || side === "right") {
-        adjustedArrangement[side] = adjustedArrangement[side].map(
-          (y: number) => y * scaleFactor
-        )
-      }
+  setSchematicProperties(props) {
+    this.schematic_properties = {
+      ...this.schematic_properties,
+      ...props,
     }
-
-    return adjustedArrangement
+    return this
   }
 
   async build(bc): Promise<Type.AnyElement[]> {
@@ -100,23 +87,14 @@ export class BugBuilderClass
 
     const pin_spacing =
       this.schematic_properties?.pin_spacing ?? DEFAULT_PIN_SPACING
+
     const extended_port_arrangement = {
       ...port_arrangement,
       pin_spacing: this.schematic_properties.pin_spacing,
+      schWidth: this.source_properties.schPortArrangement.schWidth,
     }
-    const port_arrangement_size = getPortArrangementSize(
-      extended_port_arrangement
-    )
 
-    const schWidth =
-      this.source_properties.schWidth ||
-      port_arrangement_size.width - pin_spacing
-    const originalWidth = port_arrangement_size.width - pin_spacing
-    const adjustedPortArrangement = this.adjustPortPositions(
-      port_arrangement,
-      schWidth,
-      originalWidth
-    )
+    const port_arrangement_size = getPortArrangementSize(extended_port_arrangement)
 
     const schematic_component: Soup.SchematicComponent = {
       type: "schematic_component",
@@ -124,8 +102,8 @@ export class BugBuilderClass
       schematic_component_id,
       rotation: this.schematic_rotation ?? 0,
       size: {
-        width: schWidth,
-        height: port_arrangement_size.height - pin_spacing,
+        width: port_arrangement_size.width,
+        height: port_arrangement_size.height,
       },
       center: this.schematic_position || { x: 0, y: 0 },
       ...this.schematic_properties,
@@ -146,15 +124,9 @@ export class BugBuilderClass
       throw new Error("port_labels is required when building a <bug />")
     }
 
-    const port_indices = getPortIndices(adjustedPortArrangement)
+    const port_indices = getPortIndices(extended_port_arrangement)
     for (const pn of port_indices) {
-      const portPosition = getPortPosition(
-        {
-          ...adjustedPortArrangement,
-          pin_spacing: this.schematic_properties.pin_spacing,
-        },
-        pn
-      )
+      const portPosition = getPortPosition(extended_port_arrangement, pn)
       this.ports.addPort({
         name: port_labels[pn],
         pin_number: pn,
@@ -234,20 +206,13 @@ export class BugBuilderClass
 
     const footprint_elements = await this.footprint.build(bc)
     for (const fe of footprint_elements) {
-      ;(fe as any).pcb_component_id = pcb_component_id
+      ; (fe as any).pcb_component_id = pcb_component_id
     }
 
     this._computeSizeOfPcbElement(pcb_component, footprint_elements as any)
     elements.push(pcb_component, ...footprint_elements)
 
     associatePcbPortsWithPads(elements)
-
-    // TODO use this standard method:
-    // matchPCBPortsWithFootprintAndMutate({
-    //   footprint_elements,
-    //   pcb_ports: elements.filter((elm) => elm.type === "pcb_port"),
-    //   source_ports: elements.filter((elm) => elm.type === "source_port"),
-    // } as any)
 
     elements.push(
       ...this._getCadElements({ source_component_id, pcb_component }, bc)

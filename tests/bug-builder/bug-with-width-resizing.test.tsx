@@ -28,6 +28,7 @@ test("bug with width resizing", async (t) => {
             schPortArrangement: {
               leftSize: 4,
               rightSize: 4,
+              schWidth: 2,
             },
             pcbRotation: "90deg",
             cadModel: {
@@ -37,7 +38,6 @@ test("bug with width resizing", async (t) => {
             footprint: "soic8_w7.2mm",
             pcbX: 3,
             pcbY: 3,
-            schWidth: 1,
           })
         )
     )
