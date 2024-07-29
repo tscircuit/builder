@@ -44,7 +44,6 @@ export function solveForSingleLayerRoute(
           y: point.y,
           start_pcb_port_id: ctx.pcb_terminal_port_ids[0],
           end_pcb_port_id: ctx.pcb_terminal_port_ids[1],
-          // TODO add start_pcb_port_id & end_pcb_port_id
         })
       }
       return route
