@@ -11,7 +11,7 @@ export const getTestFixture = (t: ExecutionContext) => {
   return {
     logSoup: (soup: AnySoupElement[]) => logLayout(t.title, soup),
     pb: createProjectBuilder(),
-    schematicSnapshot: (soup: AnySoupElement[]) =>
-      schematicSnapshotOutput(soup),
+    schematicSnapshot: (fileName: string, soup: AnySoupElement[]) =>
+      schematicSnapshotOutput(fileName, soup),
   }
 }
