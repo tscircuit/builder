@@ -25,7 +25,7 @@ export const writeSchematicSnapshotPng = async (
 
   const snapshotPath = path.join(
     snapshotDir,
-    `${fileNameWithoutSpaces}.snapshot.png`
+    `${fileNameWithoutSpaces}-sch.snapshot.png`
   )
   await writeFile(snapshotPath, pngBuffer)
 }
