@@ -25,7 +25,7 @@ export const writePcbSnapshotPng = async (
 
   const snapshotPath = path.join(
     snapshotDir,
-    `${fileNameWithoutSpaces}.snapshot.png`
+    `${fileNameWithoutSpaces}-pcb.snapshot.png`
   )
   await writeFile(snapshotPath, pngBuffer)
 }
