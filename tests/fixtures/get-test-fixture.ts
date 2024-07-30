@@ -4,6 +4,7 @@ import test from "ava"
 import { createProjectBuilder } from "../../src"
 import { logLayout } from "../utils/log-layout"
 import { writeSchematicSnapshotPng } from "./schematic-snapshot-output"
+import { writePcbSnapshotPng } from "./pcb-snapshot-output"
 
 /**
  * Consolidates common test functions and components for simpler test definition
@@ -14,5 +15,7 @@ export const getTestFixture = (t: ExecutionContext<unknown>) => {
     pb: createProjectBuilder(),
     writeSchematicSnapshotPng: (soup: AnySoupElement[]) =>
       writeSchematicSnapshotPng(t.title, soup, test.meta.file),
+    writePcbSnapshotPng: (soup: AnySoupElement[]) =>
+      writePcbSnapshotPng(t.title, soup, test.meta.file),
   }
 }
