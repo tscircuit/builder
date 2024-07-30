@@ -2,7 +2,7 @@ import test from "ava"
 import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
 test("multi-layer route 2", async (t) => {
-  const { pb, logSoup, writeSchematicSnapshotPng } = await getTestFixture(t)
+  const { pb, logSoup, writePcbSnapshotPng } = await getTestFixture(t)
 
   const soup = await pb
     .add("resistor", (rb) =>
@@ -48,7 +48,7 @@ test("multi-layer route 2", async (t) => {
     )
     .build()
 
-  await writeSchematicSnapshotPng(soup)
+  await writePcbSnapshotPng(soup)
   await logSoup(soup)
   t.is(
     soup.filter((s) => s.type.includes("error")).length,
