@@ -12,7 +12,7 @@ export const writePcbSnapshotPng = async (
   const pngBuffer = circuitToPng(circuit, "pcb")
   const fileNameWithoutSpaces = fileName.replaceAll(" ", "-")
 
-  const filePath =  fileURLToPath(dirName)
+  const filePath = fileURLToPath(dirName)
   const directoryPath = path.dirname(filePath)
   const snapshotDir = path.join(directoryPath, "__snapshots__")
 

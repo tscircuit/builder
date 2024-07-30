@@ -12,7 +12,7 @@ export const writeSchematicSnapshotPng = async (
   const pngBuffer = circuitToPng(circuit, "schematic")
   const fileNameWithoutSpaces = fileName.replaceAll(" ", "-")
 
-  const filePath =  fileURLToPath(dirName)
+  const filePath = fileURLToPath(dirName)
   const directoryPath = path.dirname(filePath)
   const snapshotDir = path.join(directoryPath, "__snapshots__")
 
