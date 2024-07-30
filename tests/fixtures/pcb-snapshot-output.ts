@@ -2,6 +2,7 @@ import type { AnySoupElement } from "@tscircuit/soup"
 import { circuitToPng } from "circuit-to-png"
 import { mkdir, writeFile } from "node:fs/promises"
 import path from "node:path"
+import { fileURLToPath } from "node:url"
 
 export const writePcbSnapshotPng = async (
   fileName: string,
@@ -10,9 +11,9 @@ export const writePcbSnapshotPng = async (
 ) => {
   const pngBuffer = circuitToPng(circuit, "pcb")
   const fileNameWithoutSpaces = fileName.replaceAll(" ", "-")
-  const directoryPath = dirName
-    .split(`/${fileNameWithoutSpaces}`)[0]
-    .replace(/^file:\/\//, "")
+
+  const filePath = fileURLToPath(dirName)
+  const directoryPath = path.dirname(filePath)
   const snapshotDir = path.join(directoryPath, "__snapshots__")
 
   try {
