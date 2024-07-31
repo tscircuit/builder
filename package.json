@@ -26,7 +26,7 @@
     "@tscircuit/footprinter": "^0.0.44",
     "@tscircuit/log-soup": "^1.0.2",
     "@tscircuit/props": "^0.0.21",
-    "@tscircuit/soup": "^0.0.38",
+    "@tscircuit/soup": "^0.0.46",
     "@tscircuit/soup-util": "^0.0.13",
     "@types/node": "^22.0.0",
     "ava": "^4.3.3",
