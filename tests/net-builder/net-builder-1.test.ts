@@ -3,11 +3,11 @@ import { su } from "@tscircuit/soup-util"
 import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
 test("net builder 1", async (t) => {
-  const { pb, logSoup } = await getTestFixture(t)
+  const { pb, logSoup, writePcbSnapshotPng } = await getTestFixture(t)
 
   const soup = await pb
     .add("resistor", (rb) => rb.setProps({ resistance: 100, name: "R1" }))
-    .add("net", (nb) => nb.setProps({ name: "N1" }))
+    .add("net", (nb) => nb.setProps({ name: "N1", trace_width: 0.2 }))
     .add("trace", (tb) => tb.setProps({ from: ".R1 > .right", to: "net.N1" }))
     .build()
 
@@ -29,5 +29,6 @@ test("net builder 1", async (t) => {
 
   t.truthy(trace)
 
+  await writePcbSnapshotPng(soup)
   await logSoup(soup)
 })
