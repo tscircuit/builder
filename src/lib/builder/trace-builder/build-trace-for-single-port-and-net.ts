@@ -1,6 +1,5 @@
 import type {
   AnySoupElement,
-  PcbRouteHint,
   SchematicNetLabel,
   SchematicTrace,
   SourceNet,
@@ -8,11 +7,11 @@ import type {
   SourceTrace,
 } from "@tscircuit/soup"
 import { su } from "@tscircuit/soup-util"
+import Debug from "debug"
 import type { BuildContext } from "lib/types"
 import { directionToVec, oppositeSide } from "lib/utils"
-import { buildPcbTraceElements } from "./build-pcb-trace-elements"
 import { isTruthy } from "lib/utils/is-truthy"
-import Debug from "debug"
+import { buildPcbTraceElements } from "./build-pcb-trace-elements"
 
 const debug = Debug("tscircuit:builder:trace-builder")
 
@@ -109,7 +108,7 @@ export const buildTraceForSinglePortAndNet = (
     new Set([source_port.source_port_id, ...source_port_ids_in_net])
   )
 
-  let pcb_elements: AnySoupElement[] = []
+  const pcb_elements: AnySoupElement[] = []
   debug("source_port_ids_in_route", source_port_ids_in_route)
   if (source_port_ids_in_route.length > 1) {
     const source_ports_in_route = source_port_ids_in_route
@@ -121,7 +120,7 @@ export const buildTraceForSinglePortAndNet = (
         elements: params.parent_elements,
         source_trace_id,
         pcb_route_hints: [],
-        thickness: 0.1,
+        thickness: source_net.trace_width ?? 0.1,
         source_ports_in_route,
       },
       bc
