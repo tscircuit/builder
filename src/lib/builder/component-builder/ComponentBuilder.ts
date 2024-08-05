@@ -1,12 +1,12 @@
 import type { ComponentProps } from "@tscircuit/props"
 import type {
+  AnySoupElement,
   CadComponent,
   PCBComponent,
-  SupplierName,
+  Point,
   SchematicComponent,
   SourcePort,
-  AnySoupElement,
-  Point,
+  SupplierName,
 } from "@tscircuit/soup"
 import {
   createPortsBuilder,
@@ -205,18 +205,25 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
 
     for (const [prop_key, prop_val] of Object.entries(props)) {
       const point = maybeConvertToPoint(prop_val)
-
-      if (prop_key === "schematic_x" && "schematic_y" in props) {
-        this.setSchematicCenter(prop_val, props.schematic_y)
-      } else if (prop_key === "sch_x" && "sch_y" in props) {
-        this.setSchematicCenter(prop_val, props.sch_y)
-      } else if (prop_key === "cx" && "cy" in props) {
-        this.setSchematicCenter(prop_val, props.cy)
-      } else if (
-        (prop_key === "schematic_center" || prop_key === "center") &&
-        point
+      if (
+        prop_key === "schematic_x" ||
+        prop_key === "sch_x" ||
+        prop_key === "cx" ||
+        prop_key === "x"
       ) {
-        this.setSchematicCenter(point.x, point.y)
+        this.setSchematicCenter(prop_val, this.schematic_position?.y)
+      } else if (
+        prop_key === "schematic_y" ||
+        prop_key === "sch_y" ||
+        prop_key === "cy" ||
+        prop_key === "y"
+      ) {
+        this.setSchematicCenter(this.schematic_position?.x, prop_val)
+      } else if (prop_key === "schematic_center" || prop_key === "center") {
+        const point = maybeConvertToPoint(prop_val)
+        if (point) {
+          this.setSchematicCenter(point.x, point.y)
+        }
       } else if (prop_key === "x" && "y" in props) {
         this.setSchematicCenter(prop_val, props.y)
       } else if (prop_key === "pcb_x" && "pcb_y" in props) {
@@ -292,7 +299,20 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
   }
 
   setSchematicCenter(x, y) {
-    this.schematic_position = { x, y }
+    if (x !== undefined) {
+      this.schematic_position = {
+        ...(this.schematic_position || {}),
+        x,
+      }
+    }
+
+    if (y !== undefined) {
+      this.schematic_position = {
+        ...(this.schematic_position || {}),
+        y,
+      }
+    }
+
     return this
   }
 
