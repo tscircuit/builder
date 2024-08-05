@@ -305,14 +305,14 @@ export class ComponentBuilderClass implements GenericComponentBuilder {
         x,
       }
     }
-  
+
     if (y !== undefined) {
       this.schematic_position = {
         ...(this.schematic_position || {}),
         y,
       }
     }
-  
+
     return this
   }
 

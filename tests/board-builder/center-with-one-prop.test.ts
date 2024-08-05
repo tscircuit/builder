@@ -14,7 +14,7 @@ test("Center with one prop", async (t) => {
         port_labels: {
           1: "A",
           2: "B",
-          3: "C"
+          3: "C",
         },
         schPortArrangement: {
           leftSide: {
@@ -33,7 +33,7 @@ test("Center with one prop", async (t) => {
         schPinLabels: {
           1: "A",
           2: "B",
-          3: "C"
+          3: "C",
         },
         cadModel: {
           rotationOffset: { x: 0, y: 0, z: 180 },
@@ -85,7 +85,9 @@ test("Center with one prop", async (t) => {
         .labelPort(2, "GND")
         .setSchematicCenter(-3, 0)
     )
-    .add("trace", (tb) => tb.setProps({ from: ".U2 > .GND", to: ".C1 > .left" }))
+    .add("trace", (tb) =>
+      tb.setProps({ from: ".U2 > .GND", to: ".C1 > .left" })
+    )
     .add("trace", (tb) => tb.setProps({ from: ".U2 > .PWRIN", to: ".U1 > .C" }))
     .build()
 
