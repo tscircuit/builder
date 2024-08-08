@@ -297,7 +297,10 @@ export const createTraceBuilder = (
 
     const pcb_elements: AnySoupElement[] = []
 
-    if (!bc.routing_disabled) {
+    if (bc.routing_disabled) {
+      debug("skipping pcb trace building (routing disabled)")
+    } else {
+      debug("building pcb trace elements")
       const { pcb_trace, pcb_vias, pcb_errors } = buildPcbTraceElements(
         {
           elements: parent_elements,
