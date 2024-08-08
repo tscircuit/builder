@@ -23,7 +23,7 @@ export const buildTraceForSinglePortAndNet = (
     thickness: number | string
     pcb_route_hints: any[]
   },
-  bc: BuildContext
+  bc: BuildContext,
 ): AnySoupElement[] => {
   const { source_port, source_net } = params
 
@@ -105,12 +105,12 @@ export const buildTraceForSinglePortAndNet = (
   // HACK: Connect to all ports in net (not really the best solution...)
   // TODO check if already connected
   const source_port_ids_in_route = Array.from(
-    new Set([source_port.source_port_id, ...source_port_ids_in_net])
+    new Set([source_port.source_port_id, ...source_port_ids_in_net]),
   )
 
   const pcb_elements: AnySoupElement[] = []
   debug("source_port_ids_in_route", source_port_ids_in_route)
-  if (source_port_ids_in_route.length > 1) {
+  if (source_port_ids_in_route.length > 1 && !bc.routing_disabled) {
     const source_ports_in_route = source_port_ids_in_route
       .map((id) => su(params.parent_elements).source_port.get(id))
       .filter(isTruthy)
@@ -123,7 +123,7 @@ export const buildTraceForSinglePortAndNet = (
         thickness: source_net.trace_width ?? 0.1,
         source_ports_in_route,
       },
-      bc
+      bc,
     )
 
     pcb_elements.push(...pcb_errors, ...pcb_vias, pcb_trace)

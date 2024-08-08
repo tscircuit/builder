@@ -30,7 +30,7 @@ export const getGroupAddables = () =>
     group: createGroupBuilder,
     trace_hint: createTraceHintBuilder,
     net: createNetBuilder,
-  } as const)
+  }) as const
 
 export type GroupBuilderAddables = ReturnType<typeof getGroupAddables>
 
@@ -43,33 +43,33 @@ export interface GroupBuilder {
   setName: (name: string) => GroupBuilder
   setProps: (props: any) => GroupBuilder
   appendChild(
-    child: CB.ComponentBuilder | GroupBuilder | TraceBuilder
+    child: CB.ComponentBuilder | GroupBuilder | TraceBuilder,
   ): GroupBuilder
   addGroup(
-    groupBuilderCallback: GroupBuilderCallback | GroupBuilder
+    groupBuilderCallback: GroupBuilderCallback | GroupBuilder,
   ): GroupBuilder
   addComponent(
-    componentBuilderCallback: CB.GenericComponentBuilderCallback
+    componentBuilderCallback: CB.GenericComponentBuilderCallback,
   ): GroupBuilder
   addResistor(resistorBuilderCallback: CB.ResistorBuilderCallback): GroupBuilder
   addCapacitor(
-    capacitorBuilderCallback: CB.CapacitorBuilderCallback
+    capacitorBuilderCallback: CB.CapacitorBuilderCallback,
   ): GroupBuilder
   addDiode(diodeBuilderCallback: CB.DiodeBuilderCallback): GroupBuilder
   addBug(bugBuilderCallback: CB.BugBuilderCallback): GroupBuilder
   addPowerSource(
-    powerSourceBuilderCallback: CB.PowerSourceBuilderCallback
+    powerSourceBuilderCallback: CB.PowerSourceBuilderCallback,
   ): GroupBuilder
   addInductor(
-    powerSourceBuilderCallback: CB.InductorBuilderCallback
+    powerSourceBuilderCallback: CB.InductorBuilderCallback,
   ): GroupBuilder
   addGround(groundBuilderCallback: CB.GroundBuilderCallback): GroupBuilder
   addTrace: (
-    traceBuiderCallback: TraceBuilderCallback | string[]
+    traceBuiderCallback: TraceBuilderCallback | string[],
   ) => GroupBuilder
   add<T extends keyof GroupBuilderAddables>(
     builder_type: T,
-    callback: (builder: ReturnType<GroupBuilderAddables[T]>) => unknown
+    callback: (builder: ReturnType<GroupBuilderAddables[T]>) => unknown,
   ): GroupBuilder
   build(build_context: Type.BuildContext): Promise<Type.AnyElement[]>
 }
@@ -113,7 +113,7 @@ export class GroupBuilderClass implements GroupBuilder {
       //   CB
       // )
       throw new Error(
-        `No addable in group builder for builder_type: "${new_builder_type}"`
+        `No addable in group builder for builder_type: "${new_builder_type}"`,
       )
     }
     const new_builder = this.addables[new_builder_type](this.project_builder)
@@ -153,7 +153,7 @@ export class GroupBuilderClass implements GroupBuilder {
       ].includes(child.builder_type)
     ) {
       throw new Error(
-        `Schematic primitives can't be added to a group builder (try adding to a component)`
+        `Schematic primitives can't be added to a group builder (try adding to a component)`,
       )
     }
 
@@ -173,7 +173,7 @@ export class GroupBuilderClass implements GroupBuilder {
       this.components.push(child as any)
     } else {
       throw new Error(
-        `Unknown builder type for appendChild: "${child.builder_type}"`
+        `Unknown builder type for appendChild: "${child.builder_type}"`,
       )
     }
     return this
@@ -221,10 +221,10 @@ export class GroupBuilderClass implements GroupBuilder {
   async build(bc: Type.BuildContext): Promise<Type.AnyElement[]> {
     let elements: Type.AnyElement[] = []
     elements.push(
-      ..._.flatten(await Promise.all(this.groups.map((g) => g.build(bc))))
+      ..._.flatten(await Promise.all(this.groups.map((g) => g.build(bc)))),
     )
     elements.push(
-      ..._.flatten(await Promise.all(this.components.map((c) => c.build(bc))))
+      ..._.flatten(await Promise.all(this.components.map((c) => c.build(bc)))),
     )
 
     const routingDisabled = this.routingDisabled || false
@@ -235,8 +235,8 @@ export class GroupBuilderClass implements GroupBuilder {
 
     elements.push(
       ..._.flatten(
-        await Promise.all(this.trace_hints.map((c) => c.build(elements, bc)))
-      )
+        await Promise.all(this.trace_hints.map((c) => c.build(elements, bc))),
+      ),
     )
 
     // Find any inferred nets from trace paths that aren't represented
@@ -247,19 +247,19 @@ export class GroupBuilderClass implements GroupBuilder {
       implicit_net_names.push(
         ...trace_net_names.filter(
           (n) =>
-            !explicit_net_names.includes(n) && !implicit_net_names.includes(n)
-        )
+            !explicit_net_names.includes(n) && !implicit_net_names.includes(n),
+        ),
       )
     }
 
     const implicit_net_builders = implicit_net_names.map((n) =>
-      createNetBuilder(this.project_builder).setProps({ name: n })
+      createNetBuilder(this.project_builder).setProps({ name: n }),
     )
 
     elements.push(
       ..._.flatten(
-        this.nets.concat(implicit_net_builders).map((n) => n.build(bc))
-      )
+        this.nets.concat(implicit_net_builders).map((n) => n.build(bc)),
+      ),
     )
 
     // TODO parallelize by dependency (don't do traces with the same net at the
@@ -281,7 +281,7 @@ export class GroupBuilderClass implements GroupBuilder {
             conn === `net.${net.props.name}`
           ) {
             net_name_to_source_port_ids[net.props.name!].push(
-              ...source_ports_in_route.map((p) => p.source_port_id!)
+              ...source_ports_in_route.map((p) => p.source_port_id!),
             )
           }
         }
@@ -289,16 +289,17 @@ export class GroupBuilderClass implements GroupBuilder {
     }
     bc.source_ports_for_nets_in_group = net_name_to_source_port_ids
 
+    const ogRoutingDisabled = bc.routing_disabled
+    bc.routing_disabled = this.routingDisabled
     for (const trace of this.traces) {
       const traceElements = await trace.build(elements, bc)
       elements.push(
         ...traceElements.filter(
-          (el) =>
-            !routingDisabled ||
-            (el.type !== "pcb_trace" && el.type !== "pcb_via")
-        )
+          (el) => el.type !== "pcb_trace" && el.type !== "pcb_via",
+        ),
       )
     }
+    bc.routing_disabled = ogRoutingDisabled
 
     return elements
   }
@@ -308,7 +309,7 @@ export class GroupBuilderClass implements GroupBuilder {
  * This uses an old construction pattern that's been tested.
  */
 export function createGroupBuilder(
-  project_builder?: ProjectBuilder
+  project_builder?: ProjectBuilder,
 ): GroupBuilder {
   const gb = new GroupBuilderClass(project_builder)
   return gb
