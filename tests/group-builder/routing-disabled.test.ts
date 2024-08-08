@@ -4,20 +4,19 @@ import test from "ava"
 test("group builder with routingDisabled", async (t) => {
   const project = createProjectBuilder()
 
-  const group = project.addGroup((g) => {
-    g.setProps({ routingDisabled: true })
+  project.setProps({ routingDisabled: true })
+  const g = project
 
-    g.addResistor((r) => {
-      r.setProps({ resistance: "1kohm", name: "R1" })
-    })
+  g.addResistor((r) => {
+    r.setProps({ resistance: "1kohm", name: "R1" })
+  })
 
-    g.addCapacitor((c) => {
-      c.setProps({ capacitance: "10uF", name: "C1" })
-    })
+  g.addCapacitor((c) => {
+    c.setProps({ capacitance: "10uF", name: "C1" })
+  })
 
-    g.addTrace((t) => {
-      t.addConnections([".R1 > .left", ".C1 > .left"])
-    })
+  g.addTrace((t) => {
+    t.addConnections([".R1 > .left", ".C1 > .left"])
   })
 
   const elements = await project.build()
