@@ -295,24 +295,23 @@ export const createTraceBuilder = (
       edges,
     }
 
-    const { pcb_trace, pcb_vias, pcb_errors } = buildPcbTraceElements(
-      {
-        elements: parent_elements,
-        source_ports_in_route,
-        source_trace_id,
-        thickness: internal.thickness,
-        pcb_route_hints: internal.pcb_route_hints,
-      },
-      bc
-    )
+    const pcb_elements: AnySoupElement[] = []
 
-    return [
-      source_trace,
-      schematic_trace,
-      pcb_trace,
-      ...pcb_vias,
-      ...pcb_errors,
-    ] as Type.AnyElement[]
+    if (!bc.routing_disabled) {
+      const { pcb_trace, pcb_vias, pcb_errors } = buildPcbTraceElements(
+        {
+          elements: parent_elements,
+          source_ports_in_route,
+          source_trace_id,
+          thickness: internal.thickness,
+          pcb_route_hints: internal.pcb_route_hints,
+        },
+        bc
+      )
+      pcb_elements.push(...pcb_vias, ...pcb_errors, pcb_trace)
+    }
+
+    return [source_trace, schematic_trace, ...pcb_elements] as Type.AnyElement[]
   }
 
   return builder

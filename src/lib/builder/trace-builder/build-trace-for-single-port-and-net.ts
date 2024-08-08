@@ -110,7 +110,7 @@ export const buildTraceForSinglePortAndNet = (
 
   const pcb_elements: AnySoupElement[] = []
   debug("source_port_ids_in_route", source_port_ids_in_route)
-  if (source_port_ids_in_route.length > 1) {
+  if (source_port_ids_in_route.length > 1 && !bc.routing_disabled) {
     const source_ports_in_route = source_port_ids_in_route
       .map((id) => su(params.parent_elements).source_port.get(id))
       .filter(isTruthy)

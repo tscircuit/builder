@@ -22,6 +22,8 @@ export type BuildContext = {
 
   board_thickness?: number
 
+  routing_disabled?: boolean
+
   source_ports_for_nets_in_group?: Record<string, string[]>
 
   parent?: BuildContext
