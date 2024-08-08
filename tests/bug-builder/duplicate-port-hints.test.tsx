@@ -1,33 +1,31 @@
-import test from "ava";
-import { getTestFixture } from "../fixtures/get-test-fixture"; 
+import test from "ava"
+import { getTestFixture } from "../fixtures/get-test-fixture"
+import { su } from "@tscircuit/soup-util"
 
 test("replicate duplicate port hints issue", async (t) => {
-  try {
-    const { logSoup, pb } = await getTestFixture(t);
+  const { logSoup, pb } = await getTestFixture(t)
 
-    const soup = await pb
-      .add("bug", (cb) => {
-        cb.setProps({ footprint: "soic8" });
-      })
-      .build();
+  const soup = await pb
+    .add("bug", (cb) => {
+      cb.setProps({ footprint: "soic8" })
+    })
+    .build()
 
-    const su = require("@tscircuit/soup-util");
+  const sourcePorts = su(soup).source_port.list()
 
-    const sourcePorts = su(soup).source_port.list();
-
-    sourcePorts.forEach((port) => {
-      const portHintsSet = new Set(port.port_hints);
+  sourcePorts.forEach((port) => {
+    if (port.port_hints) {
+      const portHintsSet = new Set(port.port_hints)
 
       t.is(
         port.port_hints.length,
         portHintsSet.size,
         `Duplicate hints found in port ${port.name}`
-      );
-    });
+      )
+    } else {
+      t.fail(`port_hints is undefined for port ${port.name}`)
+    }
+  })
 
-    await logSoup(soup);
-  } catch (error) {
-    console.error("Error in test:", error);
-    t.fail(`Test failed due to error: ${error.message}`);
-  }
-});
+  await logSoup(soup)
+})
