@@ -290,14 +290,12 @@ export class GroupBuilderClass implements GroupBuilder {
     bc.source_ports_for_nets_in_group = net_name_to_source_port_ids
 
     const ogRoutingDisabled = bc.routing_disabled
-    bc.routing_disabled = this.routingDisabled
+    if (this.routingDisabled !== undefined) {
+      bc.routing_disabled = this.routingDisabled
+    }
     for (const trace of this.traces) {
       const traceElements = await trace.build(elements, bc)
-      elements.push(
-        ...traceElements.filter(
-          (el) => el.type !== "pcb_trace" && el.type !== "pcb_via",
-        ),
-      )
+      elements.push(...traceElements)
     }
     bc.routing_disabled = ogRoutingDisabled
 
