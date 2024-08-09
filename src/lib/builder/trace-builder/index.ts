@@ -216,7 +216,7 @@ export const createTraceBuilder = (
     // ----------------------------
     // SCHEMATIC ROUTING
     // ----------------------------
-
+    debug("start: building schematic trace")
     const schematic_trace_id = builder.project_builder.getId("schematic_trace")
 
     const schematicTerminals = source_ports_in_route.map((sp) => {
@@ -270,23 +270,31 @@ export const createTraceBuilder = (
 
     let edges: Type.RouteEdge[]
 
-    if (schematic_route_hints.length === 0) {
-      edges = await internal.routeSolver({
-        terminals: schematicTerminals,
+    if (!bc.routing_disabled) {
+      debug("solving for schematic routes")
+      if (schematic_route_hints.length === 0) {
+        edges = await internal.routeSolver({
+          terminals: schematicTerminals,
+          obstacles: schematic_obstacles,
+        })
+      } else {
+        edges = (
+          await Promise.all(
+            pairs(ordered_terminals).map(([a, b]) =>
+              internal.routeSolver({
+                terminals: [a, b],
+                obstacles: schematic_obstacles,
+              }),
+            ),
+          )
+        ).reduce((all_edges, edges_arr) => all_edges.concat(edges_arr), [])
+      }
+    } else {
+      debug("routing disabled, using straight route solver")
+      edges = await straightRouteSolver({
+        terminals: ordered_terminals,
         obstacles: schematic_obstacles,
       })
-    } else {
-      debug("solving for schematic routes")
-      edges = (
-        await Promise.all(
-          pairs(ordered_terminals).map(([a, b]) =>
-            internal.routeSolver({
-              terminals: [a, b],
-              obstacles: schematic_obstacles,
-            }),
-          ),
-        )
-      ).reduce((all_edges, edges_arr) => all_edges.concat(edges_arr), [])
     }
 
     const schematic_trace: SchematicTrace = {
@@ -295,6 +303,7 @@ export const createTraceBuilder = (
       schematic_trace_id,
       edges,
     }
+    debug("done building schematic trace")
 
     const pcb_elements: AnySoupElement[] = []
 
