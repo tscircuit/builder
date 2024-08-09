@@ -50,7 +50,7 @@ export interface TraceBuilder {
   }
   build(
     elements: Type.AnyElement[],
-    bc: Type.BuildContext,
+    bc: Type.BuildContext
   ): Promise<Type.AnyElement[]>
 }
 
@@ -60,7 +60,7 @@ export interface PCBRouteHint extends InputPoint {
 }
 
 export const createTraceBuilder = (
-  project_builder: ProjectBuilder,
+  project_builder: ProjectBuilder
 ): TraceBuilder => {
   const builder: TraceBuilder = {
     project_builder,
@@ -88,8 +88,8 @@ export const createTraceBuilder = (
         routeSolver === "route1"
           ? portOffsetWrapper(route1Solver)
           : routeSolver === "straight"
-            ? straightRouteSolver
-            : portOffsetWrapper(route1Solver) // TODO default to rmstOrRoute1Solver
+          ? straightRouteSolver
+          : portOffsetWrapper(route1Solver) // TODO default to rmstOrRoute1Solver
     }
     internal.routeSolver = portOffsetWrapper(routeSolver as any) as any
     return builder
@@ -123,7 +123,7 @@ export const createTraceBuilder = (
   }
 
   builder.getSourcePortsAndNetsInRoute = (
-    parent_elements: Type.AnyElement[],
+    parent_elements: Type.AnyElement[]
   ) => {
     const source_ports_in_route: SourcePort[] = []
     const source_nets_in_route: SourceNet[] = []
@@ -156,7 +156,7 @@ export const createTraceBuilder = (
                 message: `non-source_port "${JSON.stringify(
                   selectedElm,
                   null,
-                  "  ",
+                  "  "
                 )}" selected by selector "${portSelector}" `,
                 ...extractIds(selectedElm),
               },
@@ -175,7 +175,7 @@ export const createTraceBuilder = (
 
   builder.build = async (
     parent_elements: AnySoupElement[],
-    bc: Type.BuildContext,
+    bc: Type.BuildContext
   ) => {
     debug("start: building trace")
     const { source_ports_in_route, source_nets_in_route, source_errors } =
@@ -199,7 +199,7 @@ export const createTraceBuilder = (
           pcb_route_hints: internal.pcb_route_hints,
           parent_elements,
         },
-        bc,
+        bc
       )
     }
 
@@ -208,7 +208,7 @@ export const createTraceBuilder = (
       type: "source_trace",
       source_trace_id,
       connected_source_port_ids: source_ports_in_route.map(
-        (sp) => sp.source_port_id,
+        (sp) => sp.source_port_id
       ),
       connected_source_net_ids: [],
     }
@@ -223,11 +223,11 @@ export const createTraceBuilder = (
       const schematic_port = parent_elements.find(
         (elm) =>
           elm.type === "schematic_port" &&
-          elm.source_port_id === sp.source_port_id,
+          elm.source_port_id === sp.source_port_id
       ) as SchematicPort | null
       if (!schematic_port)
         throw new Error(
-          `Missing schematic_port for source_port "${sp.source_port_id}"`,
+          `Missing schematic_port for source_port "${sp.source_port_id}"`
         )
       return {
         x: schematic_port.center.x,
@@ -241,22 +241,22 @@ export const createTraceBuilder = (
       parent_elements,
       {
         excluded_schematic_port_ids: schematicTerminals.map(
-          (t) => t.schematic_port_id,
+          (t) => t.schematic_port_id
         ),
-      },
+      }
     )
 
     // TODO search for <routehint /> in soup, then construct a routehints array
 
     const schematic_route_hints = (internal.schematic_route_hints ?? []).map(
-      (p) => bc.convert(p as any),
+      (p) => bc.convert(p as any)
     )
 
     let ordered_terminals = schematicTerminals
 
     if (schematicTerminals.length !== 2 && schematic_route_hints.length > 0) {
       throw new Error(
-        "Schematic route hints currently aren't supported for traces with more than 2 terminals",
+        "Schematic route hints currently aren't supported for traces with more than 2 terminals"
       )
     }
 
@@ -284,8 +284,8 @@ export const createTraceBuilder = (
               internal.routeSolver({
                 terminals: [a, b],
                 obstacles: schematic_obstacles,
-              }),
-            ),
+              })
+            )
           )
         ).reduce((all_edges, edges_arr) => all_edges.concat(edges_arr), [])
       }
@@ -319,7 +319,7 @@ export const createTraceBuilder = (
           thickness: internal.thickness,
           pcb_route_hints: internal.pcb_route_hints,
         },
-        bc,
+        bc
       )
       pcb_elements.push(...pcb_vias, ...pcb_errors, pcb_trace)
     }
