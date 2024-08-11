@@ -13,10 +13,7 @@ test("replicate duplicate port hints issue", async (t) => {
 
   const sourcePorts = su(soup).source_port.list()
 
-  console.log("All source ports:", JSON.stringify(sourcePorts, null, 2))
-
   sourcePorts.forEach((port) => {
-    console.log(`Port ${port.name} hints:`, port.port_hints)
     if (port.port_hints) {
       const portHintsSet = new Set(port.port_hints)
 
