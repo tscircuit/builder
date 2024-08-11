@@ -138,10 +138,11 @@ export class BugBuilderClass
     const port_indices = getPortIndices(port_arrangement)
     for (const pn of port_indices) {
       const portPosition = getPortPosition(extended_port_arrangement, pn)
+      const port_hints = [...new Set([port_labels[pn], pn.toString()])]
       this.ports.addPort({
         name: port_labels[pn],
         pin_number: pn,
-        port_hints: [port_labels[pn], pn],
+        port_hints,
         center: { x: portPosition.x, y: portPosition.y },
         facing_direction: convertSideToDirection(portPosition.side),
       })
