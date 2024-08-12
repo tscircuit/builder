@@ -14,7 +14,6 @@ import type { BuildContext } from "lib/types"
 import type { BuilderInterface } from "../builder-interface"
 import type { ProjectBuilder } from "../project-builder"
 
-
 export interface TraceHintBuilder extends BuilderInterface {
   setProps(new_props: Partial<TraceHintPropsInput>): this
   build(parent_elements: AnySoupElement[], bc: BuildContext): AnySoupElement[]
