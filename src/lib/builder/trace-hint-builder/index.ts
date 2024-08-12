@@ -1,25 +1,19 @@
 import {
-  route_hint_point,
+  type TraceHintProps as TraceHintPropsInput,
+  traceHintProps,
+} from "@tscircuit/props"
+import {
   type AnySoupElement,
   type PcbTraceHint,
   type RouteHintPoint,
+  route_hint_point,
 } from "@tscircuit/soup"
 import { su } from "@tscircuit/soup-util"
 import { applySelector } from "lib/apply-selector"
 import type { BuildContext } from "lib/types"
-import { z } from "zod"
 import type { BuilderInterface } from "../builder-interface"
 import type { ProjectBuilder } from "../project-builder"
 
-const trace_hints_props = z.object({
-  for: z.string(),
-  order: z.number().optional(),
-  offset: route_hint_point.optional(),
-  offsets: z.array(route_hint_point).optional(),
-})
-
-type TraceHintProps = z.infer<typeof trace_hints_props>
-type TraceHintPropsInput = z.input<typeof trace_hints_props>
 
 export interface TraceHintBuilder extends BuilderInterface {
   setProps(new_props: Partial<TraceHintPropsInput>): this
@@ -45,7 +39,7 @@ class TraceHintBuilderClass {
   }
 
   build(parent_elements: AnySoupElement[], bc: BuildContext): AnySoupElement[] {
-    const props = trace_hints_props.parse(this.props)
+    const props = traceHintProps.parse(this.props)
     if (!props.for) {
       // TODO source error
       throw new Error("TraceHintBuilder requires a 'for' prop")
@@ -59,7 +53,7 @@ class TraceHintBuilderClass {
     }
     if (target_elms.length > 1) {
       // TODO source error
-      throw new Error(`<tracehint /> does not yet support multiple selectors`)
+      throw new Error("<tracehint /> does not yet support multiple selectors")
     }
 
     const [target_elm] = target_elms
@@ -103,7 +97,7 @@ class TraceHintBuilderClass {
 
     if (route.length === 0) {
       // TODO source error
-      throw new Error(`No route defined for tracehint (try adding an offset)`)
+      throw new Error("No route defined for tracehint (try adding an offset)")
     }
 
     // Construct pcb_trace_hint
@@ -113,6 +107,7 @@ class TraceHintBuilderClass {
       pcb_port_id: pcb_port.pcb_port_id,
       pcb_component_id: pcb_port.pcb_component_id,
       route,
+      trace_width: this.props.traceWidth ?? 0.1,
     }
 
     return [trace_hint]
