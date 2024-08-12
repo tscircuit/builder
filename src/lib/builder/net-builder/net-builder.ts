@@ -52,6 +52,7 @@ export class NetBuilderClass implements NetBuilder {
         is_digital_signal: this.props.is_digital_signal,
         is_power: this.props.is_power,
         is_ground: this.props.is_ground,
+        trace_width: this.props.trace_width,
       },
     ]
   }

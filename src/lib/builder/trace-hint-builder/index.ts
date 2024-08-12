@@ -106,7 +106,7 @@ class TraceHintBuilderClass {
       pcb_port_id: pcb_port.pcb_port_id,
       pcb_component_id: pcb_port.pcb_component_id,
       route,
-      trace_width: this.props.traceWidth ?? 0.1,
+      trace_width: this.props.traceWidth,
     }
 
     return [trace_hint]
