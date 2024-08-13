@@ -1,5 +1,5 @@
-import test from "ava"
 import { su } from "@tscircuit/soup-util"
+import test from "ava"
 import { getTestFixture } from "tests/fixtures/get-test-fixture"
 
 test("trace hint 1: basic trace_hint for pad", async (t) => {
@@ -26,8 +26,12 @@ test("trace hint 1: basic trace_hint for pad", async (t) => {
   // waiting for select
   const pcb_port = su(soup).pcb_port.select(".R1 > .left")!
 
-  t.is(trace_hint.route[0].x, pcb_port.x - 1)
-  t.is(trace_hint.route[0].y, pcb_port.y + 1)
+  if (pcb_port) {
+    t.is(trace_hint.route[0]?.x, pcb_port.x - 1)
+    t.is(trace_hint.route[0]?.y, pcb_port.y + 1)
+  } else {
+    t.fail("pcb_port is undefined")
+  }
 
   logSoup(soup)
 })

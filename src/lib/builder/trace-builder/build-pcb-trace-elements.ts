@@ -1,22 +1,22 @@
-import { BuildContext } from "lib/types"
 import type {
   AnySoupElement,
-  PCBTraceError,
-  SourcePort,
   InputPoint,
-  PCBTrace,
-  PCBVia,
   PCBPort,
+  PCBTrace,
+  PCBTraceError,
+  PCBVia,
+  SourcePort,
 } from "@tscircuit/soup"
-import { TracePcbRoutingContext } from "./pcb-routing/trace-pcb-routing-context"
 import { su } from "@tscircuit/soup-util"
-import { solveForRoute } from "./pcb-routing/solve-for-route"
-import { findPossibleTraceLayerCombinations } from "./pcb-routing/find-possible-trace-layer-combinations"
-import { createNoCommonLayersError } from "./pcb-errors"
-import { pairs } from "lib/utils/pairs"
-import { mergeRoutes } from "./pcb-routing/merge-routes"
-import { getPcbObstacles } from "./pcb-routing/get-pcb-obstacles"
 import Debug from "debug"
+import type { BuildContext } from "lib/types"
+import { pairs } from "lib/utils/pairs"
+import { createNoCommonLayersError } from "./pcb-errors"
+import { findPossibleTraceLayerCombinations } from "./pcb-routing/find-possible-trace-layer-combinations"
+import { getPcbObstacles } from "./pcb-routing/get-pcb-obstacles"
+import { mergeRoutes } from "./pcb-routing/merge-routes"
+import { solveForRoute } from "./pcb-routing/solve-for-route"
+import type { TracePcbRoutingContext } from "./pcb-routing/trace-pcb-routing-context"
 
 const debug = Debug("tscircuit:builder:trace-builder")
 
@@ -98,11 +98,11 @@ export const buildPcbTraceElements = (
       pcb_port_id: pcb_terminal_port_ids[1],
     })
 
-    if (port0_hint) {
-      pcb_route_hints.push(...port0_hint.route)
+    if (port0_hint && port0_hint.route !== undefined) {
+      pcb_route_hints.push(...port0_hint.route.map((p) => p ?? { x: 0, y: 0 }))
     }
     if (port1_hint) {
-      pcb_route_hints.push(...[...port1_hint.route].reverse())
+      pcb_route_hints.push(...port1_hint.route.map((p) => p ?? { x: 0, y: 0 }))
     }
   }
 
@@ -140,13 +140,12 @@ export const buildPcbTraceElements = (
               ...t,
               via_to_layer: layer_selection[idx],
             }
-          } else {
-            return { ...t, layers: [layer_selection[idx]] }
           }
+          return { ...t, layers: [layer_selection[idx]] }
         }
       )
 
-      for (let [a, b] of pairs(ordered_with_layer_hints)) {
+      for (const [a, b] of pairs(ordered_with_layer_hints)) {
         routes.push(solveForRoute([a, b], pcb_routing_ctx))
       }
       if (routes.some((route) => route.length === 0)) {
@@ -154,7 +153,7 @@ export const buildPcbTraceElements = (
           pcb_error_id: bc.getId("pcb_error"),
           type: "pcb_error",
           error_type: "pcb_trace_error",
-          message: `No route could be found for terminals`,
+          message: "No route could be found for terminals",
           pcb_trace_id,
           source_trace_id,
           pcb_component_ids: [], // TODO
