@@ -90,6 +90,7 @@ class TraceHintBuilderClass {
           y: pcb_port.y + offset.y,
           via: offset.via,
           to_layer: offset.to_layer,
+          trace_width: offset.trace_width || this.props.traceWidth,
         })
       }
     }
@@ -106,7 +107,6 @@ class TraceHintBuilderClass {
       pcb_port_id: pcb_port.pcb_port_id,
       pcb_component_id: pcb_port.pcb_component_id,
       route,
-      trace_width: this.props.traceWidth,
     }
 
     return [trace_hint]
