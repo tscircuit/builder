@@ -16,9 +16,9 @@ import { getGerberLayerName } from "./getGerberLayerName"
  */
 export const convertSoupToGerberCommands = (
   soup: AnySoupElement[],
-  opts: { flip_y_axis?: boolean } = {}
+  opts: { flip_y_axis?: boolean } = {},
 ): LayerToGerberCommandsMap => {
-  opts.flip_y_axis ??= true
+  opts.flip_y_axis ??= false
   const glayers: LayerToGerberCommandsMap = {
     F_Cu: getCommandHeaders({
       layer: "top",
@@ -63,7 +63,7 @@ export const convertSoupToGerberCommands = (
         standard_template_code: "C",
         diameter: 0.05, //mm
       })
-      .build()
+      .build(),
   )
 
   /**
@@ -92,7 +92,7 @@ export const convertSoupToGerberCommands = (
                   })
                   .add("move_operation", { x: a.x, y: mfy(a.y) })
                   .add("plot_operation", { x: b.x, y: mfy(b.y) })
-                  .build()
+                  .build(),
               )
             }
           }
@@ -108,11 +108,11 @@ export const convertSoupToGerberCommands = (
                 .add("select_aperture", {
                   aperture_number: findApertureNumber(
                     glayer,
-                    getApertureConfigFromPcbSmtpad(element)
+                    getApertureConfigFromPcbSmtpad(element),
                   ),
                 })
                 .add("flash_operation", { x: element.x, y: mfy(element.y) })
-                .build()
+                .build(),
             )
           }
         }
@@ -124,7 +124,7 @@ export const convertSoupToGerberCommands = (
           ]) {
             if (element.shape !== "circle") {
               console.warn(
-                "NOT IMPLEMENTED: drawing gerber for non-circle plated hole"
+                "NOT IMPLEMENTED: drawing gerber for non-circle plated hole",
               )
               continue
             }
@@ -133,11 +133,11 @@ export const convertSoupToGerberCommands = (
                 .add("select_aperture", {
                   aperture_number: findApertureNumber(
                     glayer,
-                    getApertureConfigFromCirclePcbPlatedHole(element)
+                    getApertureConfigFromCirclePcbPlatedHole(element),
                   ),
                 })
                 .add("flash_operation", { x: element.x, y: mfy(element.y) })
-                .build()
+                .build(),
             )
           }
         }
@@ -181,7 +181,7 @@ export const convertSoupToGerberCommands = (
               x: center.x - width / 2,
               y: mfy(center.y - height / 2),
             })
-            .build()
+            .build(),
         )
       }
     }
