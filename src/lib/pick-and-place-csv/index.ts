@@ -11,7 +11,7 @@ interface PickAndPlaceRow {
 
 export const convertSoupToPickAndPlaceRows = (
   soup: AnySoupElement[],
-  opts: { flip_y_axis?: boolean } = {},
+  opts: { flip_y_axis?: boolean } = {}
 ): PickAndPlaceRow[] => {
   opts.flip_y_axis ??= false
 
@@ -38,5 +38,5 @@ export const convertSoupToPickAndPlaceCsv = (soup: AnySoupElement[]): string =>
       "Mid Y": row.mid_y,
       Layer: row.layer,
       Rotation: row.rotation,
-    })),
+    }))
   )
