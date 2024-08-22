@@ -9,7 +9,7 @@ export const mmToInch = (mm: number) => {
 export const convertSoupToExcellonDrillCommands = ({
   soup,
   is_plated,
-  flip_y_axis = true,
+  flip_y_axis = false,
 }: {
   soup: Array<AnySoupElement>
   is_plated: boolean

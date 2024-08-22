@@ -18,7 +18,7 @@ export const convertSoupToGerberCommands = (
   soup: AnySoupElement[],
   opts: { flip_y_axis?: boolean } = {}
 ): LayerToGerberCommandsMap => {
-  opts.flip_y_axis ??= true
+  opts.flip_y_axis ??= false
   const glayers: LayerToGerberCommandsMap = {
     F_Cu: getCommandHeaders({
       layer: "top",

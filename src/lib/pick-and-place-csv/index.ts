@@ -13,7 +13,7 @@ export const convertSoupToPickAndPlaceRows = (
   soup: AnySoupElement[],
   opts: { flip_y_axis?: boolean } = {}
 ): PickAndPlaceRow[] => {
-  opts.flip_y_axis ??= true
+  opts.flip_y_axis ??= false
 
   const rows: PickAndPlaceRow[] = []
   for (const element of soup) {
