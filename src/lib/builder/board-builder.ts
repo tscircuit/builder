@@ -42,7 +42,7 @@ export const getBoardAddables = () =>
     group: createGroupBuilder,
     trace_hint: createTraceHintBuilder,
     net: createNetBuilder,
-  } as const)
+  }) as const
 export type BoardBuilderAddables = ReturnType<typeof getBoardAddables>
 
 export interface BoardBuilder {
@@ -51,11 +51,11 @@ export interface BoardBuilder {
   addables: BoardBuilderAddables
   reset: () => BoardBuilder
   appendChild(
-    child: CB.ComponentBuilder | GroupBuilder | TraceBuilder
+    child: CB.ComponentBuilder | GroupBuilder | TraceBuilder,
   ): BoardBuilder
   add<T extends keyof BoardBuilderAddables>(
     builder_type: T,
-    callback: (builder: ReturnType<BoardBuilderAddables[T]>) => unknown
+    callback: (builder: ReturnType<BoardBuilderAddables[T]>) => unknown,
   ): BoardBuilder
   setProps(props: BoardProps): BoardBuilder
   build(build_context: Type.BuildContext): Promise<Type.AnyElement[]>
@@ -98,7 +98,7 @@ export class BoardBuilderClass
       ? bc.convert(this.props.board_thickness)
       : 1.2
 
-    const { pcbX, pcbY, width, height } = this.props
+    const { pcbX, pcbY, width, height, outline } = this.props
 
     return [
       ...(await super.build(bc)),
@@ -110,13 +110,17 @@ export class BoardBuilderClass
         },
         width: bc.convert(width!),
         height: bc.convert(height!),
+        outline:
+          outline?.map((point) => {
+            return { x: bc.convert(point.x), y: bc.convert(point.y) }
+          }) || [],
       },
     ]
   }
 }
 
 export function createBoardBuilder(
-  project_builder?: ProjectBuilder
+  project_builder?: ProjectBuilder,
 ): BoardBuilder {
   const bb = new BoardBuilderClass(project_builder)
   return bb
