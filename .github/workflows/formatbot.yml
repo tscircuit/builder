@@ -25,7 +25,6 @@ jobs:
         with:
           token: ${{ secrets.TSCIRCUIT_BOT_GITHUB_TOKEN }}
 
-
       - name: Setup Node.js
         uses: actions/setup-node@v3
         if: steps.check_fork.outputs.is_fork == 'false'
