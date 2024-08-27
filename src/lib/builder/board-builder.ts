@@ -98,7 +98,7 @@ export class BoardBuilderClass
       ? bc.convert(this.props.board_thickness)
       : 1.2
 
-    const { pcbX, pcbY, width, height } = this.props
+    const { pcbX, pcbY, width, height, outline } = this.props
 
     return [
       ...(await super.build(bc)),
@@ -110,6 +110,10 @@ export class BoardBuilderClass
         },
         width: bc.convert(width!),
         height: bc.convert(height!),
+        outline:
+          outline?.map((point) => {
+            return { x: bc.convert(point.x), y: bc.convert(point.y) }
+          }) || [],
       },
     ]
   }
