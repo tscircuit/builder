@@ -11,22 +11,35 @@ jobs:
     if: github.event.pull_request.draft == false
 
     steps:
+      - name: Determine if fork
+        id: check_fork
+        run: |
+          if [ "${{ github.event.pull_request.head.repo.full_name }}" = "${{ github.repository }}" ]; then
+            echo "is_fork=false" >> $GITHUB_OUTPUT
+          else
+            echo "is_fork=true" >> $GITHUB_OUTPUT
+          fi
       - name: Checkout code
         uses: actions/checkout@v3
+        if: steps.check_fork.outputs.is_fork == 'false'
         with:
           token: ${{ secrets.TSCIRCUIT_BOT_GITHUB_TOKEN }}
 
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
+        if: steps.check_fork.outputs.is_fork == 'false'
         with:
           node-version: "20"
 
       - run: npm install
 
       - name: Run formatter
+        if: steps.check_fork.outputs.is_fork == 'false'
         run: npx prettier -w .
 
       - name: Commit changes
+        if: steps.check_fork.outputs.is_fork == 'false'
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: "formatbot: Automatically format code"
