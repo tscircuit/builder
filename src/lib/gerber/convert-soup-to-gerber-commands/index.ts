@@ -143,12 +143,17 @@ export const convertSoupToGerberCommands = (
         }
       } else if (element.type === "pcb_board" && layer === "edgecut") {
         const glayer = glayers.Edge_Cuts
-        const { width, height, center } = element
-        glayer.push(
-          ...gerberBuilder()
-            .add("select_aperture", {
-              aperture_number: 10,
-            })
+        const { width, height, center, outline } = element
+        const gerberBuild = gerberBuilder().add("select_aperture", {
+          aperture_number: 10,
+        })
+        if (outline && outline.length > 2) {
+          gerberBuild.add("move_operation", outline[0])
+          for (let i = 1; i < outline.length; i++) {
+            gerberBuild.add("plot_operation", outline[i])
+          }
+        } else {
+          gerberBuild
             .add("move_operation", {
               x: center.x - width / 2,
               y: mfy(center.y - height / 2),
@@ -181,8 +186,9 @@ export const convertSoupToGerberCommands = (
               x: center.x - width / 2,
               y: mfy(center.y - height / 2),
             })
-            .build()
-        )
+        }
+
+        glayer.push(...gerberBuild.build())
       }
     }
   }
