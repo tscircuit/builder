@@ -6,7 +6,9 @@
   "main": "./dist/index.cjs",
   "repository": "tscircuit/builder",
   "license": "MIT",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "test": "FULL_TEST=1 ava",
     "build": "tsup",
