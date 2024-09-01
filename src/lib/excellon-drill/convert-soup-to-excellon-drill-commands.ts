@@ -2,8 +2,8 @@ import type { AnySoupElement } from "@tscircuit/soup"
 import type { AnyExcellonDrillCommand } from "./any-excellon-drill-command-map"
 import { excellonDrill } from "./excellon-drill-builder"
 
-export const mmToInch = (mm: number) => {
-  return mm / 25.4
+export const inchToMm = (mm: number) => {
+  return mm * 25.4
 }
 
 export const convertSoupToExcellonDrillCommands = ({
@@ -27,7 +27,7 @@ export const convertSoupToExcellonDrillCommands = ({
       text: `DRILL file {tscircuit} date ${date_str}`,
     })
     .add("header_comment", {
-      text: "FORMAT={-:-/ absolute / inch / decimal}",
+      text: "FORMAT={-:-/ absolute / metric / decimal}",
     })
     .add("header_attribute", {
       attribute_name: "TF.CreationDate",
@@ -42,7 +42,7 @@ export const convertSoupToExcellonDrillCommands = ({
       attribute_value: "Plated,1,2,PTH",
     })
     .add("FMAT", { format: 2 }) // Assuming format 2 for the example
-    .add("unit_format", { unit: "INCH", lz: null })
+    .add("unit_format", { unit: "METRIC", lz: null })
 
   let tool_counter = 10 // Start tool numbering from 10 for example
 
@@ -62,7 +62,7 @@ export const convertSoupToExcellonDrillCommands = ({
         })
         builder.add("define_tool", {
           tool_number: tool_counter,
-          diameter: mmToInch(element.hole_diameter),
+          diameter: inchToMm(element.hole_diameter),
         })
         diameterToToolNumber[element.hole_diameter] = tool_counter
         tool_counter++
@@ -92,8 +92,8 @@ export const convertSoupToExcellonDrillCommands = ({
         if (!("hole_diameter" in element)) continue
         if (diameterToToolNumber[element.hole_diameter] === i) {
           builder.add("drill_at", {
-            x: mmToInch(element.x),
-            y: mmToInch(element.y) * (flip_y_axis ? -1 : 1),
+            x: inchToMm(element.x),
+            y: inchToMm(element.y) * (flip_y_axis ? -1 : 1),
           })
         }
       }
